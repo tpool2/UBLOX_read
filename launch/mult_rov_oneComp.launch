@@ -46,8 +46,8 @@
 			<param name="rover_quantity" value = "0"/>
 			<param name="local_host" value="localhost"/>
 			<param name="local_port" value="16155"/>
-			<param name="remote_host" value="localhost"/>
-			<param name="remote_port" value="16145"/>
+			<param name="base_host" value="localhost"/>
+			<param name="base_port" value="16145"/>
 			<!--param name="log_filename" value="../data/devel/rover2_binary"/-->
 		</node>
 		<!--node pkg="rosbag" type="record" name="record"

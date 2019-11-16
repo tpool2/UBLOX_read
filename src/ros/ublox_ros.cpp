@@ -30,7 +30,7 @@ UBLOX_ROS::UBLOX_ROS() :
 {
 
     //Get the number of rovers
-    int rover_quantity = nh_private_.param<int>("rover_quantity", 1);
+    int rover_quantity = nh_private_.param<int>("rover_quantity", 0);
 
     //Get RTK type 2 is rover. 3 is base.
     int rtk_type = nh_private_.param<int>("rtk_type", 0x00);

@@ -23,7 +23,7 @@ public:
     {
         NONE = 0,
         ROVER = 0b10,
-        BASE = 0b11,
+        BASE = 0b00,  //0
         RTK = 0b10,
     } rtk_type_t;
 
