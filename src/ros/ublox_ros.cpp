@@ -32,17 +32,26 @@ UBLOX_ROS::UBLOX_ROS() :
     //Get the number of rovers
     int rover_quantity = nh_private_.param<int>("rover_quantity", 0);
 
-    //Get RTK type 2 is rover. 3 is base.
-    int rtk_type = nh_private_.param<int>("rtk_type", 0x00);
+    //Get chain_level.
+    //0 is stationary base
+    // 1 to n-1 is
+    int chain_level = nh_private_.param<int>("chain_level", 0x00);
 
     //Get the serial port
     std::string serial_port = nh_private_.param<std::string>("serial_port", "/dev/ttyACM0");
 
-    //Initialize arrays to contain parameters from xml file
+    //Initialize local arrays to contain parameters from xml file
     std::string* local_host = new std::string[rover_quantity];
-    std::string* remote_host = new std::string[rover_quantity];
     uint16_t* local_port = new uint16_t[rover_quantity];
-    uint16_t* remote_port = new uint16_t[rover_quantity];
+
+    //Initialize rover arrays to contain parameters from xml file
+    std::string* rover_host = new std::string[rover_quantity];
+    uint16_t* rover_port = new uint16_t[rover_quantity];
+
+    //Initialize base arrays to contain parameters from xml file
+    std::string* base_host = new std::string[rover_quantity];
+    uint16_t* base_port = new uint16_t[rover_quantity];
+
 
     //Account for the case when no numbers are used for the first rover.
     int j = 0;
@@ -50,8 +59,8 @@ UBLOX_ROS::UBLOX_ROS() :
 
         local_host[0] = nh_private_.param<std::string>("local_host", "localhost");
         local_port[0] = nh_private_.param<int>("local_port", 16140);
-        remote_host[0] = nh_private_.param<std::string>("remote_host", "localhost");
-        remote_port[0] = nh_private_.param<int>("remote_port", 16145);
+        rover_host[0] = nh_private_.param<std::string>("rover_host", "localhost");
+        rover_port[0] = nh_private_.param<int>("rover_port", 16145);
         j=1;
     }
 
@@ -59,8 +68,8 @@ UBLOX_ROS::UBLOX_ROS() :
     for(int i=1+j; i <= rover_quantity; i++) {
         local_host[i-1] = nh_private_.param<std::string>("local_host"+std::to_string(i), "localhost");
         local_port[i-1] = nh_private_.param<int>("local_port"+std::to_string(i), 16140);
-        remote_host[i-1] = nh_private_.param<std::string>("remote_host"+std::to_string(i), "localhost");
-        remote_port[i-1] = nh_private_.param<int>("remote_port"+std::to_string(i), 16145);
+        rover_host[i-1] = nh_private_.param<std::string>("rover_host"+std::to_string(i), "localhost");
+        rover_port[i-1] = nh_private_.param<int>("rover_port"+std::to_string(i), 16145);
     }
 
     std::string log_filename = nh_private_.param<std::string>("log_filename", "");
@@ -81,12 +90,12 @@ UBLOX_ROS::UBLOX_ROS() :
 //    nav_sat_status_pub_ = nh_.advertise<sensor_msgs::NavSatStatus>("NavSatStatus");
 
 
-    std::cerr<<"rtk_type: " << rtk_type << "\n";
+    std::cerr<<"Chain Level: " << chain_level << "\n";
     for(int i = 0; i < rover_quantity; i++) {
         std::cerr<<"local_host " + std::to_string(i+1) + ": " << local_host[i] << "\n";
         std::cerr<<"local_port " + std::to_string(i+1) + ": " << local_port[i] << "\n";
-        std::cerr<<"remote_host " + std::to_string(i+1) + ": " << remote_host[i] << "\n";
-        std::cerr<<"remote_port " + std::to_string(i+1) + ": " << remote_port[i] << "\n";
+        std::cerr<<"rover_host " + std::to_string(i+1) + ": " << rover_host[i] << "\n";
+        std::cerr<<"rover_port " + std::to_string(i+1) + ": " << rover_port[i] << "\n";
     }
 
     std::cerr<<"Creating ublox parser\n";
@@ -95,13 +104,18 @@ UBLOX_ROS::UBLOX_ROS() :
     std::cerr<<"Created ublox parser\n";
 
     // set up RTK
-    if (rtk_type == ublox::UBLOX::ROVER){
-        std::cerr<<"Initializing Rover\n";
-        ublox_->initRover(local_host[0], local_port[0], remote_host[0], remote_port[0]);
-    }
-    else if (rtk_type == ublox::UBLOX::BASE){
+    if (chain_level == ublox::UBLOX::BASE){
         std::cerr<<"Initializing Base\n";
-        ublox_->initBase(local_host, local_port, remote_host, remote_port, base_type, rover_quantity);
+        ublox_->initBase(local_host, local_port, rover_host, rover_port, base_type, rover_quantity);
+    }
+    else if (rover_quantity == 0){
+        std::cerr<<"Initializing Rover\n";
+        ublox_->initRover(local_host[0], local_port[0], base_host[0], base_port[0]);
+    }
+    else if (rover_quantity>=0) {
+        std::cerr<<"Initializing Brover\n";
+        ublox_->initBrover(local_host, local_port, base_host, base_port, rover_host, rover_port, base_type, rover_quantity);
+
     }
     // connect callbacks
     createCallback(ublox::CLASS_NAV, ublox::NAV_PVT, pvtCB, NAV_PVT);

@@ -217,6 +217,13 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
     config_f9p();
 }
 
+void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
+                std::string base_host[], uint16_t base_port[],
+                std::string rover_host[], uint16_t rover_port[],
+                std::string base_type, int rover_quantity) {
+     std::cerr<<"Initializing Brover\n";
+}
+
 UBLOX::~UBLOX()
 {
     if (udp_)

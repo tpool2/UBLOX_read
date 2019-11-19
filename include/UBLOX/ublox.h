@@ -43,6 +43,12 @@ public:
     void initRover(std::string local_host, uint16_t local_port,
                    std::string remote_host, uint16_t remote_port);
 
+    // base_type refers to whether the brover is stationary or moving
+    void initBrover(std::string local_host[], uint16_t local_port[],
+                    std::string base_host[], uint16_t base_port[],
+                    std::string rover_host[], uint16_t rover_port[],
+                    std::string base_type, int rover_quantity);
+
     void initLogFile(const std::string& filename);
     void readFile(const std::string& filename);
 
