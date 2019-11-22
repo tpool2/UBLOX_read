@@ -61,6 +61,8 @@ UBLOX_ROS::UBLOX_ROS() :
         local_port[0] = nh_private_.param<int>("local_port", 16140);
         rover_host[0] = nh_private_.param<std::string>("rover_host", "localhost");
         rover_port[0] = nh_private_.param<int>("rover_port", 16145);
+        base_host[0] = nh_private_.param<std::string>("base_host", "localhost");
+        base_port[0] = nh_private_.param<int>("base_port", 16150);
         j=1;
     }
 
@@ -70,6 +72,8 @@ UBLOX_ROS::UBLOX_ROS() :
         local_port[i-1] = nh_private_.param<int>("local_port"+std::to_string(i), 16140);
         rover_host[i-1] = nh_private_.param<std::string>("rover_host"+std::to_string(i), "localhost");
         rover_port[i-1] = nh_private_.param<int>("rover_port"+std::to_string(i), 16145);
+        base_host[i-1] = nh_private_.param<std::string>("base_host", "localhost");
+        base_port[i-1] = nh_private_.param<int>("base_port"+std::to_string(i), 16150);
     }
 
     std::string log_filename = nh_private_.param<std::string>("log_filename", "");
