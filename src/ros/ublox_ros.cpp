@@ -40,6 +40,17 @@ UBLOX_ROS::UBLOX_ROS() :
     // nav_sat_fix_pub_ = nh_.advertise<sensor_msgs::NavSatFix>("NavSatFix");
     // nav_sat_status_pub_ = nh_.advertise<sensor_msgs::NavSatStatus>("NavSatStatus");
 
+    //Get the serial port
+    std::string serial_port = nh_private_.param<std::string>("serial_port", "/dev/ttyACM0");
+
+    // Get the log file
+    std::string log_filename = nh_private_.param<std::string>("log_filename", "");
+
+    std::cerr<<"Creating ublox parser\n";
+    // create the parser
+    ublox_ = new ublox::UBLOX(serial_port);
+    std::cerr<<"Created ublox parser\n";
+
     //Get the number of rovers
     int rover_quantity = nh_private_.param<int>("rover_quantity", 0);
 
@@ -48,22 +59,19 @@ UBLOX_ROS::UBLOX_ROS() :
     // 1 to n-1 is
     int chain_level = nh_private_.param<int>("chain_level", 0x00);
 
-    //Initialize local arrays to contain parameters from xml file
-    std::string* local_host = new std::string[rover_quantity];
-    uint16_t* local_port = new uint16_t[rover_quantity];
-
-    //Initialize rover arrays to contain parameters from xml file
-    std::string* rover_host = new std::string[rover_quantity];
-    uint16_t* rover_port = new uint16_t[rover_quantity];
-
-    //Initialize base arrays to contain parameters from xml file
-    std::string* base_host = new std::string[rover_quantity];
-    uint16_t* base_port = new uint16_t[rover_quantity];
-
     // set up RTK
     // Base (n local_host n local_port, n rover_host, n rover_port)
     if (chain_level == ublox::UBLOX::BASE){
         std::cerr<<"Initializing Base\n";
+
+        //Initialize local arrays to contain parameters from xml file
+        std::string* local_host = new std::string[rover_quantity];
+        uint16_t* local_port = new uint16_t[rover_quantity];
+
+        //Initialize rover arrays to contain parameters from xml file
+        std::string* rover_host = new std::string[rover_quantity];
+        uint16_t* rover_port = new uint16_t[rover_quantity];
+
         //Account for the case when no numbers are used for the first rover.
         int j = 0;
         if(nh_private_.hasParam("local_host")) {
@@ -93,13 +101,25 @@ UBLOX_ROS::UBLOX_ROS() :
         //Determine whether the base is moving or stationary
         std::string base_type = nh_private_.param<std::string>("base_type", "stationary");
 
+        std::cerr<<"About to init base\n";
         ublox_->initBase(local_host, local_port, rover_host, rover_port, base_type, rover_quantity);
     }
     // Rover(1 local_host 1 local_port 1 base_host 1 base_port)
     else if (rover_quantity == 0){
         std::cerr<<"Initializing Rover\n";
+
+        //Initialize local arrays to contain parameters from xml file
+        std::string* local_host = new std::string[1];
+        uint16_t* local_port = new uint16_t[1];
+
+        //Initialize base arrays to contain parameters from xml file
+        std::string* base_host = new std::string[1];
+        uint16_t* base_port = new uint16_t[1];
+
         if(nh_private_.hasParam("local_host")) {
             std::cerr<<"Got to here\n";
+            std::string test = nh_private_.param<std::string>("local_host", "localhost");
+            std::cerr<<"Got to here: "<<test<<local_host<<"something\n";
             local_host[0] = nh_private_.param<std::string>("local_host", "localhost");
             std::cerr<<"Got to here\n";
             local_port[0] = nh_private_.param<int>("local_port", 16140);
@@ -125,22 +145,24 @@ UBLOX_ROS::UBLOX_ROS() :
     // Brover(1 base_host 1 base_port n local_host n local_port n rover_host n rover_port)
     else if (rover_quantity>=0) {
         std::cerr<<"Initializing Brover\n";
+
+        //Initialize local arrays to contain parameters from xml file
+        std::string* local_host = new std::string[rover_quantity];
+        uint16_t* local_port = new uint16_t[rover_quantity];
+
+        //Initialize rover arrays to contain parameters from xml file
+        std::string* rover_host = new std::string[rover_quantity];
+        uint16_t* rover_port = new uint16_t[rover_quantity];
+
+        //Initialize base arrays to contain parameters from xml file
+        std::string* base_host = new std::string[rover_quantity];
+        uint16_t* base_port = new uint16_t[rover_quantity];
+        
         //Determine whether the base is moving or stationary
         std::string base_type = nh_private_.param<std::string>("base_type", "stationary");
         ublox_->initBrover(local_host, local_port, base_host, base_port, rover_host, rover_port, base_type, rover_quantity);
 
     }
-
-    //Get the serial port
-    std::string serial_port = nh_private_.param<std::string>("serial_port", "/dev/ttyACM0");
-
-    // Get the log file
-    std::string log_filename = nh_private_.param<std::string>("log_filename", "");
-
-    std::cerr<<"Creating ublox parser\n";
-    // create the parser
-    ublox_ = new ublox::UBLOX(serial_port);
-    std::cerr<<"Created ublox parser\n";
 
     // connect callbacks
     createCallback(ublox::CLASS_NAV, ublox::NAV_PVT, pvtCB, NAV_PVT);
@@ -447,6 +469,8 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "ublox_ros");
 
     ublox_ros::UBLOX_ROS Thing;
+
+    std::cerr<<"About to spin\n";
 
     ros::spin();
 }
