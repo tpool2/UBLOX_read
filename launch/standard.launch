@@ -12,7 +12,7 @@
 			<param name="local_port1" value="16140"/>
 			<param name="rover_host1" value="localhost"/>
 			<param name="rover_port1" value="16145"/>
-		</node> 
+		</node>
 	</group>
 
 	<group ns = "rover">
@@ -20,10 +20,10 @@
 			<param name="serial_port" value="/dev/ttyACM1"/>
 			<param name="chain_level" value="1"/>
 			<param name="rover_quantity" value="0"/>
-			<param name="local_host1" value="localhost"/>
-			<param name="local_port1" value="16145"/>
-			<param name="base_host1" value="localhost"/>
-			<param name="base_port1" value="16140"/>
+			<param name="local_host" value="localhost"/>
+			<param name="local_port" value="16145"/>
+			<param name="base_host" value="localhost"/>
+			<param name="base_port" value="16140"/>
 		</node>
 		<!--node pkg="rosbag" type="record" name="record" output="screen" args="-O /home/matt/data/devel/onerover/rover.bag -a"/-->
 	</group>
