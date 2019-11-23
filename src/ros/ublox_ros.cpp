@@ -157,7 +157,7 @@ UBLOX_ROS::UBLOX_ROS() :
         //Initialize base arrays to contain parameters from xml file
         std::string* base_host = new std::string[rover_quantity];
         uint16_t* base_port = new uint16_t[rover_quantity];
-        
+
         //Determine whether the base is moving or stationary
         std::string base_type = nh_private_.param<std::string>("base_type", "stationary");
         ublox_->initBrover(local_host, local_port, base_host, base_port, rover_host, rover_port, base_type, rover_quantity);
@@ -469,8 +469,6 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "ublox_ros");
 
     ublox_ros::UBLOX_ROS Thing;
-
-    std::cerr<<"About to spin\n";
 
     ros::spin();
 }
