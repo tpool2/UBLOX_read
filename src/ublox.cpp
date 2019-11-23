@@ -150,8 +150,6 @@ void UBLOX::initLogFile(const std::string& filename)
 void UBLOX::initRover(std::string local_host, uint16_t local_port,
                       std::string remote_host, uint16_t remote_port)
 {
-    // Not getting to here
-    std::cerr<<"Got to here\n";
     type_ = ROVER;
 
     assert(udp_ == nullptr);
