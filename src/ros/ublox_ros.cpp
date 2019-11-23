@@ -117,17 +117,11 @@ UBLOX_ROS::UBLOX_ROS() :
         uint16_t* base_port = new uint16_t[1];
 
         if(nh_private_.hasParam("local_host")) {
-            std::cerr<<"Got to here\n";
             std::string test = nh_private_.param<std::string>("local_host", "localhost");
-            std::cerr<<"Got to here: "<<test<<local_host<<"something\n";
             local_host[0] = nh_private_.param<std::string>("local_host", "localhost");
-            std::cerr<<"Got to here\n";
             local_port[0] = nh_private_.param<int>("local_port", 16140);
-            std::cerr<<"Got to here\n";
             base_host[0] = nh_private_.param<std::string>("base_host", "localhost");
-            std::cerr<<"Got to here\n";
             base_port[0] = nh_private_.param<int>("base_port", 16145);
-            std::cerr<<"Got to here\n";
         }
         else {
           local_host[0] = nh_private_.param<std::string>("local_host1", "localhost");
@@ -155,8 +149,41 @@ UBLOX_ROS::UBLOX_ROS() :
         uint16_t* rover_port = new uint16_t[rover_quantity];
 
         //Initialize base arrays to contain parameters from xml file
-        std::string* base_host = new std::string[rover_quantity];
-        uint16_t* base_port = new uint16_t[rover_quantity];
+        std::string* base_host = new std::string[1];
+        uint16_t* base_port = new uint16_t[1];
+
+        // Fill base arrays with their single values
+        base_host[0] = nh_private_.param<std::string>("base_host", "localhost");
+        base_port[0] = nh_private_.param<int>("base_port", 16140);
+
+        int j = 0;
+        if(nh_private_.hasParam("local_host")) {
+
+            local_host[0] = nh_private_.param<std::string>("local_host", "localhost");
+            local_port[0] = nh_private_.param<int>("local_port", 16140);
+            rover_host[0] = nh_private_.param<std::string>("rover_host", "localhost");
+            rover_port[0] = nh_private_.param<int>("rover_port", 16145);
+            j=1;
+        }
+
+        //Input parameters from xml file into respective arrays
+        for(int i=1+j; i <= rover_quantity; i++) {
+            local_host[i-1] = nh_private_.param<std::string>("local_host"+std::to_string(i), "localhost");
+            local_port[i-1] = nh_private_.param<int>("local_port"+std::to_string(i), 16140);
+            rover_host[i-1] = nh_private_.param<std::string>("rover_host"+std::to_string(i), "localhost");
+            rover_port[i-1] = nh_private_.param<int>("rover_port"+std::to_string(i), 16145);
+        }
+
+        std::cerr<<"Chain Level: " << chain_level << "\n";
+        std::cerr<<"Base Host: "<<base_host[0]<<"\n";
+        std::cerr<<"Base Port: "<<base_port[0]<<"\n";
+        for(int i = 0; i < rover_quantity; i++) {
+            std::cerr<<"local_host " + std::to_string(i+1) + ": " << local_host[i] << "\n";
+            std::cerr<<"local_port " + std::to_string(i+1) + ": " << local_port[i] << "\n";
+            std::cerr<<"rover_host " + std::to_string(i+1) + ": " << rover_host[i] << "\n";
+            std::cerr<<"rover_port " + std::to_string(i+1) + ": " << rover_port[i] << "\n";
+        }
+
 
         //Determine whether the base is moving or stationary
         std::string base_type = nh_private_.param<std::string>("base_type", "stationary");
@@ -384,6 +411,7 @@ void UBLOX_ROS::ephCB(const Ephemeris &eph)
     out.toe.sec = eph.toe.sec;
     out.toe.nsec = eph.toe.nsec;
     out.toc.sec = eph.toc.sec;
+    std::cerr<<"About to spin\n";
     out.toc.nsec = eph.toc.nsec;
 
     out.tow = eph.tow;
