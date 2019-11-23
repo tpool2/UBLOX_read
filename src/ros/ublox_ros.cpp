@@ -117,17 +117,11 @@ UBLOX_ROS::UBLOX_ROS() :
         uint16_t* base_port = new uint16_t[1];
 
         if(nh_private_.hasParam("local_host")) {
-            std::cerr<<"Got to here\n";
             std::string test = nh_private_.param<std::string>("local_host", "localhost");
-            std::cerr<<"Got to here: "<<test<<local_host<<"something\n";
             local_host[0] = nh_private_.param<std::string>("local_host", "localhost");
-            std::cerr<<"Got to here\n";
             local_port[0] = nh_private_.param<int>("local_port", 16140);
-            std::cerr<<"Got to here\n";
             base_host[0] = nh_private_.param<std::string>("base_host", "localhost");
-            std::cerr<<"Got to here\n";
             base_port[0] = nh_private_.param<int>("base_port", 16145);
-            std::cerr<<"Got to here\n";
         }
         else {
           local_host[0] = nh_private_.param<std::string>("local_host1", "localhost");
@@ -140,6 +134,7 @@ UBLOX_ROS::UBLOX_ROS() :
         std::cerr<<"Local Port: "<<local_port[0]<<"\n";
         std::cerr<<"Base Host: "<<base_host[0]<<"\n";
         std::cerr<<"Base Port: "<<base_port[0]<<"\n";
+        
         ublox_->initRover(local_host[0], local_port[0], base_host[0], base_port[0]);
     }
     // Brover(1 base_host 1 base_port n local_host n local_port n rover_host n rover_port)
@@ -469,8 +464,6 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "ublox_ros");
 
     ublox_ros::UBLOX_ROS Thing;
-
-    std::cerr<<"About to spin\n";
 
     ros::spin();
 }

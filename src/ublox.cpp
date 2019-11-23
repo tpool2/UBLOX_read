@@ -91,7 +91,7 @@ void UBLOX::config_base_stationary(int on_off)
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::MSGOUT_SVIN, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::TMODE_MODE, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 500000*on_off, CFG_VALSET_t::TMODE_SVIN_ACC_LIMIT, word);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 119*on_off, CFG_VALSET_t::TMODE_SVIN_MIN_DUR, word);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 118*on_off, CFG_VALSET_t::TMODE_SVIN_MIN_DUR, word);
 
 }
 
@@ -150,8 +150,6 @@ void UBLOX::initLogFile(const std::string& filename)
 void UBLOX::initRover(std::string local_host, uint16_t local_port,
                       std::string remote_host, uint16_t remote_port)
 {
-    // Not getting to here
-    std::cerr<<"Got to here\n";
     type_ = ROVER;
 
     assert(udp_ == nullptr);
@@ -174,6 +172,7 @@ void UBLOX::initRover(std::string local_host, uint16_t local_port,
 
     config_rover();
     config_f9p();
+    std::cerr<<"Initialized Rover\n";
 }
 
 /*

@@ -20,6 +20,8 @@
 			<param name="local_port" value="16140"/>
 			<param name="rover_host" value="localhost"/>
 			<param name="rover_port" value="16145"/>
+			<param name="local_host2" value="localhost"/>
+			<param name="local_port2" value="16150"/>
 			<param name="rover_host2" value="localhost"/>
 			<param name="rover_port2" value="16155"/>
 			<!--param name="log_filename" value="../data/devel/base_binary"/-->
@@ -42,7 +44,7 @@
 		<!--node pkg="rosbag" type="record" name="record" output="screen" args="-O ../data/devel/tworovernew/rover1.bag -a"/-->
 	</group>
 
-	<group ns="rover">
+	<group ns="rover2">
 		<node name="f9p" pkg="ublox" type="ublox_ros">
 			<param name="serial_port" value="/dev/ttyACM2"/>
 			<param name="chain_level" value="1"/>
@@ -50,7 +52,7 @@
 			<param name="local_host" value="localhost"/>
 			<param name="local_port" value="16155"/>
 			<param name="base_host" value="localhost"/>
-			<param name="base_port" value="16140"/>
+			<param name="base_port" value="16150"/>
 			<!--param name="log_filename" value="../data/devel/rover2_binary"/-->
 		</node>
 		<!--node pkg="rosbag" type="record" name="record"
