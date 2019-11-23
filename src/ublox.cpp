@@ -37,11 +37,11 @@ UBLOX::UBLOX(const std::string& port) :
     ubx_.registerCallback(ublox::CLASS_RXM, ublox::RXM_SFRBX, eph_cb);
 }
 
-void UBLOX::config_f9p()
+void UBLOX::config_f9p() //See ubx_defs.h for more information
 {
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, CFG_VALSET_t::DYNMODE_AIRBORNE_1G, CFG_VALSET_t::DYNMODEL, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_INPROT_NMEA, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_OUTPROT_NMEA, byte);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, CFG_VALSET_t::DYNMODE_AIRBORNE_1G, CFG_VALSET_t::DYNMODEL, byte); //Dynamic platform model
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_INPROT_NMEA, byte); //Flag to indicate if NMEA should be an input protocol on USB
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_OUTPROT_NMEA, byte); //Flag to indicate if NMEA should bean output protocol on USB
 
     bool poll = true;
     if(poll == true)
@@ -111,11 +111,11 @@ void UBLOX::config_rover()
 {
 }
 
-void UBLOX::poll_value()
+void UBLOX::poll_value() //See ubx_defs.h for more information
 {
-    ubx_.get_configuration(CFG_VALGET_t::REQUEST, CFG_VALGET_t::RAM, CFG_VALGET_t::RTCM_1005USB);
-    ubx_.get_configuration(CFG_VALGET_t::REQUEST, CFG_VALGET_t::RAM, CFG_VALGET_t::RTCM_1230USB);
-    ubx_.get_configuration(CFG_VALGET_t::REQUEST, CFG_VALGET_t::RAM, CFG_VALGET_t::RTCM_1097USB);
+    ubx_.get_configuration(CFG_VALGET_t::REQUEST, CFG_VALGET_t::RAM, CFG_VALGET_t::RTCM_1005USB); //CFG-MSGOUT-RTCM_3X_TYPE1005_USB -- Stationary RTK Reference Station ARP
+    ubx_.get_configuration(CFG_VALGET_t::REQUEST, CFG_VALGET_t::RAM, CFG_VALGET_t::RTCM_1230USB); //CFG-MSGOUT-RTCM_3X_TYPE1230_USB -- Glonass L1 and L2 Code-Phase Biases
+    ubx_.get_configuration(CFG_VALGET_t::REQUEST, CFG_VALGET_t::RAM, CFG_VALGET_t::RTCM_1097USB); //CFG-MSGOUT-RTCM_3X_TYPE1097_USB __ Galileo MSM 7 (high precision)
 }
 
 void UBLOX::readFile(const std::string& filename)
@@ -222,7 +222,59 @@ void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
                 std::string base_host[], uint16_t base_port[],
                 std::string rover_host[], uint16_t rover_port[],
                 std::string base_type, int rover_quantity) {
-     std::cerr<<"Initializing Brover\n";
+
+                  type_ = ROVER;
+
+                  assert(udp_ == nullptr);
+                  // Connect the rtcm_cb callback to forward data to the UBX serial port
+                  rtcm_.registerCallback([this](uint8_t* buf, size_t size)
+                  {
+                      this->rtcm_complete_cb(buf, size);
+                  });
+
+                  // hook up UDP to listen
+                  /// TODO: configure ports and IP from cli
+                  udp_ = new async_comm::UDP(local_host[0], local_port[0], base_host[0], base_port[0]);
+                  udp_->register_receive_callback([this](const uint8_t* buf, size_t size)
+                  {
+                      this->udp_read_cb(buf, size);
+                  });
+
+                  if (!udp_->init())
+                      throw std::runtime_error("Failed to initialize Brover receive UDP");
+
+                  config_rover();
+
+                  type_ = BASE;
+
+                  //Instantiate an array of UDP objects
+                  udparray_ = new async_comm::UDP*[rover_quantity];
+
+                  //Fill udp objects into the array.
+                  for(int i = 0; i < rover_quantity; i++) {
+                      std::cerr<<"Initializing Brover to Rover "<<std::to_string(i+1)<<" UDP\n";
+
+                      //Create pointer to UDP object within an array
+                      udparray_[i] = new async_comm::UDP(local_host[i], local_port[i], rover_host[i], rover_port[i]);
+
+                      if (!udparray_[i]->init())
+                      {
+                          throw std::runtime_error("Failed to initialize Brover to Rover "+ std::to_string(i+1) +" receive UDP\n");
+                      }
+
+                      rtcm_.registerCallback([ this , i](uint8_t* buf, size_t size)
+                      {
+                          this->udparray_[i]->send_bytes(buf, size);
+                      });
+
+                      std::cerr<<"Initialized "+ std::to_string(i) +" UDP\n";
+                  }
+
+                  config_base(base_type);
+
+
+                  config_f9p();
+                  std::cerr<<"Initialized Brover\n";
 }
 
 UBLOX::~UBLOX()

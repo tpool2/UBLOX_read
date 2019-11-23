@@ -22,8 +22,9 @@ public:
     typedef enum
     {
         NONE = 0,
-        ROVER = 0b10,
+        ROVER = 0b10, // 2
         BASE = 0b00,  //0
+        BROVER = 0b01,  // 1
         RTK = 0b10,
     } rtk_type_t;
 
