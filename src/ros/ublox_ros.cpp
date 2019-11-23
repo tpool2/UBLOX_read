@@ -134,6 +134,7 @@ UBLOX_ROS::UBLOX_ROS() :
         std::cerr<<"Local Port: "<<local_port[0]<<"\n";
         std::cerr<<"Base Host: "<<base_host[0]<<"\n";
         std::cerr<<"Base Port: "<<base_port[0]<<"\n";
+        
         ublox_->initRover(local_host[0], local_port[0], base_host[0], base_port[0]);
     }
     // Brover(1 base_host 1 base_port n local_host n local_port n rover_host n rover_port)
