@@ -22,6 +22,22 @@ do{\
 
 constexpr double deg2rad(double x) { return M_PI/180.0 * x; }
 
+// Function slice
+// This function slices into an iteratable
+// Inputs:  iteratable to be slice
+//          starting index (included in the slicing)
+//          ending index (not included in the slicing)
+// Returns: a neatly sliced iteratable
+template <class T> T slice(T iteratable, int xstart, int xend) {
+  // Declare subvariable
+  T subiterate = new T[xend-xstart];
+
+  for(int i=xstart; i< xend; i++) {
+
+    subiterate[i-xstart] = iteratable[i];
+  }
+}
+
 namespace ublox_ros
 {
 
@@ -106,6 +122,7 @@ UBLOX_ROS::UBLOX_ROS() :
     }
     // Rover(1 local_host 1 local_port 1 base_host 1 base_port)
     else if (rover_quantity == 0){
+
         std::cerr<<"Initializing Rover\n";
 
         //Initialize local arrays to contain parameters from xml file
@@ -134,14 +151,15 @@ UBLOX_ROS::UBLOX_ROS() :
         std::cerr<<"Local Port: "<<local_port[0]<<"\n";
         std::cerr<<"Base Host: "<<base_host[0]<<"\n";
         std::cerr<<"Base Port: "<<base_port[0]<<"\n";
-        
+
         ublox_->initRover(local_host[0], local_port[0], base_host[0], base_port[0]);
     }
     // Brover(1 base_host 1 base_port n local_host n local_port n rover_host n rover_port)
     else if (rover_quantity>=0) {
         std::cerr<<"Initializing Brover\n";
 
-        //Initialize local arrays to contain parameters from xml file
+        // Initialize local arrays to contain parameters from xml file
+        // The first local_host and local_port correspond to the base.
         std::string* local_host = new std::string[rover_quantity];
         uint16_t* local_port = new uint16_t[rover_quantity];
 

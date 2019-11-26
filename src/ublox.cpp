@@ -145,8 +145,8 @@ void UBLOX::initLogFile(const std::string& filename)
     log_file_.open(filename);
 }
 
-//Function initRover
-//This function initializes a rover that is given by the following data.
+// Function initRover
+// This function initializes a rover that is given by the following data.
 void UBLOX::initRover(std::string local_host, uint16_t local_port,
                       std::string remote_host, uint16_t remote_port)
 {
@@ -203,7 +203,7 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
 
         if (!udparray_[i]->init())
         {
-            throw std::runtime_error("Failed to initialize Base to Rover "+ std::to_string(i) +" receive UDP\n");
+            throw std::runtime_error("Failed to initialize Base to Rover "+ std::to_string(i+1) +" receive UDP\n");
         }
 
         rtcm_.registerCallback([ this , i](uint8_t* buf, size_t size)
@@ -211,7 +211,7 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
             this->udparray_[i]->send_bytes(buf, size);
         });
 
-        std::cerr<<"Initialized "+ std::to_string(i) +" UDP\n";
+        std::cerr<<"Initialized Base to Rover "+ std::to_string(i+1) +" UDP\n";
     }
 
     config_base(base_type);
@@ -252,10 +252,11 @@ void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
 
                   //Fill udp objects into the array.
                   for(int i = 0; i < rover_quantity; i++) {
-                      std::cerr<<"Initializing Brover to Rover "<<std::to_string(i+1)<<" UDP\n";
+                      std::cerr<<"Initializing Brover at "<< local_host[i+1]<<", "<<local_port[i+1]
+                      <<" to Rover at "<< rover_host[i]<<", "<<rover_port[i]<<std::to_string(i+1)<<" UDP\n";
 
                       //Create pointer to UDP object within an array
-                      udparray_[i] = new async_comm::UDP(local_host[i], local_port[i], rover_host[i], rover_port[i]);
+                      udparray_[i] = new async_comm::UDP(local_host[i+1], local_port[i+1], rover_host[i], rover_port[i]);
 
                       if (!udparray_[i]->init())
                       {
@@ -267,11 +268,10 @@ void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
                           this->udparray_[i]->send_bytes(buf, size);
                       });
 
-                      std::cerr<<"Initialized "+ std::to_string(i) +" UDP\n";
+                      std::cerr<<"Initialized Brover to Rover "+ std::to_string(i+1) +" UDP\n";
                   }
 
                   config_base(base_type);
-
 
                   config_f9p();
                   std::cerr<<"Initialized Brover\n";
