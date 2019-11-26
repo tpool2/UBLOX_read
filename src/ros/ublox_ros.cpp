@@ -160,8 +160,8 @@ UBLOX_ROS::UBLOX_ROS() :
 
         // Initialize local arrays to contain parameters from xml file
         // The first local_host and local_port correspond to the base.
-        std::string* local_host = new std::string[rover_quantity];
-        uint16_t* local_port = new uint16_t[rover_quantity];
+        std::string* local_host = new std::string[rover_quantity+1];
+        uint16_t* local_port = new uint16_t[rover_quantity+1];
 
         //Initialize rover arrays to contain parameters from xml file
         std::string* rover_host = new std::string[rover_quantity];
@@ -191,7 +191,12 @@ UBLOX_ROS::UBLOX_ROS() :
             local_port[i-1] = nh_private_.param<int>("local_port"+std::to_string(i), 16140);
             rover_host[i-1] = nh_private_.param<std::string>("rover_host"+std::to_string(i), "localhost");
             rover_port[i-1] = nh_private_.param<int>("rover_port"+std::to_string(i), 16145);
+            j = i;
         }
+
+        // Add in extra local host values.
+        local_host[j] = nh_private_.param<std::string>("local_host"+std::to_string(j+1), "localhost");
+        local_port[j] = nh_private_.param<int>("local_port"+std::to_string(j+1), 16140);
 
         std::cerr<<"Chain Level: " << chain_level << "\n";
         std::cerr<<"Base Host: "<<base_host[0]<<"\n";

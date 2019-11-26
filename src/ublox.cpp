@@ -224,7 +224,7 @@ void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
                 std::string base_type, int rover_quantity) {
 
                   type_ = ROVER;
-
+                  
                   assert(udp_ == nullptr);
                   // Connect the rtcm_cb callback to forward data to the UBX serial port
                   rtcm_.registerCallback([this](uint8_t* buf, size_t size)
@@ -249,11 +249,12 @@ void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
 
                   //Instantiate an array of UDP objects
                   udparray_ = new async_comm::UDP*[rover_quantity];
+                  std::cerr<<"Rover Quantity: "<<rover_quantity<<"\n";
 
                   //Fill udp objects into the array.
                   for(int i = 0; i < rover_quantity; i++) {
                       std::cerr<<"Initializing Brover at "<< local_host[i+1]<<", "<<local_port[i+1]
-                      <<" to Rover at "<< rover_host[i]<<", "<<rover_port[i]<<std::to_string(i+1)<<" UDP\n";
+                      <<" to Rover "<<std::to_string(i+1)<<" at "<< rover_host[i]<<", "<<rover_port[i]<<" UDP\n";
 
                       //Create pointer to UDP object within an array
                       udparray_[i] = new async_comm::UDP(local_host[i+1], local_port[i+1], rover_host[i], rover_port[i]);
