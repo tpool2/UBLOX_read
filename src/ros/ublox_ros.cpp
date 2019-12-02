@@ -210,7 +210,7 @@ UBLOX_ROS::UBLOX_ROS() :
 
 
         //Determine whether the base is moving or stationary
-        std::string base_type = nh_private_.param<std::string>("base_type", "stationary");
+        std::string base_type = "moving";
         ublox_->initBrover(local_host, local_port, base_host, base_port, rover_host, rover_port, base_type, rover_quantity);
 
     }

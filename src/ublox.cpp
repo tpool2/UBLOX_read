@@ -223,8 +223,8 @@ void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
                 std::string rover_host[], uint16_t rover_port[],
                 std::string base_type, int rover_quantity) {
 
-                  type_ = ROVER;
-                  
+                  type_ = BROVER;
+
                   assert(udp_ == nullptr);
                   // Connect the rtcm_cb callback to forward data to the UBX serial port
                   rtcm_.registerCallback([this](uint8_t* buf, size_t size)
@@ -245,8 +245,6 @@ void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
 
                   config_rover();
 
-                  type_ = BASE;
-
                   //Instantiate an array of UDP objects
                   udparray_ = new async_comm::UDP*[rover_quantity];
                   std::cerr<<"Rover Quantity: "<<rover_quantity<<"\n";
@@ -261,7 +259,7 @@ void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
 
                       if (!udparray_[i]->init())
                       {
-                          throw std::runtime_error("Failed to initialize Brover to Rover "+ std::to_string(i+1) +" receive UDP\n");
+                          throw std::runtime_error("Failed to initialize Brover to Rover "+ std::to_string(i+1) +"  UDP\n");
                       }
 
                       rtcm_.registerCallback([ this , i](uint8_t* buf, size_t size)
@@ -290,7 +288,7 @@ UBLOX::~UBLOX()
 void UBLOX::udp_read_cb(const uint8_t* buf, size_t size)
 {
 
-    assert(type_ == ROVER);
+    assert(type_ == ROVER || type_ == BROVER);
     for (int i = 0; i < size; i++)
     {
         rtcm_.read_cb(buf[i]);
@@ -326,10 +324,14 @@ void UBLOX::serial_read_cb(const uint8_t *buf, size_t size)
 
 void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
 {
-    assert (type_ == ROVER || type_ == BASE);
+    assert (type_ == ROVER || type_ == BASE || type_ == BROVER);
     if (type_ == ROVER)
         serial_.send_bytes(buf, size);
     else if (type_ == BASE)
         udp_->send_bytes(buf, size);
+    else if (type_ == BROVER) {
+        serial_.send_bytes(buf, size);
+      }
+
 }
 }

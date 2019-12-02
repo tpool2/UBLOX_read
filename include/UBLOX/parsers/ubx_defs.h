@@ -270,8 +270,8 @@ typedef struct {
         VALSET_float = 2,
         VALSET_fixed  = 3,
     };
-     
-    enum { 
+
+    enum {
         MSGOUT_RELPOSNED = 0x20910090, //Output rate of the UBX-NAV-RELPOSNED message on port USB
         MSGOUT_PVT = 0x20910009, //Output rate of the UBX-NAV-PVT message on port USB
         MSGOUT_POSECEF = 0x20910027, //Output rate of the UBX-NAV-POSECEF message on port USB
@@ -382,8 +382,8 @@ typedef struct {
         VALSET_float = 2,
         VALSET_fixed  = 3,
     };
-     
-    enum { 
+
+    enum {
         MSGOUT_RELPOSNED = 0x20910090, //Output rate of the UBX-NAV-RELPOSNED message on port USB
         MSGOUT_PVT = 0x20910009, //Output rate of the UBX-NAV-PVT message on port USB
         MSGOUT_POSECEF = 0x20910027, //Output rate of the UBX-NAV-POSECEF message on port USB
@@ -475,7 +475,7 @@ typedef struct {
     uint8_t reserved1[2];
     uint32_t cfgDataKey;
 
-    union 
+    union
     {
         uint8_t bytes[4];
         uint16_t half_word[2];
@@ -485,7 +485,7 @@ typedef struct {
 
 }__attribute__((packed)) CFG_VALSET_t;
 
-typedef struct 
+typedef struct
 {
     enum {
         RAM = 0b00000001,
@@ -503,8 +503,8 @@ typedef struct
         VALSET_float = 2,
         VALSET_fixed  = 3,
     };
-     
-    enum { 
+
+    enum {
         MSGOUT_RELPOSNED = 0x20910090, //Output rate of the UBX-NAV-RELPOSNED message on port USB
         MSGOUT_PVT = 0x20910009, //Output rate of the UBX-NAV-PVT message on port USB
         MSGOUT_POSECEF = 0x20910027, //Output rate of the UBX-NAV-POSECEF message on port USB
@@ -596,7 +596,7 @@ typedef struct
     uint8_t reserved1[2];
     uint32_t cfgDataKey;
 
-    union 
+    union
     {
         uint8_t bytes[4];
         uint16_t half_word[2];
@@ -758,13 +758,13 @@ typedef uint8_t X1;
 
 typedef struct
 {
-    R8 rcvTow;      // Measurement time of week in receiver localtime approximately aligned to the GPS timesystem. 
-                    // The receiver local time of week, week number and leap second information can be used to translate 
-                    // the time to other time systems. More information about the difference in time systems can be found 
-                    // in RINEX 3 documentation. For a receiver operating in GLONASS only mode, UTC time can be determined 
+    R8 rcvTow;      // Measurement time of week in receiver localtime approximately aligned to the GPS timesystem.
+                    // The receiver local time of week, week number and leap second information can be used to translate
+                    // the time to other time systems. More information about the difference in time systems can be found
+                    // in RINEX 3 documentation. For a receiver operating in GLONASS only mode, UTC time can be determined
                     // by subtracting the leapS field from GPS time regardless of whether the GPS leap seconds are valid.
     U2 week;        // GPS week number in receiver local time.
-    I1 leapS;       // GPS leap seconds (GPS-UTC). This field represents the receiver's best knowledge of the leap seconds 
+    I1 leapS;       // GPS leap seconds (GPS-UTC). This field represents the receiver's best knowledge of the leap seconds
                     // offset. A flag is given in the recStat bitfield to indicate if the leap seconds are known.
     I1 numMeas;     // number of measurements to follow
     X1 recStat;     // Receiver tracking status bitfield (see graphic below)
@@ -774,8 +774,8 @@ typedef struct
     struct RawxMeas
     {
         R8 prMeas;  // Pseudorange measurement [m]. GLONASS inter-frequency channel delays are compensated with an internal calibration table.
-        R8 cpMeas;  // Carrier phase measurement [cycles]. The carrierphase initial ambiguity is initialized using anapproximate value to 
-                    // make the magnitude of the phase close to the pseudorange measurement. Clock resets are applied to both phase and code 
+        R8 cpMeas;  // Carrier phase measurement [cycles]. The carrierphase initial ambiguity is initialized using anapproximate value to
+                    // make the magnitude of the phase close to the pseudorange measurement. Clock resets are applied to both phase and code
                     // measurements in accordance with the RINEX specification.
         R4 doMeas;  // Doppler measurement (positive sign forapproaching satellites) [Hz]
         U1 gnssId;  // GNSS identifier (see Satellite Numbering for a list of identifiers)
@@ -792,7 +792,7 @@ typedef struct
     };
     RawxMeas meas[30];
 
-    enum 
+    enum
     {
         recStat_clkReset = 0b10,
         recStat_leapSec = 0b01,
