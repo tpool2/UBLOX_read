@@ -27,9 +27,11 @@ UBLOX::UBLOX(const std::string& port) :
 
 void UBLOX::config_f9p()
 {
-    // ubx_.set_nav_rate(1000);
+    //set nav rate
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 200, CFG_VALSET_t::RATE_MEAS, byte);
+    //set dynamic model
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, CFG_VALSET_t::DYNMODE_AIRBORNE_1G, CFG_VALSET_t::DYNMODEL, byte);
+    //turn off incoming and outcoming nmea
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_INPROT_NMEA, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_OUTPROT_NMEA, byte);
 

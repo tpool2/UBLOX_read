@@ -28,7 +28,6 @@ namespace ublox_ros
 UBLOX_ROS::UBLOX_ROS() :
     nh_(), nh_private_("~")
 {
-    std::cerr << "UBLOX_ROS function \n";
     int rtk_type = nh_private_.param<int>("rtk_type", 0x00);
     std::string serial_port = nh_private_.param<std::string>("serial_port", "/dev/ttyACM0");
     std::string local_host = nh_private_.param<std::string>("local_host", "localhost");
@@ -268,7 +267,6 @@ void UBLOX_ROS::obsCB(const ublox::RXM_RAWX_t &msg)
 
 void UBLOX_ROS::ephCB(const Ephemeris &eph)
 {
-    std::cerr << "Ephemeris!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
     ublox::Ephemeris out;
     out.header.stamp = ros::Time::now();
 
