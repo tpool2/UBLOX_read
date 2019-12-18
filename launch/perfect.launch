@@ -34,8 +34,8 @@
       <param name="galileo" value="$(arg GALILEO)"/>
       <param name="Surveytime" value="$(arg Surveytime)"/>
       <param name="Surveyacc" value="$(arg Surveyacc)"/>
-    <node/>
-  <group/>
+    </node>
+  </group>
 
   <group ns="brover">
     <node name="f9p" pkg="ublox" type="ublox_ros">
@@ -55,8 +55,8 @@
       <param name="galileo" value="$(arg GALILEO)"/>
       <param name="Surveytime" value="$(arg Surveytime)"/>
       <param name="Surveyacc" value="$(arg Surveyacc)"/>
-    <node/>
-  <group/>
+    </node>
+  </group>
 
   <group ns="rover">
     <node name="f9p" pkg="ublox" type="ublox_ros">
@@ -73,6 +73,4 @@
       <param name="galileo" value="$(arg GALILEO)"/>
     </node>
   </group>
-
-
-<launch/>
+</launch>
