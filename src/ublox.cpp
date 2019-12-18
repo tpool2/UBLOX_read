@@ -41,7 +41,7 @@ void UBLOX::config_f9p() //See ubx_defs.h for more information
 {
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, CFG_VALSET_t::DYNMODE_AIRBORNE_1G, CFG_VALSET_t::DYNMODEL, byte); //Dynamic platform model
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_INPROT_NMEA, byte); //Flag to indicate if NMEA should be an input protocol on USB
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_OUTPROT_NMEA, byte); //Flag to indicate if NMEA should bean output protocol on USB
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_OUTPROT_NMEA, byte); //Flag to indicate if NMEA should be an output protocol on USB
 
     bool poll = true;
     if(poll == true)
@@ -80,7 +80,8 @@ void UBLOX::config_base(const std::string base_type="stationary")
 void UBLOX::config_base_stationary(int on_off)
 {
     // ubx_.del_configuration(CFG_VALDEL_t::VERSION_0, CFG_VALDEL_t::RAM, CFG_VALDEL_t::TMODE_SVIN_MIN_DUR);
-
+    // These values control whether RTK corrections are calculated for the
+    // following constellations
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::RTCM_1005USB, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::RTCM_1074USB, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::RTCM_1084USB, byte);
@@ -90,14 +91,18 @@ void UBLOX::config_base_stationary(int on_off)
 
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::MSGOUT_SVIN, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::TMODE_MODE, byte);
+
+    // Survey in accuracy limit
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 500000*on_off, CFG_VALSET_t::TMODE_SVIN_ACC_LIMIT, word);
+    // Survey in time limit
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 118*on_off, CFG_VALSET_t::TMODE_SVIN_MIN_DUR, word);
 
 }
 
 void UBLOX::config_base_moving(int on_off)
 {
-
+    // These values control whether RTK corrections are calculated for the
+    // following constellations
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::RTCM_4072_0USB, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::RTCM_4072_1USB, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::RTCM_1077USB, byte);
@@ -148,7 +153,8 @@ void UBLOX::initLogFile(const std::string& filename)
 // Function initRover
 // This function initializes a rover that is given by the following data.
 void UBLOX::initRover(std::string local_host, uint16_t local_port,
-                      std::string remote_host, uint16_t remote_port)
+                      std::string remote_host, uint16_t remote_port,
+                      uint32_t constellation[] = default_rover_conste)
 {
     type_ = ROVER;
 
@@ -187,7 +193,8 @@ void UBLOX::initRover(std::string local_host, uint16_t local_port,
 */
 void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
                        std::string remote_host[], uint16_t remote_port[],
-                       std::string base_type, int rover_quantity)
+                       std::string base_type, int rover_quantity,
+                      uint32_t constellation[] = default_base_conste)
 {
     type_ = BASE;
 
@@ -221,7 +228,8 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
 void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
                 std::string base_host[], uint16_t base_port[],
                 std::string rover_host[], uint16_t rover_port[],
-                std::string base_type, int rover_quantity) {
+                std::string base_type, int rover_quantity,
+                uint32_t constellation[] = default_base_conste) {
 
                   type_ = BROVER;
 

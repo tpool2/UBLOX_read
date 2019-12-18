@@ -88,6 +88,15 @@ UBLOX_ROS::UBLOX_ROS() :
         std::string* rover_host = new std::string[rover_quantity];
         uint16_t* rover_port = new uint16_t[rover_quantity];
 
+        // Get Constallation settings
+        uint32_t constellation [6];
+        constellation[0] = nh_private_.param<int>("GPS", 1);
+        constellation[1] = nh_private_.param<int>("GLONAS", 0);
+        constellation[2] = nh_private_.param<int>("BEIDOU", 0);
+        constellation[3] = nh_private_.param<int>("GALILEO", 1);
+        constellation[4] = nh_private_.param<int>("Surveytime", 120);
+        constellation[5] = nh_private_.param<int>("Surveyacc", 500000);
+
         //Account for the case when no numbers are used for the first rover.
         int j = 0;
         if(nh_private_.hasParam("local_host")) {
@@ -118,7 +127,7 @@ UBLOX_ROS::UBLOX_ROS() :
         std::string base_type = nh_private_.param<std::string>("base_type", "stationary");
 
         std::cerr<<"About to init base\n";
-        ublox_->initBase(local_host, local_port, rover_host, rover_port, base_type, rover_quantity);
+        ublox_->initBase(local_host, local_port, rover_host, rover_port, base_type, rover_quantity, constellation);
     }
     // Rover(1 local_host 1 local_port 1 base_host 1 base_port)
     else if (rover_quantity == 0){
@@ -132,6 +141,13 @@ UBLOX_ROS::UBLOX_ROS() :
         //Initialize base arrays to contain parameters from xml file
         std::string* base_host = new std::string[1];
         uint16_t* base_port = new uint16_t[1];
+
+        // Get Constallation settings
+        uint32_t constellation [4];
+        constellation[0] = nh_private_.param<int>("GPS", 1);
+        constellation[1] = nh_private_.param<int>("GLONAS", 0);
+        constellation[2] = nh_private_.param<int>("BEIDOU", 0);
+        constellation[3] = nh_private_.param<int>("GALILEO", 1);
 
         if(nh_private_.hasParam("local_host")) {
             std::string test = nh_private_.param<std::string>("local_host", "localhost");
@@ -152,7 +168,7 @@ UBLOX_ROS::UBLOX_ROS() :
         std::cerr<<"Base Host: "<<base_host[0]<<"\n";
         std::cerr<<"Base Port: "<<base_port[0]<<"\n";
 
-        ublox_->initRover(local_host[0], local_port[0], base_host[0], base_port[0]);
+        ublox_->initRover(local_host[0], local_port[0], base_host[0], base_port[0], constellation);
     }
     // Brover(1 base_host 1 base_port n local_host n local_port n rover_host n rover_port)
     else if (rover_quantity>=0) {
@@ -174,6 +190,15 @@ UBLOX_ROS::UBLOX_ROS() :
         // Fill base arrays with their single values
         base_host[0] = nh_private_.param<std::string>("base_host", "localhost");
         base_port[0] = nh_private_.param<int>("base_port", 16140);
+
+        // Get Constallation settings
+        uint32_t constellation [6];
+        constellation[0] = nh_private_.param<int>("GPS", 1);
+        constellation[1] = nh_private_.param<int>("GLONAS", 0);
+        constellation[2] = nh_private_.param<int>("BEIDOU", 0);
+        constellation[3] = nh_private_.param<int>("GALILEO", 1);
+        constellation[4] = nh_private_.param<int>("Surveytime", 120);
+        constellation[5] = nh_private_.param<int>("Surveyacc", 500000);
 
         int j = 0;
         if(nh_private_.hasParam("local_host")) {
@@ -211,7 +236,8 @@ UBLOX_ROS::UBLOX_ROS() :
 
         //Determine whether the base is moving or stationary
         std::string base_type = "moving";
-        ublox_->initBrover(local_host, local_port, base_host, base_port, rover_host, rover_port, base_type, rover_quantity);
+        ublox_->initBrover(local_host, local_port, base_host, base_port, rover_host, rover_port, base_type
+          , rover_quantity, constellation);
 
     }
 

@@ -39,16 +39,22 @@ public:
     // Current initBase function supports multiple rovers
     void initBase(std::string local_host[], uint16_t local_port[],
                     std::string remote_host[], uint16_t remote_port[],
-                    std::string base_type, int rover_quantity);
+                    std::string base_type, int rover_quantity,
+                    uint32_t constellation[]);
 
     void initRover(std::string local_host, uint16_t local_port,
-                   std::string remote_host, uint16_t remote_port);
+                   std::string remote_host, uint16_t remote_port,
+                   uint32_t constellation[]);
+     void initRover(std::string local_host, uint16_t local_port,
+                    std::string remote_host, uint16_t remote_port);
+
 
     // base_type refers to whether the brover is stationary or moving
     void initBrover(std::string local_host[], uint16_t local_port[],
                     std::string base_host[], uint16_t base_port[],
                     std::string rover_host[], uint16_t rover_port[],
-                    std::string base_type, int rover_quantity);
+                    std::string base_type, int rover_quantity,
+                    uint32_t constellation[]);
 
     void initLogFile(const std::string& filename);
     void readFile(const std::string& filename);
@@ -96,6 +102,8 @@ public:
     uint8_t byte = 1;
     uint8_t word = 2;
     int on_off;
+    uint32_t default_base_conste[] = {1, 0, 0, 1, 120, 500000};
+    uint32_t default_rover_conste[] = {1, 0, 0, 1};
 };
 }
 
