@@ -153,8 +153,7 @@ void UBLOX::initLogFile(const std::string& filename)
 // Function initRover
 // This function initializes a rover that is given by the following data.
 void UBLOX::initRover(std::string local_host, uint16_t local_port,
-                      std::string remote_host, uint16_t remote_port,
-                      uint32_t constellation[] = default_rover_conste)
+                      std::string remote_host, uint16_t remote_port)
 {
     type_ = ROVER;
 
@@ -193,8 +192,7 @@ void UBLOX::initRover(std::string local_host, uint16_t local_port,
 */
 void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
                        std::string remote_host[], uint16_t remote_port[],
-                       std::string base_type, int rover_quantity,
-                      uint32_t constellation[] = default_base_conste)
+                       std::string base_type, int rover_quantity)
 {
     type_ = BASE;
 
@@ -228,8 +226,7 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
 void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
                 std::string base_host[], uint16_t base_port[],
                 std::string rover_host[], uint16_t rover_port[],
-                std::string base_type, int rover_quantity,
-                uint32_t constellation[] = default_base_conste) {
+                std::string base_type, int rover_quantity) {
 
                   type_ = BROVER;
 

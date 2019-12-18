@@ -127,7 +127,8 @@ UBLOX_ROS::UBLOX_ROS() :
         std::string base_type = nh_private_.param<std::string>("base_type", "stationary");
 
         std::cerr<<"About to init base\n";
-        ublox_->initBase(local_host, local_port, rover_host, rover_port, base_type, rover_quantity, constellation);
+        ublox_->initBase(local_host, local_port, rover_host, rover_port,
+          base_type, rover_quantity);
     }
     // Rover(1 local_host 1 local_port 1 base_host 1 base_port)
     else if (rover_quantity == 0){
@@ -168,7 +169,7 @@ UBLOX_ROS::UBLOX_ROS() :
         std::cerr<<"Base Host: "<<base_host[0]<<"\n";
         std::cerr<<"Base Port: "<<base_port[0]<<"\n";
 
-        ublox_->initRover(local_host[0], local_port[0], base_host[0], base_port[0], constellation);
+        ublox_->initRover(local_host[0], local_port[0], base_host[0], base_port[0]);
     }
     // Brover(1 base_host 1 base_port n local_host n local_port n rover_host n rover_port)
     else if (rover_quantity>=0) {
@@ -236,8 +237,8 @@ UBLOX_ROS::UBLOX_ROS() :
 
         //Determine whether the base is moving or stationary
         std::string base_type = "moving";
-        ublox_->initBrover(local_host, local_port, base_host, base_port, rover_host, rover_port, base_type
-          , rover_quantity, constellation);
+        ublox_->initBrover(local_host, local_port, base_host, base_port,
+           rover_host, rover_port, base_type, rover_quantity);
 
     }
 

@@ -12,6 +12,12 @@
     <arg name="Surveytime" default="120"/>
     <arg name="Suveryacc" default="500000"/>
   <constellation/-->
+  <arg name="GLONAS" default="0"/>
+  <arg name="GPS" default="1"/>
+  <arg name="BEIDOU" default="1"/>
+  <arg name="GALILEO" default="1"/>
+  <arg name="Surveytime" default="500000"/>
+  <arg name="Surveyacc" default="120"/>
 
   <group ns="base">
     <node name="f9p" pkg="ublox" type="ublox_ros">
@@ -22,12 +28,12 @@
       <param name="rover_port" value="16145"/>
       <param name="base_type" value="stationary"/>
       <param name="rover_quantity" value="1"/>
-      <param name="GPS" default="1"/>
-      <param name="GLONAS" default="0"/>
-      <param name="BEIDOU" default="0"/>
-      <param name="GALILEO" default="1"/>
-      <param name="Surveytime" default="120"/>
-      <param name="Suveryacc" default="500000"/>
+      <param name="gps" value="$(arg GPS)"/>
+      <param name="glonas" value="$(arg GLONAS)"/>
+      <param name="beidou" value="$(arg BEIDOU)"/>
+      <param name="galileo" value="$(arg GALILEO)"/>
+      <param name="Surveytime" value="$(arg Surveytime)"/>
+      <param name="Surveyacc" value="$(arg Surveyacc)"/>
     <node/>
   <group/>
 
@@ -43,12 +49,12 @@
       <param name="rover_host" value="localhost"/>
       <param name="rover_port" value="16150"/>
       <param name="rover_quantity" value="1"/>
-      <param name="GPS" default="1"/>
-      <param name="GLONAS" default="0"/>
-      <param name="BEIDOU" default="0"/>
-      <param name="GALILEO" default="1"/>
-      <param name="Surveytime" default="120"/>
-      <param name="Suveryacc" default="500000"/>
+      <param name="gps" value="$(arg GPS)"/>
+      <param name="glonas" value="$(arg GLONAS)"/>
+      <param name="beidou" value="$(arg BEIDOU)"/>
+      <param name="galileo" value="$(arg GALILEO)"/>
+      <param name="Surveytime" value="$(arg Surveytime)"/>
+      <param name="Surveyacc" value="$(arg Surveyacc)"/>
     <node/>
   <group/>
 
@@ -61,10 +67,10 @@
       <param name="base_host" value="localhost"/>
       <param name="base_port" value="16155"/>
       <param name="rover_quantity" value="0"/>
-      <param name="GPS" default="1"/>
-      <param name="GLONAS" default="0"/>
-      <param name="BEIDOU" default="0"/>
-      <param name="GALILEO" default="1"/>
+      <param name="gps" value="$(arg GPS)"/>
+      <param name="glonas" value="$(arg GLONAS)"/>
+      <param name="beidou" value="$(arg BEIDOU)"/>
+      <param name="galileo" value="$(arg GALILEO)"/>
     </node>
   </group>
 
