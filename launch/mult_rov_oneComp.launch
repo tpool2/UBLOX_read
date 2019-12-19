@@ -10,6 +10,8 @@
 <!--rover_host: the unit to which the local unit is sending corrections-->
 <launch>
 
+	<arg name="rosbag_name" default="rosbag.bag"/>
+
 	<group ns="base">
 		<node name="f9p" pkg="ublox" type="ublox_ros">
 			<param name="serial_port" value="/dev/ttyACM0"/>
@@ -41,7 +43,7 @@
 			<!--param name="rover_port" value="16155"/-->
 			 <!--param name="log_filename" value="../data/devel/rover1_binary"/-->
 		</node>
-		<!--node pkg="rosbag" type="record" name="record" output="screen" args="-O ../data/devel/tworovernew/rover1.bag -a"/-->
+		<!--node pkg="rosbag" type="record" name="record" output="screen" args="-O ../data/devel/tworovernew/$(arg rosbag_name) -a"/-->
 	</group>
 
 	<group ns="rover2">
