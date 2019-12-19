@@ -36,6 +36,17 @@ public:
                   std::string remote_host, uint16_t remote_port,
                   std::string base_type);
 
+    void initBase(std::string local_host[], uint16_t local_port[],
+                    std::string remote_host[], uint16_t remote_port[],
+                    std::string base_type, int rover_quantity, int gps,
+                    int glonas, int beidou, int galileo, int surveytime,
+                    int surveyacc);
+
+    void initBase(std::string local_host[], uint16_t local_port[],
+                    std::string remote_host[], uint16_t remote_port[],
+                    std::string base_type, int rover_quantity, int gps,
+                    int glonas, int beidou, int galileo);
+
     // Current initBase function supports multiple rovers
     void initBase(std::string local_host[], uint16_t local_port[],
                     std::string remote_host[], uint16_t remote_port[],
@@ -54,6 +65,12 @@ public:
                     std::string base_host[], uint16_t base_port[],
                     std::string rover_host[], uint16_t rover_port[],
                     std::string base_type, int rover_quantity);
+
+    void initBrover(std::string local_host[], uint16_t local_port[],
+                    std::string base_host[], uint16_t base_port[],
+                    std::string rover_host[], uint16_t rover_port[],
+                    std::string base_type, int rover_quantity, int gps,
+                    int glonas, int beidou, int galileo);
 
     void initLogFile(const std::string& filename);
     void readFile(const std::string& filename);
@@ -93,9 +110,12 @@ public:
 
     void config_f9p();
     void config_rover();
-    void config_base(std::string base_type);
-    void config_base_stationary(int on_off);
-    void config_base_moving(int on_off);
+    void config_base(std::string base_type, int gps, int glonas, int beidou,
+                      int galileo, int surveytime, int surveyacc);
+    void config_base_stationary(int on_off, int gps, int glonas, int beidou,
+                      int galileo, int surveytime, int surveyacc);
+    void config_base_moving(int on_off, int gps, int glonas, int beidou,
+                      int galileo);
     void poll_value();
 
     uint8_t byte = 1;

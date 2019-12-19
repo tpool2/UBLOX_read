@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <!--group ns, serial_port, local_port, local_host, base_port, base_host, rover_port
-    rover_host, rover_quantity, nav rate, GPS, GLONAS, Beidou, Galileo, stationary
+    rover_host, rover_quantity, nav rate, GPS, GLONAS, BEIDOU, GALILEO, stationary
     or moving base or rover, Survey in Time, Survey in Accuracy limit
   -->
   <!--constellation>
@@ -22,16 +22,17 @@
   <group ns="base">
     <node name="f9p" pkg="ublox" type="ublox_ros">
       <param name="serial_port" value="/dev/ttyACM0"/>
+      <param name="chain_level" value="0"/>
       <param name="local_host" value="localhost"/>
       <param name="local_port" value="16140"/>
       <param name="rover_host" value="localhost"/>
       <param name="rover_port" value="16145"/>
       <param name="base_type" value="stationary"/>
       <param name="rover_quantity" value="1"/>
-      <param name="gps" value="$(arg GPS)"/>
-      <param name="glonas" value="$(arg GLONAS)"/>
-      <param name="beidou" value="$(arg BEIDOU)"/>
-      <param name="galileo" value="$(arg GALILEO)"/>
+      <param name="GPS" value="$(arg GPS)"/>
+      <param name="GLONAS" value="$(arg GLONAS)"/>
+      <param name="BEIDOU" value="$(arg BEIDOU)"/>
+      <param name="GALILEO" value="$(arg GALILEO)"/>
       <param name="Surveytime" value="$(arg Surveytime)"/>
       <param name="Surveyacc" value="$(arg Surveyacc)"/>
     </node>
@@ -40,6 +41,7 @@
   <group ns="brover">
     <node name="f9p" pkg="ublox" type="ublox_ros">
       <param name="serial_port" value="/dev/ttyACM1"/>
+      <param name="chain_level" value="1"/>
       <param name="local_host" value="localhost"/>
       <param name="local_port" value="16145"/>
       <param name="local_host2" value="localhost"/>
@@ -49,10 +51,10 @@
       <param name="rover_host" value="localhost"/>
       <param name="rover_port" value="16150"/>
       <param name="rover_quantity" value="1"/>
-      <param name="gps" value="$(arg GPS)"/>
-      <param name="glonas" value="$(arg GLONAS)"/>
-      <param name="beidou" value="$(arg BEIDOU)"/>
-      <param name="galileo" value="$(arg GALILEO)"/>
+      <param name="GPS" value="$(arg GPS)"/>
+      <param name="GLONAS" value="$(arg GLONAS)"/>
+      <param name="BEIDOU" value="$(arg BEIDOU)"/>
+      <param name="GALILEO" value="$(arg GALILEO)"/>
       <param name="Surveytime" value="$(arg Surveytime)"/>
       <param name="Surveyacc" value="$(arg Surveyacc)"/>
     </node>
@@ -67,10 +69,10 @@
       <param name="base_host" value="localhost"/>
       <param name="base_port" value="16155"/>
       <param name="rover_quantity" value="0"/>
-      <param name="gps" value="$(arg GPS)"/>
-      <param name="glonas" value="$(arg GLONAS)"/>
-      <param name="beidou" value="$(arg BEIDOU)"/>
-      <param name="galileo" value="$(arg GALILEO)"/>
+      <param name="GPS" value="$(arg GPS)"/>
+      <param name="GLONAS" value="$(arg GLONAS)"/>
+      <param name="BEIDOU" value="$(arg BEIDOU)"/>
+      <param name="GALILEO" value="$(arg GALILEO)"/>
     </node>
   </group>
 </launch>
