@@ -90,32 +90,39 @@ UBLOX_ROS::UBLOX_ROS() :
 
         // Get Constallation settings
         uint32_t constellation [6];
-        int gps = nh_private_.param<int>("GPS", 1);
-        int glonas = nh_private_.param<int>("GLONAS", 0);
-        int beidou = nh_private_.param<int>("BEIDOU", 0);
-        int galileo = nh_private_.param<int>("GALILEO", 1);
-        int surveytime = nh_private_.param<int>("Surveytime", 120);
-        int surveyacc = nh_private_.param<int>("Surveyacc", 500000);
+        int gps = nh_private_.param<int>("GPS", 1); //GPS
+        int glonas = nh_private_.param<int>("GLONAS", 0); //GLONAS
+        int beidou = nh_private_.param<int>("BEIDOU", 0); //BEIDOU
+        int galileo = nh_private_.param<int>("GALILEO", 1); //GALILEO
+        int surveytime = nh_private_.param<int>("Surveytime", 120); //Stationary base survey time
+        int surveyacc = nh_private_.param<int>("Surveyacc", 500000);  //Stationary base accuracy
 
         //Account for the case when no numbers are used for the first rover.
         int j = 0;
         if(nh_private_.hasParam("local_host")) {
-
+            //The first local host corresponds to the first rover.
             local_host[0] = nh_private_.param<std::string>("local_host", "localhost");
             local_port[0] = nh_private_.param<int>("local_port", 16140);
+            //First rover.
             rover_host[0] = nh_private_.param<std::string>("rover_host", "localhost");
             rover_port[0] = nh_private_.param<int>("rover_port", 16145);
+
+            //Let the program know that we have inputted the first rover.
             j=1;
         }
 
-        //Input parameters from xml file into respective arrays
+        //Input parameters from xml file into respective arrays for rovers.
         for(int i=1+j; i <= rover_quantity; i++) {
             local_host[i-1] = nh_private_.param<std::string>("local_host"+std::to_string(i), "localhost");
             local_port[i-1] = nh_private_.param<int>("local_port"+std::to_string(i), 16140);
             rover_host[i-1] = nh_private_.param<std::string>("rover_host"+std::to_string(i), "localhost");
             rover_port[i-1] = nh_private_.param<int>("rover_port"+std::to_string(i), 16145);
         }
+
+        //Output the chain level we are at.
         std::cerr<<"Chain Level: " << chain_level << "\n";
+
+        //Return outputs for all local hosts and rovers hooked up.
         for(int i = 0; i < rover_quantity; i++) {
             std::cerr<<"local_host " + std::to_string(i+1) + ": " << local_host[i] << "\n";
             std::cerr<<"local_port " + std::to_string(i+1) + ": " << local_port[i] << "\n";
@@ -262,6 +269,20 @@ UBLOX_ROS::~UBLOX_ROS()
 {
     if (ublox_)
         delete ublox_;
+}
+
+// Callback function for subscriber to RelPos for a given RelPos
+void UBLOX_ROS::cb_rov1(const ublox::NAV_RELPOSNED_t& msg) {
+    ned_1[0] = msg.relPosN*1e-2;  //North
+    ned_1[1] = msg.relPosE*1e-2;  //East
+    ned_1[2] = msg.relPosD*1e-2;  //Down
+}
+
+// Callback function for subscriber to second RelPos.
+void UBLOX_ROS::cb_rov2(const ublox::NAV_RELPOSNED_t& msg) {
+    ned_2[0] = msg.relPosN*1e-2;  //North
+    ned_2[1] = msg.relPosE*1e-2;  //East
+    ned_2[2] = msg.relPosD*1e-2;  //Down
 }
 
 void UBLOX_ROS::pvtCB(const ublox::NAV_PVT_t& msg)

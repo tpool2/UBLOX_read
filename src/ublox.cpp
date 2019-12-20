@@ -348,15 +348,15 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
 
 // Function vector_math
   // Purpose: Compute NED, absolute distance, roll, pitch, and yaw
-  // Inputs: NED_1 and NED_2 have three elements
-  // Returns: A data structure of the same type as NED_1 and NED_2 which contains
+  // Inputs: ned_1 and ned_2 have three elements
+  // Returns: A data structure of the same type as ned_1 and ned_2 which contains
   // NED, absolute distance, roll, pitch, and yaw
-  void UBLOX::vector_math(double NED_1[], double NED_2[], double answer[]) {
+  void UBLOX::vector_math(double ned_1[], double ned_2[], double answer[]) {
 
     // For loop to calculate difference in NED values.
     for(int i = 0; i < 3; i++) {
       // Assign for NED respectively.
-      answer[i] = NED_2[i]-NED_1[i];
+      answer[i] = ned_2[i]-ned_1[i];
     } // End for loop
 
     answer[3] = sqrt(pow(answer[0],2)+pow(answer[1],2)+pow(answer[2],2));

@@ -118,6 +118,8 @@ public:
                       int galileo);
     void poll_value();
 
+    void vector_math(double ned_1[], double ned_2[], double answer[]);
+
     uint8_t byte = 1;
     uint8_t word = 2;
     int on_off;
