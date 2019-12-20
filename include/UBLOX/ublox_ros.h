@@ -47,9 +47,6 @@ private:
     void velECEFCB(const ublox::NAV_VELECEF_t& msg);
     void svinCB(const ublox::NAV_SVIN_t& msg);
 
-    void cb_rov1(const ublox::NAV_RELPOSNED_t& msg);
-    void cb_rov2(const ublox::NAV_RELPOSNED_t& msg);
-
     void obsCB(const ublox::RXM_RAWX_t& msg);
     void ephCB(const Ephemeris& eph);
     void gephCB(const GlonassEphemeris& eph);
@@ -62,7 +59,12 @@ private:
     double ned_1[3];
     double ned_2[3];
 
+    ros::Subscriber sub1;
+    ros::Subscriber sub2;
+
     ublox::PosVelEcef ecef_msg_;
+    static void cb_rov1(const ublox::NAV_RELPOSNED_t& msg);
+    void cb_rov2(const ublox::NAV_RELPOSNED_t& msg);
 };
 
 }

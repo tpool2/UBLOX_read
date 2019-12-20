@@ -249,6 +249,15 @@ UBLOX_ROS::UBLOX_ROS() :
 
     }
 
+    // Check if there is a arrow
+    if (nh_private_.hasParam("arrowbase") && nh_private_.hasParam("arrowtip")) {
+      std::string arrowbase = nh_private_.param<std::string>("arrowbase", "/brover");
+      std::string arrowtip = nh_private_.param<std::string>("arrowtip", "/rover");
+
+      sub1 = nh_.subscribe(arrowbase+"/RelPos", 10, &UBLOX_ROS::cb_rov1, this);
+      sub2 = nh_.subscribe(arrowtip+"/RelPos", 10, &UBLOX_ROS::cb_rov2, this);
+    }
+
     // connect callbacks
     createCallback(ublox::CLASS_NAV, ublox::NAV_PVT, pvtCB, NAV_PVT);
     createCallback(ublox::CLASS_NAV, ublox::NAV_RELPOSNED, relposCB, NAV_RELPOSNED);
@@ -272,7 +281,7 @@ UBLOX_ROS::~UBLOX_ROS()
 }
 
 // Callback function for subscriber to RelPos for a given RelPos
-void UBLOX_ROS::cb_rov1(const ublox::NAV_RELPOSNED_t& msg) {
+void UBLOX_ROS::cb_rov1(const ublox::NAV_RELPOSNED_t &msg) {
     ned_1[0] = msg.relPosN*1e-2;  //North
     ned_1[1] = msg.relPosE*1e-2;  //East
     ned_1[2] = msg.relPosD*1e-2;  //Down
@@ -337,6 +346,12 @@ void UBLOX_ROS::pvtCB(const ublox::NAV_PVT_t& msg)
 void UBLOX_ROS::relposCB(const ublox::NAV_RELPOSNED_t& msg)
 {
     ublox::RelPos out;
+    double rovToRov[7];
+
+    // Perform vector_math
+    ublox_->vector_math(ned_1, ned_2, rovToRov);
+
+
     // out.iTOW = msg.iTow*1e-3;
     out.header.stamp = ros::Time::now(); /// TODO: do this right
     out.refStationId = msg.refStationId;
@@ -355,6 +370,15 @@ void UBLOX_ROS::relposCB(const ublox::NAV_RELPOSNED_t& msg)
     out.accLength = msg.accLength*1e-3*.1;
     out.accHeading = deg2rad(msg.accHeading*1e-5);
     out.flags = msg.flags;
+
+    // Rover to Rover
+    out.rovToRovNED[0] = rovToRov[0];
+    out.rovToRovNED[1] = rovToRov[1];
+    out.rovToRovNED[2] = rovToRov[2];
+    out.rovToRovLength = rovToRov[3];
+    out.rovToRovRPY[0] = rovToRov[4];
+    out.rovToRovRPY[1] = rovToRov[5];
+    out.rovToRovRPY[2] = rovToRov[6];
     relpos_pub_.publish(out);
 }
 
@@ -562,6 +586,7 @@ void UBLOX_ROS::gephCB(const GlonassEphemeris &eph)
 }
 
 }
+
 
 
 int main(int argc, char** argv)
