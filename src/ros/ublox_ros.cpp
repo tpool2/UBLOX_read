@@ -230,8 +230,13 @@ UBLOX_ROS::UBLOX_ROS() :
         local_host[j] = nh_private_.param<std::string>("local_host"+std::to_string(j+1), "localhost");
         local_port[j] = nh_private_.param<int>("local_port"+std::to_string(j+1), 16140);
 
+        // Output chain level
         std::cerr<<"Chain Level: " << chain_level << "\n";
+
+        // Output base host
         std::cerr<<"Base Host: "<<base_host[0]<<"\n";
+
+        // Output base port
         std::cerr<<"Base Port: "<<base_port[0]<<"\n";
         for(int i = 0; i < rover_quantity; i++) {
             std::cerr<<"local_host " + std::to_string(i+1) + ": " << local_host[i] << "\n";
@@ -243,6 +248,8 @@ UBLOX_ROS::UBLOX_ROS() :
 
         //Determine whether the base is moving or stationary
         std::string base_type = "moving";
+
+        // Initiate the Brover
         ublox_->initBrover(local_host, local_port, base_host, base_port,
            rover_host, rover_port, base_type, rover_quantity, gps,
             glonas, beidou, galileo);
@@ -251,10 +258,16 @@ UBLOX_ROS::UBLOX_ROS() :
 
     // Check if there is a arrow
     if (nh_private_.hasParam("arrowbase") && nh_private_.hasParam("arrowtip")) {
+
+      // If there is an arrow , then we need to subscribe to the base
       std::string arrowbase = nh_private_.param<std::string>("arrowbase", "/brover");
+      // and tip of the arrow for /RelPos
       std::string arrowtip = nh_private_.param<std::string>("arrowtip", "/rover");
 
+      // Call the first subscriber
       sub1 = nh_.subscribe(arrowbase+"/RelPos", 10, &UBLOX_ROS::cb_rov1, this);
+
+      // Call the second subscriber
       sub2 = nh_.subscribe(arrowtip+"/RelPos", 10, &UBLOX_ROS::cb_rov2, this);
     }
 
@@ -280,18 +293,22 @@ UBLOX_ROS::~UBLOX_ROS()
         delete ublox_;
 }
 
-// Callback function for subscriber to RelPos for a given RelPos
-void UBLOX_ROS::cb_rov1(const ublox::NAV_RELPOSNED_t &msg) {
-    ned_1[0] = msg.relPosN*1e-2;  //North
-    ned_1[1] = msg.relPosE*1e-2;  //East
-    ned_1[2] = msg.relPosD*1e-2;  //Down
+// Callback function for subscriber to RelPos for a given RelPos message.
+// NOTE: This message is not the same as ublox::NAV_RELPOSNED_t, since that one
+// deals with messages from the f9p
+void UBLOX_ROS::cb_rov1(const ublox::RelPos &msg) {
+    ned_1[0] = msg.relPosNED[0]*1e-2;  //North
+    ned_1[1] = msg.relPosNED[1]*1e-2;  //East
+    ned_1[2] = msg.relPosNED[2]*1e-2;  //Down
 }
 
 // Callback function for subscriber to second RelPos.
-void UBLOX_ROS::cb_rov2(const ublox::NAV_RELPOSNED_t& msg) {
-    ned_2[0] = msg.relPosN*1e-2;  //North
-    ned_2[1] = msg.relPosE*1e-2;  //East
-    ned_2[2] = msg.relPosD*1e-2;  //Down
+// NOTE: This message is not the same as ublox::NAV_RELPOSNED_t, since that one
+// deals with messages from the f9p
+void UBLOX_ROS::cb_rov2(const ublox::RelPos &msg) {
+    ned_2[0] = msg.relPosNED[0]*1e-2;  //North
+    ned_2[1] = msg.relPosNED[1]*1e-2;  //East
+    ned_2[2] = msg.relPosNED[2]*1e-2;  //Down
 }
 
 void UBLOX_ROS::pvtCB(const ublox::NAV_PVT_t& msg)
@@ -345,7 +362,10 @@ void UBLOX_ROS::pvtCB(const ublox::NAV_PVT_t& msg)
 
 void UBLOX_ROS::relposCB(const ublox::NAV_RELPOSNED_t& msg)
 {
+    // Create the message to be outputted
     ublox::RelPos out;
+
+    // Declare the double array for vector math
     double rovToRov[7];
 
     // Perform vector_math
@@ -469,7 +489,7 @@ void UBLOX_ROS::obsCB(const ublox::RXM_RAWX_t &msg)
 //        case ublox::Observation::BEIDOU_B2I_D2:
 //            out.obs[i].freq = Ephemeris::BEIDOU_FREQ_B2;
 //            break;
-        default:
+        default:      // and tip of the arrow for /RelPos
             out.obs[i].freq = 0;
             break;
         }

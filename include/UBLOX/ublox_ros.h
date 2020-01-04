@@ -63,8 +63,8 @@ private:
     ros::Subscriber sub2;
 
     ublox::PosVelEcef ecef_msg_;
-    static void cb_rov1(const ublox::NAV_RELPOSNED_t& msg);
-    void cb_rov2(const ublox::NAV_RELPOSNED_t& msg);
+    void cb_rov1(const ublox::RelPos &msg);
+    void cb_rov2(const ublox::RelPos &msg);
 };
 
 }
