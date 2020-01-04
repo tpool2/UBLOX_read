@@ -366,10 +366,10 @@ void UBLOX_ROS::relposCB(const ublox::NAV_RELPOSNED_t& msg)
     ublox::RelPos out;
 
     // Declare the double array for vector math
-    double rovToRov[7];
+    double arrow[7];
 
     // Perform vector_math
-    ublox_->vector_math(ned_1, ned_2, rovToRov);
+    ublox_->vector_math(ned_1, ned_2, arrow);
 
 
     // out.iTOW = msg.iTow*1e-3;
@@ -392,13 +392,13 @@ void UBLOX_ROS::relposCB(const ublox::NAV_RELPOSNED_t& msg)
     out.flags = msg.flags;
 
     // Rover to Rover
-    out.rovToRovNED[0] = rovToRov[0];
-    out.rovToRovNED[1] = rovToRov[1];
-    out.rovToRovNED[2] = rovToRov[2];
-    out.rovToRovLength = rovToRov[3];
-    out.rovToRovRPY[0] = rovToRov[4];
-    out.rovToRovRPY[1] = rovToRov[5];
-    out.rovToRovRPY[2] = rovToRov[6];
+    out.arrowNED[0] = arrow[0];
+    out.arrowNED[1] = arrow[1];
+    out.arrowNED[2] = arrow[2];
+    out.arrowLength = arrow[3];
+    out.arrowRPY[0] = arrow[4];
+    out.arrowRPY[1] = arrow[5];
+    out.arrowRPY[2] = arrow[6];
     relpos_pub_.publish(out);
 }
 
