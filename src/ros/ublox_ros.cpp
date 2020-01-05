@@ -297,18 +297,18 @@ UBLOX_ROS::~UBLOX_ROS()
 // NOTE: This message is not the same as ublox::NAV_RELPOSNED_t, since that one
 // deals with messages from the f9p
 void UBLOX_ROS::cb_rov1(const ublox::RelPos &msg) {
-    ned_1[0] = msg.relPosNED[0]*1e-2;  //North
-    ned_1[1] = msg.relPosNED[1]*1e-2;  //East
-    ned_1[2] = msg.relPosNED[2]*1e-2;  //Down
+    ned_1[0] = msg.relPosNED[0];  //North
+    ned_1[1] = msg.relPosNED[1];  //East
+    ned_1[2] = msg.relPosNED[2];  //Down
 }
 
 // Callback function for subscriber to second RelPos.
 // NOTE: This message is not the same as ublox::NAV_RELPOSNED_t, since that one
 // deals with messages from the f9p
 void UBLOX_ROS::cb_rov2(const ublox::RelPos &msg) {
-    ned_2[0] = msg.relPosNED[0]*1e-2;  //North
-    ned_2[1] = msg.relPosNED[1]*1e-2;  //East
-    ned_2[2] = msg.relPosNED[2]*1e-2;  //Down
+    ned_2[0] = msg.relPosNED[0];  //North
+    ned_2[1] = msg.relPosNED[1];  //East
+    ned_2[2] = msg.relPosNED[2];  //Down
 }
 
 void UBLOX_ROS::pvtCB(const ublox::NAV_PVT_t& msg)

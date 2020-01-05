@@ -363,7 +363,18 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
 
     answer[4] = 0.0;
     answer[5] = atan(sqrt(pow(answer[0],2)+pow(answer[1],2))/(-answer[2]));
-    answer[6] = atan(answer[0]/answer[1]);
+    if(answer[0]>0 && answer[1]>0) {
+      answer[6] = atan(answer[1]/answer[0]);
+    }
+    else if(answer[0]<0 && answer[1]>0) {
+      answer[6] = atan(-answer[0]/answer[1])+3.1415926535/2;
+    }
+    else if(answer[0]<0 && answer[1]<0) {
+      answer[6] = atan(-answer[1]/-answer[0]) + 3.1415926535;
+    }
+    else {
+      answer[6] = atan(answer[0]/-answer[1])+3.1415926535*1.5;
+    }
 
   } // End function vector_math
 }
