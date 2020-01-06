@@ -359,21 +359,27 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
       answer[i] = ned_2[i]-ned_1[i];
     } // End for loop
 
+    // Find distance from point 1 to point 2
     answer[3] = sqrt(pow(answer[0],2)+pow(answer[1],2)+pow(answer[2],2));
 
+    // Roll = nan since we cannot calculate roll
     answer[4] = 0.0;
-    answer[5] = atan(sqrt(pow(answer[0],2)+pow(answer[1],2))/(-answer[2]));
-    if(answer[0]>0 && answer[1]>0) {
+
+    // Calculate pitch
+    answer[5] = atan((-answer[2])/sqrt(pow(answer[0],2)+pow(answer[1],2)));
+
+    // Calculate heading relative to true north
+    if(answer[0]>0 && answer[1]>0) {  // Quadrant 1
       answer[6] = atan(answer[1]/answer[0]);
     }
-    else if(answer[0]<0 && answer[1]>0) {
-      answer[6] = atan(-answer[0]/answer[1])+3.1415926535/2;
+    else if(answer[0]<0 && answer[1]>0) { // Quadrant 2
+      answer[6] = atan(-answer[0]/answer[1])+PI/2;
     }
-    else if(answer[0]<0 && answer[1]<0) {
-      answer[6] = atan(-answer[1]/-answer[0]) + 3.1415926535;
+    else if(answer[0]<0 && answer[1]<0) { // Quadrant 3
+      answer[6] = atan(-answer[1]/-answer[0]) + PI;
     }
-    else {
-      answer[6] = atan(answer[0]/-answer[1])+3.1415926535*1.5;
+    else {  // Quadrant 4
+      answer[6] = atan(answer[0]/-answer[1])+PI*1.5;
     }
 
   } // End function vector_math

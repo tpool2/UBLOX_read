@@ -27,6 +27,7 @@ public:
         BROVER = 0b01,  // 1
         RTK = 0b10,
     } rtk_type_t;
+    const double PI = 3.14159265358979323846264338327950288419716939937510582097494459230781640628620;
 
     UBLOX(const std::string& port);
     ~UBLOX();
