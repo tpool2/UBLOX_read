@@ -27,8 +27,8 @@
       <param name="base_host" value="localhost"/>
       <param name="base_port" value="16140"/>
       <param name="rover_quantity" value="0"/>
-      <param name="arrowbase" value="/base"/>
-      <param name="arrowtip" value="/rover"/>
+      <!--param name="arrowbase" value="/base"/>
+      <param name="arrowtip" value="/rover"/-->
     </node>
   </group>
 </launch>
