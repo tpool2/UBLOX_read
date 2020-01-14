@@ -3,7 +3,7 @@
 	<group ns="base">
 		<node name="f9p" pkg="ublox" type="ublox_ros">
 			<param name="serial_port" value="/dev/ttyACM0"/>
-			<param name="rtk_type" value="3"/>
+			<param name="chain_level" value="0"/>
 			<param name="log_filename" value="../data/base_binary"/>
 		</node> 
 		<node pkg="rosbag" type="record" name="record" output="screen" args="-O ../data/base.bag --all"/>
