@@ -15,7 +15,7 @@
       <param name="arrowtip" value="/rover"/>
     </node>
     <node pkg="rosbag" type="record" name="record"
-    output="screen" args="-O /home/magicc/data/arrow/test.bag -a"/>
+    output="screen" args="-O /home/magicc/data/arrow/NEU2.bag -a"/>
   </group>
 
   <group ns="rover">
