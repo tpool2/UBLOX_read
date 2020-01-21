@@ -269,6 +269,11 @@ UBLOX_ROS::UBLOX_ROS() :
 
       // Call the second subscriber
       sub2 = nh_.subscribe(arrowtip+"/RelPos", 10, &UBLOX_ROS::cb_rov2, this);
+
+      // Make the arrow flag true. This flag is used in the relposCB function in
+      // in order to determine if the vector math function needs to be called or
+      // not.
+      arrow_flag = true;
     }
 
     // connect callbacks
@@ -365,12 +370,6 @@ void UBLOX_ROS::relposCB(const ublox::NAV_RELPOSNED_t& msg)
     // Create the message to be outputted
     ublox::RelPos out;
 
-    // Declare the double array for vector math
-    double arrow[7];
-
-    // Perform vector_math
-    ublox_->vector_math(ned_1, ned_2, arrow);
-
 
     // out.iTOW = msg.iTow*1e-3;
     out.header.stamp = ros::Time::now(); /// TODO: do this right
@@ -391,7 +390,13 @@ void UBLOX_ROS::relposCB(const ublox::NAV_RELPOSNED_t& msg)
     out.accHeading = deg2rad(msg.accHeading*1e-5);
     out.flags = msg.flags;
 
-    // Rover to Rover
+    if (arrow_flag == true) {
+
+    // Perform vector_math and assign values to arrow. (see ublox_ros.h for
+    // variable declarations)
+    ublox_->vector_math(ned_1, ned_2, arrow);
+
+    // Assign all the values
     out.arrowNED[0] = arrow[0];
     out.arrowNED[1] = arrow[1];
     out.arrowNED[2] = arrow[2];
@@ -399,6 +404,8 @@ void UBLOX_ROS::relposCB(const ublox::NAV_RELPOSNED_t& msg)
     out.arrowRPY[0] = arrow[4];
     out.arrowRPY[1] = arrow[5];
     out.arrowRPY[2] = arrow[6];
+  }
+    // Publish the RelPos ROS message
     relpos_pub_.publish(out);
 }
 

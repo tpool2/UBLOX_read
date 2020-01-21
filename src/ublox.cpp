@@ -362,8 +362,7 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
     // Find distance from point 1 to point 2
     answer[3] = sqrt(pow(answer[0],2)+pow(answer[1],2)+pow(answer[2],2));
 
-    // Roll = nan since we cannot calculate roll
-    answer[4] = 0.0;
+    // Roll = nan since we cannot calculate roll so we leave answer[4] untouched
 
     // Calculate pitch
     answer[5] = atan((-answer[2])/sqrt(pow(answer[0],2)+pow(answer[1],2)));

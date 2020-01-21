@@ -58,6 +58,8 @@ private:
 
     double ned_1[3];
     double ned_2[3];
+    bool arrow_flag = false;
+    double arrow[7];
 
     ros::Subscriber sub1;
     ros::Subscriber sub2;
