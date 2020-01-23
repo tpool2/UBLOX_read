@@ -9,9 +9,9 @@
             <param name="local_host2" value="localhost"/>
             <param name="local_port2" value="16145"/>
             <param name="rover_host" value="192.168.1.106"/>
-            <param name="rover_port" value="16140"/>
+            <param name="rover_port" value="16150"/>
             <param name="rover_host2" value="192.168.1.202"/>
-            <param name="rover_port2" value="16140"/>
+            <param name="rover_port2" value="16155"/>
             <param name="base_type" value="stationary"/>
             <param name="rover_quantity" value="2"/>
             <!--param name="arrowbase" value="/rover1"/>

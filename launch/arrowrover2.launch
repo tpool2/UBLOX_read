@@ -5,7 +5,7 @@
             <param name="serial_port" value="/dev/ttyACM0"/>
             <param name="chain_level" value="1"/>
             <param name="local_host" value="localhost"/>
-            <param name="local_port" value="16140"/>
+            <param name="local_port" value="16155"/>
             <param name="base_host" value="192.168.1.211"/>
             <param name="base_port" value="16145"/>
             <param name="rover_quantity" value="0"/>
