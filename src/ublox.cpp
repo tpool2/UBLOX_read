@@ -21,6 +21,7 @@ UBLOX::UBLOX(const std::string& port) :
 
     // configure the parsers/Enable Messages
     ubx_.set_nav_rate(100);
+    std::cerr<<"Set nav rate to "<<100<<std::endl;
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_PVT, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_RELPOSNED, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_POSECEF, byte);
@@ -115,6 +116,7 @@ void UBLOX::config_base_moving(int on_off, int gps, int glonas, int beidou,
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*glonas, CFG_VALSET_t::RTCM_1230USB, byte);
 }
 
+// Empty
 void UBLOX::config_rover()
 {
 }
@@ -153,8 +155,15 @@ void UBLOX::initLogFile(const std::string& filename)
     log_file_.open(filename);
 }
 
-// Function initRover
-// This function initializes a rover that is given by the following data.
+/* Function initRover
+// Purpose: Initializes a rover
+// Inputs:  local_host: hostname for rover
+            local_port: port for rover
+            remote_host: hostname for base
+            remote_port: port for base
+// Diagram:
+            Base(remote)-------------->Rover(local)
+*/
 void UBLOX::initRover(std::string local_host, uint16_t local_port,
                       std::string remote_host, uint16_t remote_port)
 {
@@ -188,10 +197,11 @@ void UBLOX::initRover(std::string local_host, uint16_t local_port,
   Purpose: Initializes the base to send corrections to rovers
   Inputs: local_host[] an array of strings containing the local hosts for base. (remote hose for rover)
           local_port[] an array of uint16_t that contains local port numbers for base. (remote ports for rover)
-          remote_host[] an array of strings containing the remote hosts for base (local host for rover)
-          remote_port[] an array of uint16_t that contains remote ports for base. (local ports for rover)
+          remote_host[] an array of strings containing the rover hosts for base (local host for rover)
+          remote_port[] an array of uint16_t that contains rover ports for base. (local ports for rover)
           base_type stationary or moving base
           rover_quantity number of rovers (number of elements in each array)
+Diagram:    Base(local)--------->remote(rover)
 */
 void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
                 std::string remote_host[], uint16_t remote_port[],
@@ -228,13 +238,33 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
     config_f9p();
 }
 
+/*
+initBrover() function
+Purpose: Used to initialize a moving base that receives RTK corrections from another base.
+Inputs:   local_host[] an array of strings containing the local hosts for base. (remote hose for rover)
+          local_port[] an array of uint16_t that contains local port numbers for base. (remote ports for rover)
+          base_host[] an array containing only one element which is the base host for the unit
+          base_port[] an array containing only one element which is the base port for the unit
+          rover_host[] an array of strings containing the rover hosts for the brover
+          rover_port[] an array of uint16_t that contains rover ports for the brover
+          base_type: stationary or moving base
+          rover_quantity: number of rovers
+          int gps: 1 is on, 0 is off
+          int glonas: 1 is on, 0 is off
+          int beidou: 1 is on, 0 is off
+          int galileo: 1 is on, 0 is off
+Diagram:
+            Base-------->Brover(local)--------->Rover
+*/
 void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
                 std::string base_host[], uint16_t base_port[],
                 std::string rover_host[], uint16_t rover_port[],
                 std::string base_type, int rover_quantity, int gps,
                 int glonas, int beidou, int galileo) {
-
+                    
+                // Declare type as Brover. This is used by rtcm_complete_cb()
                   type_ = BROVER;
+
 
                   assert(udp_ == nullptr);
                   // Connect the rtcm_cb callback to forward data to the UBX serial port
@@ -243,7 +273,7 @@ void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
                       this->rtcm_complete_cb(buf, size);
                   });
 
-                  // hook up UDP to listen
+                  // hook up UDP to listen to the base
                   /// TODO: configure ports and IP from cli
                   udp_ = new async_comm::UDP(local_host[0], local_port[0], base_host[0], base_port[0]);
                   udp_->register_receive_callback([this](const uint8_t* buf, size_t size)
@@ -256,11 +286,11 @@ void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
 
                   config_rover();
 
-                  //Instantiate an array of UDP objects
+                  //Instantiate an array of UDP objects for rovers
                   udparray_ = new async_comm::UDP*[rover_quantity];
                   std::cerr<<"Rover Quantity: "<<rover_quantity<<"\n";
 
-                  //Fill udp objects into the array.
+                  //Fill rover udp objects into the array.
                   for(int i = 0; i < rover_quantity; i++) {
                       std::cerr<<"Initializing Brover at "<< local_host[i+1]<<", "<<local_port[i+1]
                       <<" to Rover "<<std::to_string(i+1)<<" at "<< rover_host[i]<<", "<<rover_port[i]<<" UDP\n";
@@ -273,6 +303,7 @@ void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
                           throw std::runtime_error("Failed to initialize Brover to Rover "+ std::to_string(i+1) +"  UDP\n");
                       }
 
+                        // hook up UDP to send data to the rovers
                       rtcm_.registerCallback([ this , i](uint8_t* buf, size_t size)
                       {
                           this->udparray_[i]->send_bytes(buf, size);
@@ -281,8 +312,10 @@ void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
                       std::cerr<<"Initialized Brover to Rover "+ std::to_string(i+1) +" UDP\n";
                   }
 
+                    // configure the base
                   config_base(base_type, gps, glonas, beidou, galileo, 0, 0);
 
+                    // configure the f9p
                   config_f9p();
                   std::cerr<<"Initialized Brover\n";
 }
