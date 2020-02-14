@@ -14,8 +14,8 @@
             <param name="rover_port2" value="16155"/>
             <param name="base_type" value="stationary"/>
             <param name="rover_quantity" value="2"/>
-            <!--param name="arrowbase" value="/rover1"/>
-            <param name="arrowtip" value="/rover2"/-->
+            <param name="arrowbase" value="/rover1"/>
+            <param name="arrowtip" value="/rover2"/>
         </node>
     </group>
 </launch>
