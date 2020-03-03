@@ -1,3 +1,0 @@
-[submodule "lib/async_comm"]
-	path = lib/async_comm
-	url = https://github.com/superjax/async_comm.git
