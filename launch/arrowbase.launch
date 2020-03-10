@@ -9,15 +9,9 @@
             <param name="rover_host" value="local_host"/>
             <param name="rover_port" value="16150"/>
             <param name="base_type" value="stationary"/>
-<<<<<<< HEAD
-            <param name="rover_quantity" value="2"/>
-            <param name="arrowbase" value="/rover1"/>
-            <param name="arrowtip" value="/rover2"/>
-=======
             <param name="rover_quantity" value="1"/>
             <!--param name="arrowbase" value="/rover1"/>
 	       <param name="arrowtip" value="/rover2"/-->
->>>>>>> edc9ac617b47fb71fd5c2a353ebfe8099387fbef
         </node>
     </group>
 </launch>
