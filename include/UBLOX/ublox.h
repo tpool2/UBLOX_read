@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 #include "async_comm/serial.h"
 #include "async_comm/udp.h"
