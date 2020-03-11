@@ -24,8 +24,12 @@ cd build
 cmake ..
 make -j
 ```
+## Submodule
+In UBLOX_Read use the command
+git submodule update --init --recursive
 
 ## Running the example
 ``` bash
 ./ublox
 ```
+
