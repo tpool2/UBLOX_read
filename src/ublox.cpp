@@ -6,7 +6,7 @@ namespace ublox
 {
 
 UBLOX::UBLOX(const std::string& port) :
-    serial_(port, 921600),
+    serial_(port, 460800),
     //115200
     ubx_(serial_)
 {
@@ -18,7 +18,7 @@ UBLOX::UBLOX(const std::string& port) :
     };
     serial_.register_receive_callback(cb);
     serial_.init();
-
+      
     // configure the parsers/Enable Messages
     ubx_.set_nav_rate(100);
     std::cerr<<"Set nav rate to "<<100<<std::endl;
@@ -36,6 +36,7 @@ UBLOX::UBLOX(const std::string& port) :
       this->nav_.convertUBX(in_msg.RXM_SFRBX);
     };
     ubx_.registerCallback(ublox::CLASS_RXM, ublox::RXM_SFRBX, eph_cb);
+
 }
 
 void UBLOX::config_f9p() //See ubx_defs.h for more information
@@ -44,7 +45,7 @@ void UBLOX::config_f9p() //See ubx_defs.h for more information
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_INPROT_NMEA, byte); //Flag to indicate if NMEA should be an input protocol on USB
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_OUTPROT_NMEA, byte); //Flag to indicate if NMEA should be an output protocol on USB
 
-    bool poll = true;
+    bool poll = false;
     if(poll == true)
         poll_value();
 }
@@ -119,6 +120,14 @@ void UBLOX::config_base_moving(int on_off, int gps, int glonas, int beidou,
 // Empty
 void UBLOX::config_rover()
 {
+    // configure the parsers/Enable Messages
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_PVT, byte);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_RELPOSNED, byte);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_POSECEF, byte);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_VELECEF, byte);
+    // ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::MSGOUT_RAWX, byte);
+    // ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::MSGOUT_SFRBX, byte);
+    //configuring SVIN messages is done in config_base_stationary()
 }
 
 void UBLOX::poll_value() //See ubx_defs.h for more information
@@ -167,6 +176,7 @@ void UBLOX::initLogFile(const std::string& filename)
 void UBLOX::initRover(std::string local_host, uint16_t local_port,
                       std::string remote_host, uint16_t remote_port)
 {
+    std::cerr << "initRover \n";
     type_ = ROVER;
 
     assert(udp_ == nullptr);
@@ -209,6 +219,7 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
                 int glonas, int beidou, int galileo, int surveytime,
                 int surveyacc)
 {
+    std::cerr << "initBase \n";
     type_ = BASE;
 
     //Instantiate an array of UDP objects

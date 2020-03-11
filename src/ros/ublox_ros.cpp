@@ -525,7 +525,6 @@ void UBLOX_ROS::obsCB(const ublox::RXM_RAWX_t &msg)
 
 void UBLOX_ROS::ephCB(const Ephemeris &eph)
 {
-    std::cerr << "Ephemeris!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
     ublox::Ephemeris out;
     out.header.stamp = ros::Time::now();
 
@@ -579,7 +578,6 @@ void UBLOX_ROS::ephCB(const Ephemeris &eph)
 
 void UBLOX_ROS::gephCB(const GlonassEphemeris &eph)
 {
-    std::cerr << "Glonas Ephemeris!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
     ublox::GlonassEphemeris out;
     out.header.stamp = ros::Time::now();
 
