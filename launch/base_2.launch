@@ -3,13 +3,14 @@
 	<group ns="base">
 		<node name="f9p" pkg="ublox" type="ublox_ros">
 			<param name="serial_port" value="/dev/ttyACM0"/>
-			<param name="rtk_type" value="3"/>
+			<param name="chain_level" value="0"/>
+			<param name="rover_quantity" value="2"/>
  			<param name="local_host" value="192.168.0.111"/>
 			<param name="local_port" value="16140"/>
-			<param name="remote_host" value="192.168.0.143"/>
-			<param name="remote_port" value="16145"/>
-			<param name="remote_host2" value="192.168.0.143"/>
-			<param name="remote_port2" value="16150"/>
+			<param name="rover_host" value="192.168.0.143"/>
+			<param name="rover_port" value="16145"/>
+			<param name="rover_host2" value="192.168.0.143"/>
+			<param name="rover_port2" value="16150"/>
 		</node> 
 	</group>
 </launch>
