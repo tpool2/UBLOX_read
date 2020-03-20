@@ -307,13 +307,13 @@ void UBX::del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
     out_message_.CFG_VALDEL.cfgDataKey = cfgDataKey;
     send_message(CLASS_CFG, CFG_VALDEL, out_message_, sizeof(CFG_VALDEL_t));
 }
-ACK_msg_map =
+std::map<uint8_t, std::string> ACK_msg_map =
 {
 	{0x01, "ACK_ACK"},
 	{0x00, "ACK_NACK"}
 };
 
-AID_msg_map = 
+std::map<uint8_t, std::string> AID_msg_map = 
 {
 	{0x30, "AID_ALM"},
 	{0x33, "AID_AOP"},
@@ -321,7 +321,7 @@ AID_msg_map =
 	{0x02, "AID_HUI"},
 	{0x01, "AID_INI"}
 };
-CFG_msg_map = 
+std::map<uint8_t, std::string> CFG_msg_map = 
 {
 	{0x13, "CFG_ANT"},
 	{0x93, "CFG_BATCH"},
@@ -362,7 +362,7 @@ CFG_msg_map =
 	{0x8B, "CFG_VALGET"},
 	{0x8A, "CFG_VALSET"}
 };
-INF_msg_map = 
+std::map<uint8_t, std::string> INF_msg_map = 
 {
 	{0x04, "INF_DEBUG"},
 	{0x00, "INF_ERROR"},
@@ -370,7 +370,7 @@ INF_msg_map =
 	{0x03, "INF_TEST"},
 	{0x01, "INF_WARNING"}
 };
-LOG_msg_map = 
+std::map<uint8_t, std::string> LOG_msg_map = 
 {
 	{0x07, "LOG_CREATE"},
 	{0x03, "LOG_ERASE"},
@@ -382,7 +382,7 @@ LOG_msg_map =
 	{0x09, "LOG_RETRIEVE"},
 	{0x04, "LOG_STRING"}
 };
-MGA_msg_map = 
+std::map<uint8_t, std::string> MGA_msg_map = 
 {
 	{0x60, "MGA_ACK"},
 	{0x03, "MGA_BDS"},
@@ -393,7 +393,7 @@ MGA_msg_map =
 	{0x40, "MGA_INI"},
 	{0x05, "MGA_QZSS"}
 };
-MON_msg_map = 
+std::map<uint8_t, std::string> MON_msg_map = 
 {
 	{0x36, "MON_COMMS"},
 	{0x28, "MON_GNSS"},
@@ -409,7 +409,7 @@ MON_msg_map =
 	{0x08, "MON_TXBUF"},
 	{0x04, "MON_VER"}
 };
-NAV_msg_map = 
+std::map<uint8_t, std::string> NAV_msg_map = 
 {
 	{0x60, "NAV_AOPSTATUS"},
 	{0x05, "NAV_ATT"},
@@ -443,7 +443,7 @@ NAV_msg_map =
 	{0x12, "NAV_VELNED"},
 	{0x43, "NAV_SIG"}
 };
-RXM_msg_map = 
+std::map<uint8_t, std::string> RXM_msg_map = 
 {
 	{0x14, "RXM_MEASX"},
 	{0x41, "RXM_PMREQ"},
@@ -452,21 +452,21 @@ RXM_msg_map =
 	{0x32, "RXM_RTCM"},
 	{0x13, "RXM_SFRBX"}
 };
-SEC_msg_map = 
+std::map<uint8_t, std::string> SEC_msg_map = 
 {
 	{0x03, "SEC_UNIQID"}
 };
-TIM_msg_map = 
+std::map<uint8_t, std::string> TIM_msg_map = 
 {
 	{0x03, "TIM_TM2"},
 	{0x01, "TIM_TP"},
 	{0x06, "TIM_VRFY"}
 };
-UPD_msg_map = 
+std::map<uint8_t, std::string> UPD_msg_map = 
 {
 	{0x14, "UPD_SOS"}
 };
-UBX_map = 
+std::map<uint8_t, std::map<uint8_t, std::string>> UBX_map = 
 {
 	{0x01, NAV_msg_map},
 	{0x02, RXM_msg_map},
