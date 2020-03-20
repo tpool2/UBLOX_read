@@ -55,7 +55,18 @@ private:
     uint32_t vel_tow_;
     uint32_t pvt_tow_;
     uint32_t pvt_week_;
+
+    double ned_1[3];
+    double ned_2[3];
+    bool arrow_flag = false;
+    double arrow[7];
+
+    ros::Subscriber sub1;
+    ros::Subscriber sub2;
+
     ublox::PosVelEcef ecef_msg_;
+    void cb_rov1(const ublox::RelPos &msg);
+    void cb_rov2(const ublox::RelPos &msg);
 };
 
 }

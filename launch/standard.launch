@@ -24,6 +24,9 @@
 			<param name="base_host" value="localhost"/>
 			<param name="base_port" value="16140"/>
 		</node>
-		<!--node pkg="rosbag" type="record" name="record" output="screen" args="-O /home/matt/data/devel/onerover/rover.bag -a"/-->
+		<node pkg="rosbag" type="record" name="record" output="screen" args="-O /home/magicc/data/feb102020.bag -a"/>
+		<node name="dashboard" pkg="ublox" type="ublox_dashboard.py">
+			<param name="relpostopic" value="/rover/RelPos"/>
+		</node>
 	</group>
 </launch>
