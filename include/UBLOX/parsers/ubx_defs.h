@@ -2,11 +2,16 @@
 
 #include <cstddef>
 #include <cstdint>
-
+#include <map>
 namespace ublox
 {
 
 static constexpr size_t BUFFER_SIZE = 1024;
+std::map<uint8_t, std::string> ACK_msg_map =
+{
+	{0x01, "ACK_ACK"},
+	{0x00, "ACK_NACK"}
+};
 
 std::map<uint8_t, std::string> AID_msg_map = 
 {
