@@ -8,20 +8,6 @@ namespace ublox
 
 static constexpr size_t BUFFER_SIZE = 1024;
 
-/*std::map<uint8_t, std::string> ACK_msg_map;
-std::map<uint8_t, std::string> AID_msg_map;
-std::map<uint8_t, std::string> CFG_msg_map;
-std::map<uint8_t, std::string> INF_msg_map;
-std::map<uint8_t, std::string> LOG_msg_map;
-std::map<uint8_t, std::string> MGA_msg_map;
-std::map<uint8_t, std::string> MON_msg_map;
-std::map<uint8_t, std::string> NAV_msg_map;
-std::map<uint8_t, std::string> RXM_msg_map;
-std::map<uint8_t, std::string> SEC_msg_map;
-std::map<uint8_t, std::string> TIM_msg_map;
-std::map<uint8_t, std::string> UPD_msg_map;
-std::map<uint8_t, std::map<uint8_t, std::string>> UBX_map;*/
-
 enum {
     FIX_TYPE_NO_FIX = 0x00,
     FIX_TYPE_DEAD_RECKONING = 0x01,
