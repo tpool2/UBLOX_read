@@ -73,6 +73,12 @@ if (${BUILD_ROS})
 		GlonassEphemeris.msg
 		Observation.msg
 		ObsVec.msg)
+	
+	add_service_files(
+		DIRECTORY srv
+		FILES
+		cfg_val_get.srv)
+		
 	generate_messages(
   		DEPENDENCIES
   		std_msgs)
