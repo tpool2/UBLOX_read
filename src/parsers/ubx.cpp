@@ -200,7 +200,7 @@ bool UBX::decode_message()
        }
 
     default:
-        DBG((UBX_map[message_class_][message_type_]+"\n").c_str());
+        // DBG((UBX_map[message_class_][message_type_]+"\n").c_str());
         break;
     }
 
