@@ -56,6 +56,9 @@ UBLOX_ROS::UBLOX_ROS() :
     // nav_sat_fix_pub_ = nh_.advertise<sensor_msgs::NavSatFix>("NavSatFix");
     // nav_sat_status_pub_ = nh_.advertise<sensor_msgs::NavSatStatus>("NavSatStatus");
 
+    // Connect ROS services
+    cfg_val_get = nh_.advertiseService("CfgValGet", &UBLOX_ROS::cfgValGet, this);
+
     //Get the serial port
     std::string serial_port = nh_private_.param<std::string>("serial_port", "/dev/ttyACM0");
 
@@ -608,6 +611,15 @@ void UBLOX_ROS::gephCB(const GlonassEphemeris &eph)
     out.dtaun = eph.dtaun;
 
     geph_pub_.publish(out);
+}
+
+bool UBLOX_ROS::cfgValGet(ublox::CfgValGet::Request &req, ublox::CfgValGet::Response &res)
+{
+    res.version=req.version;
+    res.layer=req.layer;
+    res.position=req.position;
+    res.cfgData.push_back(0x01);
+    return true;
 }
 
 }

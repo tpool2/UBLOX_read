@@ -77,7 +77,7 @@ if (${BUILD_ROS})
 	add_service_files(
 		DIRECTORY srv
 		FILES
-		cfg_val_get.srv)
+		CfgValGet.srv)
 		
 	generate_messages(
   		DEPENDENCIES
