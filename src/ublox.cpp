@@ -436,6 +436,6 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
       response.position=request.position;
       response.cfgData=0x01;
 
-      return response;
+      return ubx_.cfgValGet(response);
   }
 }
