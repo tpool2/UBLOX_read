@@ -427,4 +427,15 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
     }
 
   } // End function vector_math
+
+  CFG_VALGET_t UBLOX::cfgValGet(const CFG_VALGET_t &request)
+  {
+      CFG_VALGET_t response;
+      response.version=0x01;
+      response.layer=request.layer;
+      response.position=request.position;
+      response.cfgData=0x01;
+
+      return response;
+  }
 }

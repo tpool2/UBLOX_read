@@ -310,7 +310,7 @@ void UBX::get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
        out_message_.CFG_VALGET.layer = layer;
        out_message_.CFG_VALGET.cfgDataKey = cfgDataKey;
        send_message(CLASS_CFG, CFG_VALGET, out_message_, sizeof(CFG_VALGET_t));
-       std::cerr<<"Got configuration of "<<cfgDataKey<<" to "<<cfgData<<std::endl;
+    //    std::cerr<<"Got configuration of "<<cfgDataKey<<" to "<<cfgData<<std::endl;
 }
 
 //Deletes configuration values specified by the key
