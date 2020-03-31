@@ -1,56 +1,36 @@
 <?xml version="1.0"?>
 <launch>
-
-  <arg name="GLONAS" default="0"/>
-  <arg name="GPS" default="1"/>
-  <arg name="BEIDOU" default="1"/>
-  <arg name="GALILEO" default="1"/>
-  <arg name="Surveytime" default="30"/>
-  <arg name="Surveyacc" default="50000"/>
-  <arg name="message_rate" default="5"/>
-
+  <arg name="base_serial_port" default="/dev/ttyACM0"/>
+  <arg name="rover_serial_port" default="/dev/ttyACM1"/>
+  <arg name="base_host" default="localhost"/>
+  <arg name="rover_host" default="localhost"/>
 	<group ns="base">
+		<rosparam command="load" file="$(find ublox)/params/ublox.yaml"/>
 		<node name="f9p" pkg="ublox" type="ublox_ros">
-			<param name="serial_port" value="/dev/ttyACM0"/>
-			<param name="chain_level" value="0"/>
-			<param name="base_type" value = "stationary"/>  <!--moving or stationary-->
-			<param name="rover_quantity" value = "1"/>     <!--number of rovers-->
-			<param name="serial_port" value="/dev/ttyACM0"/>
-			<param name="local_host1" value="localhost"/>
-			<param name="local_port1" value="16140"/>
-			<param name="rover_host1" value="localhost"/>
-			<param name="rover_port1" value="16145"/>
-			<param name="GPS" value="$(arg GPS)"/>
-      		<param name="GLONAS" value="$(arg GLONAS)"/>
-      		<param name="BEIDOU" value="$(arg BEIDOU)"/>
-      		<param name="GALILEO" value="$(arg GALILEO)"/>
-      		<param name="Surveytime" value="$(arg Surveytime)"/>
-      		<param name="Surveyacc" value="$(arg Surveyacc)"/>
-			<param name="message_rate" value = "$(arg message_rate)"/>
-		</node>
+			<param name="serial_port" value="$(arg base_serial_port)"/>
+ 			<param name="local_host" value="$(arg base_host)"/>
+			<param name="local_port" value="16140"/>
+			<param name="rover_host" value="$(arg rover_host)"/>
+			<param name="rover_port" value="16145"/>
+		</node> 
 		<node pkg="rosbag" type="record" name="record" output="screen" args="-o ../data/rtk_tests/base --all"/>
 	</group>
 
 	<group ns = "rover">
+		<rosparam command="load" file="$(find ublox)/params/ublox.yaml"/>
+		<param name="chain_level" value="1"/>
+		<param name="rover_quantity" value="0"/>
 		<node name="f9p" pkg="ublox" type="ublox_ros">
-			<param name="serial_port" value="/dev/ttyACM1"/>
-			<param name="chain_level" value="1"/>
-			<param name="rover_quantity" value="0"/>
-			<param name="local_host" value="localhost"/>
+			<param name="serial_port" value="$(arg rover_serial_port)"/>
+ 			<param name="local_host" value="$(arg rover_host)"/>
 			<param name="local_port" value="16145"/>
-			<param name="base_host" value="localhost"/>
-			<param name="base_port" value="16140"/>
-			<param name="GPS" value="$(arg GPS)"/>
-      		<param name="GLONAS" value="$(arg GLONAS)"/>
-      		<param name="BEIDOU" value="$(arg BEIDOU)"/>
-      		<param name="GALILEO" value="$(arg GALILEO)"/>
-      		<param name="Surveytime" value="$(arg Surveytime)"/>
-      		<param name="Surveyacc" value="$(arg Surveyacc)"/>
-			<param name="message_rate" value = "$(arg message_rate)"/>
+			<param name="rover_host" value="$(arg base_host)"/>
+			<param name="rover_port" value="16140"/>
 		</node>
-		<node pkg="rosbag" type="record" name="record" output="screen" args="-o ../data/rtk_tests/rover --all"/>
-		<!-- <node name="dashboard" pkg="ublox" type="ublox_dashboard.py"> -->
-			<!-- <param name="relpostopic" value="/rover/RelPos"/> -->
-		<!-- </node> -->
+		<node pkg="rosbag" type="record" name="record" output="screen" args="-o ../data/rtk_tests/rover -- all"/>
+		<!-- <node name="dashboard" pkg="ublox" type="ublox_dashboard.py">
+			<param name="relpostopic" value="/rover/RelPos"/>
+		</node> -->
 	</group>
+
 </launch>

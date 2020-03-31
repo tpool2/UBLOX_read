@@ -1,0 +1,18 @@
+#GNSS Constellations configured
+GPS: 1
+GLONAS: 0
+BEIDOU: 1
+GALILEO: 1
+
+#moving or stationary base
+base_type: "stationary"  
+
+#if stationary the survey time and survey accuracy minimums
+Surveytime: 30
+Surveyacc: 50000
+
+#GNSS message output rate
+message_rate: 5
+
+rover_quantity: 0    #number of rovers
+chain_level: 1    #base is at level 0

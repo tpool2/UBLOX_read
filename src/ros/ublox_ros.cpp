@@ -60,7 +60,7 @@ UBLOX_ROS::UBLOX_ROS() :
     std::string serial_port = nh_private_.param<std::string>("serial_port", "/dev/ttyACM0");
 
     //Get the message rate, rate at which GNSS measurements are takens in hz
-    int message_rate = nh_private_.param<int>("message_rate", 10);
+    int message_rate = nh_.param<int>("message_rate", 10);
 
     // Get the log file
     std::string log_filename = nh_private_.param<std::string>("log_filename", "");
@@ -71,12 +71,12 @@ UBLOX_ROS::UBLOX_ROS() :
     std::cerr<<"Created ublox parser\n";
 
     //Get the number of rovers
-    int rover_quantity = nh_private_.param<int>("rover_quantity", 0);
+    int rover_quantity = nh_.param<int>("rover_quantity", 0);
 
     //Get chain_level.
     //0 is stationary base
     // 1 to n-1 is
-    int chain_level = nh_private_.param<int>("chain_level", 0x00);
+    int chain_level = nh_.param<int>("chain_level", 0x00);
 
     // set up RTK
     // Base (n local_host n local_port, n rover_host, n rover_port)
@@ -93,12 +93,14 @@ UBLOX_ROS::UBLOX_ROS() :
 
         // Get Constallation settings
         uint32_t constellation [6];
-        int gps = nh_private_.param<int>("GPS", 1); //GPS
-        int glonas = nh_private_.param<int>("GLONAS", 0); //GLONAS
-        int beidou = nh_private_.param<int>("BEIDOU", 0); //BEIDOU
-        int galileo = nh_private_.param<int>("GALILEO", 1); //GALILEO
-        int surveytime = nh_private_.param<int>("Surveytime", 120); //Stationary base survey time
-        int surveyacc = nh_private_.param<int>("Surveyacc", 500000);  //Stationary base accuracy
+        int gps = nh_.param<int>("GPS", 1); //GPS
+        int glonas = nh_.param<int>("GLONAS", 0); //GLONAS
+        int beidou = nh_.param<int>("BEIDOU", 0); //BEIDOU
+        int galileo = nh_.param<int>("GALILEO", 1); //GALILEO
+        
+        // Get survey settngs
+        int surveytime = nh_.param<int>("Surveytime", 120); //Stationary base survey time
+        int surveyacc = nh_.param<int>("Surveyacc", 500000);  //Stationary base accuracy
 
         //Account for the case when no numbers are used for the first rover.
         int j = 0;
@@ -134,7 +136,7 @@ UBLOX_ROS::UBLOX_ROS() :
         }
 
         //Determine whether the base is moving or stationary
-        std::string base_type = nh_private_.param<std::string>("base_type", "stationary");
+        std::string base_type = nh_.param<std::string>("base_type", "stationary");
 
         std::cerr<<"About to init base\n";
         ublox_->initBase(local_host, local_port, rover_host, rover_port,
@@ -156,10 +158,10 @@ UBLOX_ROS::UBLOX_ROS() :
 
         // Get Constallation settings
         uint32_t constellation [4];
-        constellation[0] = nh_private_.param<int>("GPS", 1);
-        constellation[1] = nh_private_.param<int>("GLONAS", 0);
-        constellation[2] = nh_private_.param<int>("BEIDOU", 0);
-        constellation[3] = nh_private_.param<int>("GALILEO", 1);
+        constellation[0] = nh_.param<int>("GPS", 1);
+        constellation[1] = nh_.param<int>("GLONAS", 0);
+        constellation[2] = nh_.param<int>("BEIDOU", 0);
+        constellation[3] = nh_.param<int>("GALILEO", 1);
 
         if(nh_private_.hasParam("local_host")) {
             std::string test = nh_private_.param<std::string>("local_host", "localhost");
@@ -205,10 +207,10 @@ UBLOX_ROS::UBLOX_ROS() :
 
         // Get Constallation settings
         uint32_t constellation [6];
-        int gps = nh_private_.param<int>("GPS", 1);
-        int glonas = nh_private_.param<int>("GLONAS", 0);
-        int beidou = nh_private_.param<int>("BEIDOU", 0);
-        int galileo = nh_private_.param<int>("GALILEO", 1);
+        int gps = nh_.param<int>("GPS", 1);
+        int glonas = nh_.param<int>("GLONAS", 0);
+        int beidou = nh_.param<int>("BEIDOU", 0);
+        int galileo = nh_.param<int>("GALILEO", 1);
 
         int j = 0;
         if(nh_private_.hasParam("local_host")) {
