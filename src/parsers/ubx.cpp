@@ -9,11 +9,12 @@ using namespace std::chrono;
 using namespace std;
 
 #define DEG2RAD (3.14159 / 180.0)
-#ifndef NDEBUG
-#define DBG(...) fprintf(stderr, __VA_ARGS__)
-#else
-#define DBG(...)
-#endif
+// #ifndef NDEBUG
+#define DBG(...) //fprintf(stderr, __VA_ARGS__)
+// #define DBG(...) fprintf(stderr, )
+// #else
+// #define DBG(...)
+// #endif
 
 namespace ublox
 {
@@ -274,11 +275,9 @@ bool UBX::send_message(uint8_t msg_class, uint8_t msg_id, UBX_message_t& message
 void UBX::set_nav_rate(uint16_t message_rate)
 {
 
-    DBG("Setting message rate to %d hz\n", message_rate);
+    fprintf(stderr, "Setting message rate to %d hz\n", message_rate);
 
     uint16_t period_ms = uint16_t(1000)/message_rate;
-    std::cerr << "this is the value!!!!!!!!!!!!!!!!!";
-    std::cerr << period_ms << "\n";
 
     configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, period_ms, CFG_VALSET_t::RATE_MEAS, byte);
     configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RATE_NAV, byte);
@@ -304,7 +303,7 @@ void UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t c
     }
     out_message_.CFG_VALSET.cfgDataKey = cfgDataKey;
     send_message(CLASS_CFG, CFG_VALSET, out_message_, sizeof(CFG_VALSET_t));
-    std::cerr<<"Configured "<< cfgDataKey<<" to "<<cfgData<<std::endl;
+    // std::cerr<<"Configured "<< cfgDataKey<<" to "<<cfgData<<std::endl;
 }
 
 void UBX::get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
@@ -314,7 +313,7 @@ void UBX::get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
        out_message_.CFG_VALGET.layer = layer;
        out_message_.CFG_VALGET.cfgDataKey = cfgDataKey;
        send_message(CLASS_CFG, CFG_VALGET, out_message_, sizeof(CFG_VALGET_t));
-       std::cerr<<"Got configuration of "<<cfgDataKey<<" to "<<cfgData<<std::endl;
+    //    std::cerr<<"Got configuration of "<<cfgDataKey<<" to "<<cfgData<<std::endl;
 }
 
 //Deletes configuration values specified by the key
@@ -325,7 +324,7 @@ void UBX::del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
     out_message_.CFG_VALDEL.layer = layer;
     out_message_.CFG_VALDEL.cfgDataKey = cfgDataKey;
     send_message(CLASS_CFG, CFG_VALDEL, out_message_, sizeof(CFG_VALDEL_t));
-    std::cerr<<"Deleted configuration of "<<cfgDataKey<<std::endl;
+    // std::cerr<<"Deleted configuration of "<<cfgDataKey<<std::endl;
 }
 std::map<uint8_t, std::string> UBX::ACK_msg_map =
 {

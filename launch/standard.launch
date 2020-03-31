@@ -8,14 +8,13 @@
 
 	<group ns="base">
 
-		<rosparam command="load" file="$(find ublox)/params/ublox.yaml"/>
-
 		<node name="f9p" pkg="ublox" type="ublox_ros">
 			<param name="serial_port" value="$(arg base_serial_port)"/>
  			<param name="local_host" value="$(arg base_host)"/>
 			<param name="local_port" value="16140"/>
 			<param name="rover_host" value="$(arg rover_host)"/>
 			<param name="rover_port" value="16145"/>
+			<rosparam command="load" file="$(find ublox)/params/ublox.yaml"/>
 		</node> 
 
 		<node pkg="rosbag" type="record" name="record" output="screen" args="-o ../data/rtk_tests/base --all"/>
@@ -24,16 +23,15 @@
 
 	<group ns = "rover">
 
-		<rosparam command="load" file="$(find ublox)/params/ublox.yaml"/>
-		<param name="chain_level" value="1"/>
-		<param name="rover_quantity" value="0"/>
-
 		<node name="f9p" pkg="ublox" type="ublox_ros">
 			<param name="serial_port" value="$(arg rover_serial_port)"/>
  			<param name="local_host" value="$(arg rover_host)"/>
 			<param name="local_port" value="16145"/>
 			<param name="rover_host" value="$(arg base_host)"/>
 			<param name="rover_port" value="16140"/>
+			<rosparam command="load" file="$(find ublox)/params/ublox.yaml"/>
+			<param name="chain_level" value="1"/>
+			<param name="rover_quantity" value="0"/>
 		</node>
 
 		<node pkg="rosbag" type="record" name="record" output="screen" args="-o ../data/rtk_tests/rover -- all"/>

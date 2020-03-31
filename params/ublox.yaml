@@ -9,7 +9,7 @@ base_type: "stationary"
 
 #if stationary the survey time and survey accuracy minimums
 Surveytime: 30
-Surveyacc: 500000000
+Surveyacc: 50000
 
 #GNSS message output rate
 message_rate: 5
