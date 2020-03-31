@@ -1,5 +1,14 @@
 <?xml version="1.0"?>
 <launch>
+
+  <arg name="GLONAS" default="0"/>
+  <arg name="GPS" default="1"/>
+  <arg name="BEIDOU" default="1"/>
+  <arg name="GALILEO" default="1"/>
+  <arg name="Surveytime" default="30"/>
+  <arg name="Surveyacc" default="50000"/>
+  <arg name="message_rate" default="5"/>
+
 	<group ns="base">
 		<node name="f9p" pkg="ublox" type="ublox_ros">
 			<param name="serial_port" value="/dev/ttyACM0"/>
@@ -11,7 +20,15 @@
 			<param name="local_port1" value="16140"/>
 			<param name="rover_host1" value="localhost"/>
 			<param name="rover_port1" value="16145"/>
+			<param name="GPS" value="$(arg GPS)"/>
+      		<param name="GLONAS" value="$(arg GLONAS)"/>
+      		<param name="BEIDOU" value="$(arg BEIDOU)"/>
+      		<param name="GALILEO" value="$(arg GALILEO)"/>
+      		<param name="Surveytime" value="$(arg Surveytime)"/>
+      		<param name="Surveyacc" value="$(arg Surveyacc)"/>
+			<param name="message_rate" value = "$(arg message_rate)"/>
 		</node>
+		<node pkg="rosbag" type="record" name="record" output="screen" args="-o ../data/rtk_tests/base --all"/>
 	</group>
 
 	<group ns = "rover">
@@ -23,10 +40,17 @@
 			<param name="local_port" value="16145"/>
 			<param name="base_host" value="localhost"/>
 			<param name="base_port" value="16140"/>
+			<param name="GPS" value="$(arg GPS)"/>
+      		<param name="GLONAS" value="$(arg GLONAS)"/>
+      		<param name="BEIDOU" value="$(arg BEIDOU)"/>
+      		<param name="GALILEO" value="$(arg GALILEO)"/>
+      		<param name="Surveytime" value="$(arg Surveytime)"/>
+      		<param name="Surveyacc" value="$(arg Surveyacc)"/>
+			<param name="message_rate" value = "$(arg message_rate)"/>
 		</node>
-		<node pkg="rosbag" type="record" name="record" output="screen" args="-O /home/magicc/data/feb102020.bag -a"/>
-		<node name="dashboard" pkg="ublox" type="ublox_dashboard.py">
-			<param name="relpostopic" value="/rover/RelPos"/>
-		</node>
+		<node pkg="rosbag" type="record" name="record" output="screen" args="-o ../data/rtk_tests/rover --all"/>
+		<!-- <node name="dashboard" pkg="ublox" type="ublox_dashboard.py"> -->
+			<!-- <param name="relpostopic" value="/rover/RelPos"/> -->
+		<!-- </node> -->
 	</group>
 </launch>

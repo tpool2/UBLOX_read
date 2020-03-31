@@ -59,12 +59,15 @@ UBLOX_ROS::UBLOX_ROS() :
     //Get the serial port
     std::string serial_port = nh_private_.param<std::string>("serial_port", "/dev/ttyACM0");
 
+    //Get the message rate, rate at which GNSS measurements are takens in hz
+    int message_rate = nh_private_.param<int>("message_rate", 10);
+
     // Get the log file
     std::string log_filename = nh_private_.param<std::string>("log_filename", "");
 
     std::cerr<<"Creating ublox parser\n";
     // create the parser
-    ublox_ = new ublox::UBLOX(serial_port);
+    ublox_ = new ublox::UBLOX(serial_port, message_rate);
     std::cerr<<"Created ublox parser\n";
 
     //Get the number of rovers

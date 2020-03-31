@@ -271,10 +271,14 @@ bool UBX::send_message(uint8_t msg_class, uint8_t msg_id, UBX_message_t& message
     return true;
 }
 
-void UBX::set_nav_rate(uint16_t period_ms)
+void UBX::set_nav_rate(uint16_t message_rate)
 {
 
-    DBG("Setting nav rate to %d\n", period_ms);
+    DBG("Setting message rate to %d hz\n", message_rate);
+
+    uint16_t period_ms = uint16_t(1000)/message_rate;
+    std::cerr << "this is the value!!!!!!!!!!!!!!!!!";
+    std::cerr << period_ms << "\n";
 
     configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, period_ms, CFG_VALSET_t::RATE_MEAS, byte);
     configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RATE_NAV, byte);
