@@ -84,7 +84,7 @@ UBLOX_ROS::UBLOX_ROS() :
         std::cerr<<"Initializing Base\n";
 
         //Get base parameters
-        std::string base_type = nh_private_.param<std::string>("base_type", "stationary");
+        std::string base_type = nh_private_.param<std::string>("base_type", "moving");
         int surveytime = nh_private_.param<int>("Surveytime", 120); //Stationary base survey time
         int surveyacc = nh_private_.param<int>("Surveyacc", 500000);  //Stationary base accuracy
         std::cerr << "base_type = " << base_type << "\n";
