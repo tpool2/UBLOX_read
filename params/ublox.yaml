@@ -9,11 +9,13 @@ base_type: "stationary"
 
 #if stationary the survey time and survey accuracy minimums
 Surveytime: 30
-Surveyacc: 50000
+Surveyacc: 5000000
 
 #GNSS message output rate
 message_rate: 5
 
+#These values are just for the base.  
+#They need to be changed in the launch file for the rover
 rover_quantity: 1    #number of rovers
 chain_level: 0    #base is at level 0
 
