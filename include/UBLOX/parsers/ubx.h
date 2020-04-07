@@ -85,6 +85,7 @@ public:
     uint8_t size;
     uint8_t byte = 1;
     uint8_t word = 2;
+
     static std::map<uint8_t, std::string> ACK_msg_map;
     static std::map<uint8_t, std::string> AID_msg_map;
     static std::map<uint8_t, std::string> CFG_msg_map;

@@ -886,6 +886,16 @@ typedef struct
     U4 dwrd[10];
 }__attribute__((packed)) RXM_SFRBX_t;
 
+typedef struct
+{
+    uint32_t item               : 8;
+    uint32_t                    : 8;
+    uint32_t group              : 8;
+    uint32_t                    : 4;
+    uint32_t config_val_size    : 3;
+    uint32_t                    : 1;
+}__attribute__((packed)) CFG_KEY_t;
+
 typedef union {
     uint8_t buffer[BUFFER_SIZE];
     ACK_ACK_t ACK_ACK;
