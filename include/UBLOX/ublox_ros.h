@@ -60,6 +60,7 @@ private:
     uint32_t vel_tow_;
     uint32_t pvt_tow_;
     uint32_t pvt_week_;
+    // int message_rate;
 
     double ned_1[3];
     double ned_2[3];
