@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <iostream>
+#include <time.h>
 
 #include "async_comm/serial.h"
 #include "UBLOX/parsers/ubx_defs.h"
@@ -19,6 +20,8 @@ public:
     void configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size);
     void get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
     void del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
+
+    CFG_VALGET_t cfgValGet(CFG_VALGET_t request);
 
     // This function returns true when a new message has been parsed
     bool read_cb(uint8_t byte);
@@ -64,8 +67,9 @@ public:
     uint16_t buffer_head_ = 0;
     bool start_message_ = false;
     bool end_message_ = false;
-    bool got_ack_ = false;
-    bool got_nack_ = false;
+    ACK_ACK_t got_ack_;
+    ACK_NACK_t got_nack_;
+    CFG_VALGET_t cfg_val_get_msg;
     parse_state_t parse_state_;
     uint8_t message_class_;
     uint8_t message_type_;

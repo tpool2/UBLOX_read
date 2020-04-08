@@ -33,6 +33,11 @@ UBX::UBX(async_comm::Serial& ser) :
     start_message_ = false;
     new_data_ = false;
     end_message_ = false;
+    in_message_.ACK_ACK.clsID=0x00;
+    in_message_.ACK_ACK.msgID=0x00;
+    in_message_.ACK_NACK.clsID=0x00;
+    in_message_.ACK_NACK.msgID=0x00;
+    cfg_val_get_msg.version=0;
 }
 
 bool UBX::parsing_message()
@@ -63,6 +68,10 @@ bool UBX::read_cb(uint8_t byte)
             ck_b_ = 0;
             start_message_ = true;
             end_message_ = false;
+            in_message_.ACK_ACK.clsID=0x00;
+            in_message_.ACK_ACK.msgID=0x00;
+            in_message_.ACK_NACK.clsID=0x00;
+            in_message_.ACK_NACK.msgID=0x00;
         }
         break;
     case GOT_START_FRAME:
@@ -171,18 +180,24 @@ bool UBX::decode_message()
         switch (message_type_)
         {
         case ACK_ACK:
-            got_ack_ = true;
+            got_ack_.clsID=in_message_.buffer[0];
+            got_ack_.msgID=in_message_.buffer[1];
+            in_message_.ACK_ACK.clsID=in_message_.buffer[0];
+            in_message_.ACK_ACK.msgID=in_message_.buffer[1];
             DBG("ACK\n");
             break;
         case ACK_NACK:
-            got_nack_ = true;
-            DBG("NACK\n");
+            got_nack_.clsID=in_message_.buffer[0];
+            got_nack_.msgID=in_message_.buffer[1];
+            in_message_.ACK_NACK.clsID=in_message_.buffer[0];
+            in_message_.ACK_NACK.msgID=in_message_.buffer[1];
+            DBG(("NACK: "+UBX_map[in_message_.ACK_NACK.clsID][in_message_.ACK_NACK.msgID]+"\n").c_str());
             break;
         default:
             DBG("%d\n", message_type_);
             break;
         }
-        DBG((UBX_map[in_message_.buffer[0]][in_message_.buffer[1]]+"\n").c_str());
+        DBG("%i, %i\n", in_message_.buffer[0], in_message_.buffer[1]);
         break;
    case CLASS_CFG: //only needed for getting data
        DBG("CFG_");
@@ -201,7 +216,7 @@ bool UBX::decode_message()
        }
 
     default:
-        DBG((UBX_map[message_class_][message_type_]+"\n").c_str());
+        // DBG((UBX_map[message_class_][message_type_]+"\n").c_str());
         break;
     }
 
@@ -326,6 +341,40 @@ void UBX::del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
     send_message(CLASS_CFG, CFG_VALDEL, out_message_, sizeof(CFG_VALDEL_t));
     // std::cerr<<"Deleted configuration of "<<cfgDataKey<<std::endl;
 }
+
+CFG_VALGET_t UBX::cfgValGet(CFG_VALGET_t request)
+{
+    memset(&out_message_, 0, sizeof(CFG_VALGET_t));
+    out_message_.CFG_VALGET=request;
+    send_message(CLASS_CFG, CFG_VALGET, out_message_, sizeof(CFG_VALGET_t));
+
+    // Wait for ACK_ACK or ACK_NACK message to come back
+    clock_t start, t;
+    start=clock();
+    t=clock()-start;
+
+    while(((float)t)/CLOCKS_PER_SEC<10
+            && !(in_message_.ACK_ACK.clsID==CLASS_CFG && in_message_.ACK_ACK.msgID==CFG_VALGET))
+    {
+        t=clock()-start;
+
+        if(in_message_.ACK_NACK.clsID==CLASS_CFG && in_message_.ACK_NACK.msgID==CFG_VALGET)
+        {
+            return request;
+        }
+    }
+
+    /*start=clock();
+    t=clock()-start;
+    while(((float)t)/CLOCKS_PER_SEC<10
+            && !cfg_val_get_msg.version==1)
+    {
+
+    }*/
+    
+    return request;
+}
+
 std::map<uint8_t, std::string> UBX::ACK_msg_map =
 {
 	{0x01, "ACK_ACK"},

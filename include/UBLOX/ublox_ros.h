@@ -16,6 +16,8 @@
 #include "ublox/Observation.h"
 #include "ublox/ObsVec.h"
 
+#include "ublox/CfgValGet.h"
+
 namespace ublox_ros
 {
 
@@ -50,6 +52,9 @@ private:
     void obsCB(const ublox::RXM_RAWX_t& msg);
     void ephCB(const Ephemeris& eph);
     void gephCB(const GlonassEphemeris& eph);
+
+    bool cfgValGet(ublox::CfgValGet::Request &req, ublox::CfgValGet::Response &res);
+    ros::ServiceServer cfg_val_get;
 
     uint32_t pos_tow_;
     uint32_t vel_tow_;
