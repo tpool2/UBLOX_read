@@ -171,17 +171,17 @@ bool UBX::decode_message()
         {
         case ACK_ACK:
             got_ack_ = true;
-            DBG("ACK\n");
+            DBG("ACK: ");
             break;
         case ACK_NACK:
             got_nack_ = true;
-            DBG("NACK\n");
+            DBG("NACK: ");
             break;
         default:
             DBG("%d\n", message_type_);
             break;
         }
-        DBG((UBX_map[in_message_.buffer[0]][in_message_.buffer[1]]+"\n").c_str());
+        DBG((UBX_map[in_message_.ACK_ACK.clsID][in_message_.ACK_ACK.msgID]+"\n").c_str());
         break;
    case CLASS_CFG: //only needed for getting data
        DBG("CFG_");
@@ -189,9 +189,9 @@ bool UBX::decode_message()
        {
        case CFG_VALGET:
        {
-           DBG("VALGET = ");
-           int value = in_message_.CFG_VALGET.cfgData;
-           DBG("%d \n", value);
+           DBG("VALGET: ");
+           DBG("Key: %i ", in_message_.CFG_VALGET.cfgDataKey);
+           DBG("Value: %i \n", in_message_.CFG_VALGET.cfgData);
            break;
        }
        default:

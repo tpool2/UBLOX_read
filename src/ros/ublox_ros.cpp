@@ -616,17 +616,18 @@ void UBLOX_ROS::gephCB(const GlonassEphemeris &eph)
 bool UBLOX_ROS::cfgValGet(ublox::CfgValGet::Request &req, ublox::CfgValGet::Response &res)
 {
     ublox::CFG_VALGET_t request;
-    request.version=req.version;
+    request.version=0;
     request.layer=req.layer;
     request.position=req.position;
-    request.cfgDataKey=req.keys;
+    request.cfgDataKey=req.key;
 
     ublox::CFG_VALGET_t response = ublox_->cfgValGet(request);
     
     res.version=response.version;
     res.layer=response.layer;
     res.position=response.position;
-    res.cfgData.push_back(response.cfgData);
+    res.key=response.cfgDataKey;
+    res.value=response.cfgData;
     return true;
 }
 
