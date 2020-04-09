@@ -17,7 +17,7 @@ public:
     UBX(async_comm::Serial& ser);
 
     void configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size);
-    void get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
+    CFG_VALGET_t get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
     void del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
 
     // This function returns true when a new message has been parsed
@@ -66,6 +66,8 @@ public:
     bool end_message_ = false;
     bool got_ack_ = false;
     bool got_nack_ = false;
+    bool got_cfg_val=false;
+    CFG_VALGET_t cfg_val_get;
     parse_state_t parse_state_;
     uint8_t message_class_;
     uint8_t message_type_;
