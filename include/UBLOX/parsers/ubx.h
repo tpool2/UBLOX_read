@@ -66,7 +66,7 @@ public:
     bool end_message_ = false;
     bool got_ack_ = false;
     bool got_nack_ = false;
-    bool got_cfg_val=false;
+    bool got_cfg_val_=false;
     CFG_VALGET_t cfg_val_get;
     parse_state_t parse_state_;
     uint8_t message_class_;

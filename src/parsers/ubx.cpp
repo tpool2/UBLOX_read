@@ -193,7 +193,7 @@ bool UBX::decode_message()
            DBG("Key: %i ", in_message_.CFG_VALGET.cfgDataKey);
            DBG("Value: %i \n", in_message_.CFG_VALGET.cfgData);
            cfg_val_get=in_message_.CFG_VALGET;
-           got_cfg_val=true;
+           got_cfg_val_=true;
            break;
        }
        default:
@@ -302,7 +302,7 @@ void UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t c
     }
     out_message_.CFG_VALSET.cfgDataKey = cfgDataKey;
     send_message(CLASS_CFG, CFG_VALSET, out_message_, sizeof(CFG_VALSET_t));
-    std::cerr<<"Configured "<< cfgDataKey<<" to "<<cfgData<<std::endl;
+    // std::cerr<<"Configured "<< cfgDataKey<<" to "<<cfgData<<std::endl;
 }
 
 CFG_VALGET_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
@@ -313,13 +313,16 @@ CFG_VALGET_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32_t cfg
        out_message_.CFG_VALGET.cfgDataKey = cfgDataKey;
        send_message(CLASS_CFG, CFG_VALGET, out_message_, sizeof(CFG_VALGET_t));
     //    std::cerr<<"Got configuration of "<<cfgDataKey<<" to "<<cfgData<<std::endl;
-        
-        while(!got_cfg_val)
-        {
-            DBG("Waiting...\n");
-        }
 
-        got_cfg_val=false;
+        while(!(got_ack_ && got_cfg_val_) && !got_nack_)
+        {
+            // DBG("ACK: %i, NACK: %i, GOT_CFG: %i\n", got_ack_, got_nack_, got_cfg_val_);
+        }
+        // DBG("ACK: %i, NACK: %i, GOT_CFG: %i\n", got_ack_, got_nack_, got_cfg_val_);
+
+        got_cfg_val_=false;
+        got_nack_=false;
+        got_ack_=false;
 
         return cfg_val_get;
 
