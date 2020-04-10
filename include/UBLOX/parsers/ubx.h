@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <iostream>
+#include <ctime>
 
 #include "async_comm/serial.h"
 #include "UBLOX/parsers/ubx_defs.h"
@@ -58,6 +59,11 @@ public:
     void calculate_checksum(const uint8_t msg_cls, const uint8_t msg_id,
                             const uint16_t len, const UBX_message_t payload,
                             uint8_t &ck_a, uint8_t &ck_b) const;
+
+    inline double time_elapsed(clock_t start)
+    {
+        return ((float)(clock()-start))/CLOCKS_PER_SEC;
+    }
 
     // Parsing State Working Memory
     uint8_t prev_byte_;

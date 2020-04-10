@@ -170,11 +170,13 @@ bool UBX::decode_message()
         switch (message_type_)
         {
         case ACK_ACK:
-            got_ack_ = true;
+            if(in_message_.ACK_ACK.clsID==CLASS_CFG && in_message_.ACK_ACK.msgID==CFG_VALGET)
+                got_ack_ = true;
             DBG("ACK: ");
             break;
         case ACK_NACK:
-            got_nack_ = true;
+            if(in_message_.ACK_NACK.clsID==CLASS_CFG && in_message_.ACK_NACK.msgID==CFG_VALGET)
+                got_nack_ = true;
             DBG("NACK: ");
             break;
         default:
@@ -314,7 +316,9 @@ CFG_VALGET_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32_t cfg
        send_message(CLASS_CFG, CFG_VALGET, out_message_, sizeof(CFG_VALGET_t));
     //    std::cerr<<"Got configuration of "<<cfgDataKey<<" to "<<cfgData<<std::endl;
 
-        while(!(got_ack_ && got_cfg_val_) && !got_nack_)
+        clock_t start = clock();
+
+        while( (!(got_ack_ && got_cfg_val_) && !got_nack_) && time_elapsed(start) < 5)
         {
             // DBG("ACK: %i, NACK: %i, GOT_CFG: %i\n", got_ack_, got_nack_, got_cfg_val_);
         }

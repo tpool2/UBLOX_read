@@ -45,7 +45,7 @@ void UBLOX::config_f9p() //See ubx_defs.h for more information
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_INPROT_NMEA, byte); //Flag to indicate if NMEA should be an input protocol on USB
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_OUTPROT_NMEA, byte); //Flag to indicate if NMEA should be an output protocol on USB
 
-    bool poll = false;
+    bool poll = true;
     if(poll == true)
         poll_value();
 }
