@@ -18,7 +18,7 @@ public:
     UBX(async_comm::Serial& ser);
 
     void configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size);
-    CFG_VALGET_t get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
+    CFG_VALGET_TUPLE_t get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
     void del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
 
     // This function returns true when a new message has been parsed
@@ -68,6 +68,7 @@ public:
     // Parsing State Working Memory
     uint8_t prev_byte_;
     uint16_t buffer_head_ = 0;
+    CFG_VALGET_DBG_t valget_dbg_;
     bool start_message_ = false;
     bool end_message_ = false;
     bool got_ack_ = false;

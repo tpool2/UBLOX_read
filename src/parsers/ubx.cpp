@@ -32,6 +32,7 @@ UBX::UBX(async_comm::Serial& ser) :
     start_message_ = false;
     new_data_ = false;
     end_message_ = false;
+    memset(&valget_dbg_, 0, sizeof(CFG_VALGET_DBG_t));
 }
 
 bool UBX::parsing_message()
@@ -171,12 +172,12 @@ bool UBX::decode_message()
         {
         case ACK_ACK:
             if(in_message_.ACK_ACK.clsID==CLASS_CFG && in_message_.ACK_ACK.msgID==CFG_VALGET)
-                got_ack_ = true;
+                valget_dbg_.got_ack = true;
             DBG("ACK: ");
             break;
         case ACK_NACK:
             if(in_message_.ACK_NACK.clsID==CLASS_CFG && in_message_.ACK_NACK.msgID==CFG_VALGET)
-                got_nack_ = true;
+                valget_dbg_.got_nack = true;
             DBG("NACK: ");
             break;
         default:
@@ -195,7 +196,7 @@ bool UBX::decode_message()
            DBG("Key: %i ", in_message_.CFG_VALGET.cfgDataKey);
            DBG("Value: %i \n", in_message_.CFG_VALGET.cfgData);
            cfg_val_get=in_message_.CFG_VALGET;
-           got_cfg_val_=true;
+           valget_dbg_.got_cfg_val=true;
            break;
        }
        default:
@@ -307,9 +308,10 @@ void UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t c
     // std::cerr<<"Configured "<< cfgDataKey<<" to "<<cfgData<<std::endl;
 }
 
-CFG_VALGET_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
+CFG_VALGET_TUPLE_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
 {
        memset(&out_message_, 0, sizeof(CFG_VALGET_t));
+       memset(&valget_dbg_, 0, sizeof(CFG_VALGET_DBG_t));
        out_message_.CFG_VALGET.version = version;
        out_message_.CFG_VALGET.layer = layer;
        out_message_.CFG_VALGET.cfgDataKey = cfgDataKey;
@@ -318,17 +320,13 @@ CFG_VALGET_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32_t cfg
 
         clock_t start = clock();
 
-        while( (!(got_ack_ && got_cfg_val_) && !got_nack_) && time_elapsed(start) < 5)
+        while( (!(valget_dbg_.got_ack && valget_dbg_.got_cfg_val) && !valget_dbg_.got_nack) && time_elapsed(start) < 5)
         {
             // DBG("ACK: %i, NACK: %i, GOT_CFG: %i\n", got_ack_, got_nack_, got_cfg_val_);
         }
         // DBG("ACK: %i, NACK: %i, GOT_CFG: %i\n", got_ack_, got_nack_, got_cfg_val_);
 
-        got_cfg_val_=false;
-        got_nack_=false;
-        got_ack_=false;
-
-        return cfg_val_get;
+        return {valget_dbg_, cfg_val_get};
 
 }
 

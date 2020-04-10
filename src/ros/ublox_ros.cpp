@@ -621,13 +621,13 @@ bool UBLOX_ROS::cfgValGet(ublox::CfgValGet::Request &req, ublox::CfgValGet::Resp
     request.position=req.position;
     request.cfgDataKey=req.key;
 
-    ublox::CFG_VALGET_t response = ublox_->cfgValGet(request);
+    ublox::CFG_VALGET_TUPLE_t response = ublox_->cfgValGet(request);
     
-    res.version=response.version;
-    res.layer=response.layer;
-    res.position=response.position;
-    res.key=response.cfgDataKey;
-    res.value=response.cfgData;
+    res.version=std::get<1>(response).version;
+    res.layer=std::get<1>(response).layer;
+    res.position=std::get<1>(response).position;
+    res.key=std::get<1>(response).cfgDataKey;
+    res.value=std::get<1>(response).cfgData;
     return true;
 }
 

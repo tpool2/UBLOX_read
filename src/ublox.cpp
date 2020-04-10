@@ -428,10 +428,8 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
 
   } // End function vector_math
 
-  CFG_VALGET_t UBLOX::cfgValGet(const CFG_VALGET_t &request)
+  CFG_VALGET_TUPLE_t UBLOX::cfgValGet(const CFG_VALGET_t &request)
   {
-      CFG_VALGET_t response=ubx_.get_configuration(request.version, request.layer, request.cfgDataKey);
-        
-      return response;
+      return ubx_.get_configuration(request.version, request.layer, request.cfgDataKey);
   }
 }
