@@ -7,3 +7,7 @@ uint8 layer
 uint16 position
 uint32 key
 uint64 value
+uint8 ack
+uint8 nack
+uint8 gotcfg
+uint8 flags

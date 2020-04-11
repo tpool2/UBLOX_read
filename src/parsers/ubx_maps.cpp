@@ -176,7 +176,7 @@ namespace ublox
         {0x27, SEC_msg_map}
     };
 
-    std::map<std::string, uint32_t> UBX_cfg_map = 
+    std::map<std::string, uint32_t> UBX::UBX_cfg_map = 
     {
         {"CFG-GEOFENCE-CONFLVL", 0x20240011},
         {"CFG-GEOFENCE-USE_PIO", 0x10240012},

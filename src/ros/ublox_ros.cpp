@@ -628,6 +628,11 @@ bool UBLOX_ROS::cfgValGet(ublox::CfgValGet::Request &req, ublox::CfgValGet::Resp
     res.position=std::get<1>(response).position;
     res.key=std::get<1>(response).cfgDataKey;
     res.value=std::get<1>(response).cfgData;
+    res.ack=std::get<0>(response).got_ack;
+    res.nack=std::get<0>(response).got_nack;
+    res.gotcfg=std::get<0>(response).got_cfg_val;
+    res.flags=std::get<0>(response).flags;
+
     return true;
 }
 

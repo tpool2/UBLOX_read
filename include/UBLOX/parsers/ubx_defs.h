@@ -365,11 +365,14 @@ typedef struct {
     uint64_t cfgData;
 }__attribute__((packed)) CFG_VALGET_t;
 
-typedef struct {
+typedef union {
+    struct {
     uint8_t invalid_map_val   : 1;
     uint8_t got_nack            : 1;
     uint8_t got_ack             : 1;
     uint8_t got_cfg_val       : 1;
+    };
+    uint8_t flags;
 }__attribute__((packed)) CFG_VALGET_DBG_t;
 
 typedef std::tuple<CFG_VALGET_DBG_t, CFG_VALGET_t> CFG_VALGET_TUPLE_t;

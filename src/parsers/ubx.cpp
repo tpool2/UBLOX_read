@@ -320,11 +320,7 @@ CFG_VALGET_TUPLE_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32
 
         clock_t start = clock();
 
-        while( (!(valget_dbg_.got_ack && valget_dbg_.got_cfg_val) && !valget_dbg_.got_nack) && time_elapsed(start) < 5)
-        {
-            // DBG("ACK: %i, NACK: %i, GOT_CFG: %i\n", got_ack_, got_nack_, got_cfg_val_);
-        }
-        // DBG("ACK: %i, NACK: %i, GOT_CFG: %i\n", got_ack_, got_nack_, got_cfg_val_);
+        while( (!(valget_dbg_.got_ack && valget_dbg_.got_cfg_val) && !valget_dbg_.got_nack) && time_elapsed(start) < 5);
 
         return {valget_dbg_, cfg_val_get};
 

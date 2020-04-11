@@ -71,9 +71,6 @@ public:
     CFG_VALGET_DBG_t valget_dbg_;
     bool start_message_ = false;
     bool end_message_ = false;
-    bool got_ack_ = false;
-    bool got_nack_ = false;
-    bool got_cfg_val_=false;
     CFG_VALGET_t cfg_val_get;
     parse_state_t parse_state_;
     uint8_t message_class_;
@@ -103,6 +100,7 @@ public:
     static std::map<uint8_t, std::string> SEC_msg_map;
     static std::map<uint8_t, std::string> TIM_msg_map;
     static std::map<uint8_t, std::string> UPD_msg_map;
+
     static std::map<uint8_t, std::map<uint8_t, std::string>> UBX_map;
 
     static std::map<std::string, uint32_t> UBX_cfg_map;
