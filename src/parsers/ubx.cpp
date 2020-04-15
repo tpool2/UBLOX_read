@@ -32,7 +32,7 @@ UBX::UBX(async_comm::Serial& ser) :
     start_message_ = false;
     new_data_ = false;
     end_message_ = false;
-    memset(&valget_dbg_, 0, sizeof(CFG_VALGET_DBG_t));
+    memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
 
     fill_cfg_map();
 }
@@ -173,13 +173,13 @@ bool UBX::decode_message()
         switch (message_type_)
         {
         case ACK_ACK:
-            if(in_message_.ACK_ACK.clsID==CLASS_CFG && in_message_.ACK_ACK.msgID==CFG_VALGET)
-                valget_dbg_.got_ack = true;
+            if(in_message_.ACK_ACK.clsID==CLASS_CFG)
+                cfgval_dbg_.got_ack = true;
             DBG("ACK: ");
             break;
         case ACK_NACK:
-            if(in_message_.ACK_NACK.clsID==CLASS_CFG && in_message_.ACK_NACK.msgID==CFG_VALGET)
-                valget_dbg_.got_nack = true;
+            if(in_message_.ACK_NACK.clsID==CLASS_CFG)
+                cfgval_dbg_.got_nack = true;
             DBG("NACK: ");
             break;
         default:
@@ -198,9 +198,14 @@ bool UBX::decode_message()
            DBG("Key: %i ", in_message_.CFG_VALGET.cfgDataKey);
            DBG("Value: %i \n", in_message_.CFG_VALGET.cfgData);
            cfg_val_get=in_message_.CFG_VALGET;
-           valget_dbg_.got_cfg_val=true;
+           cfgval_dbg_.got_cfg_val=true;
            break;
        }
+       case CFG_VALDEL:
+            DBG("VALDEL: ");
+            DBG("Key: %i ", in_message_.CFG_VALDEL.cfgDataKey);
+            cfg_val_del_=in_message_.CFG_VALDEL;
+            cfgval_dbg_.got_cfg_val=true;
        default:
            DBG("unknown: %x\n", message_type_);
            break;
@@ -314,7 +319,7 @@ CFG_VALGET_TUPLE_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32
 {
        DBG("%s\n", (UBX_cfg_map.right.find(cfgDataKey)->second).c_str());
        memset(&out_message_, 0, sizeof(CFG_VALGET_t));
-       memset(&valget_dbg_, 0, sizeof(CFG_VALGET_DBG_t));
+       memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
        out_message_.CFG_VALGET.version = version;
        out_message_.CFG_VALGET.layer = layer;
        out_message_.CFG_VALGET.cfgDataKey = cfgDataKey;
@@ -323,21 +328,28 @@ CFG_VALGET_TUPLE_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32
 
         clock_t start = clock();
 
-        while( (!(valget_dbg_.got_ack && valget_dbg_.got_cfg_val) && !valget_dbg_.got_nack) && time_elapsed(start) < 5);
+        while( (!(cfgval_dbg_.got_ack && cfgval_dbg_.got_cfg_val) && !cfgval_dbg_.got_nack) && time_elapsed(start) < 5);
 
-        return {valget_dbg_, cfg_val_get};
+        return {cfgval_dbg_, cfg_val_get};
 
 }
 
 //Deletes configuration values specified by the key
-void UBX::del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
+CFG_VALDEL_TUPLE_t UBX::del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
 {
     memset(&out_message_, 0, sizeof(CFG_VALDEL_t));
+    memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
     out_message_.CFG_VALDEL.version = version;
     out_message_.CFG_VALDEL.layer = layer;
     out_message_.CFG_VALDEL.cfgDataKey = cfgDataKey;
     send_message(CLASS_CFG, CFG_VALDEL, out_message_, sizeof(CFG_VALDEL_t));
-    std::cerr<<"Deleted configuration of "<<cfgDataKey<<std::endl;
+    // std::cerr<<"Deleted configuration of "<<cfgDataKey<<std::endl;
+
+    clock_t start = clock();
+
+    while( !(cfgval_dbg_.got_ack && cfgval_dbg_.got_cfg_val) && !cfgval_dbg_.got_nack && time_elapsed(start) < 5);
+
+    return {cfgval_dbg_, cfg_val_del_};
 }
 
 uint32_t translate(std::string key)

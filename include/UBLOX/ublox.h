@@ -123,6 +123,7 @@ public:
     void vector_math(double ned_1[], double ned_2[], double answer[]);
 
     CFG_VALGET_TUPLE_t cfgValGet(const CFG_VALGET_t &request);
+    CFG_VALDEL_TUPLE_t cfgValDel(const CFG_VALDEL_t &request);
 
     uint8_t byte = 1;
     uint8_t word = 2;

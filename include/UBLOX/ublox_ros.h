@@ -17,6 +17,7 @@
 #include "ublox/ObsVec.h"
 
 #include "ublox/CfgValGet.h"
+#include "ublox/CfgValDel.h"
 
 namespace ublox_ros
 {
@@ -54,7 +55,9 @@ private:
     void gephCB(const GlonassEphemeris& eph);
 
     bool cfgValGet(ublox::CfgValGet::Request &req, ublox::CfgValGet::Response &res);
+    bool cfgValDel(ublox::CfgValDel::Request &req, ublox::CfgValDel::Response &res);
     ros::ServiceServer cfg_val_get;
+    ros::ServiceServer cfg_val_del_;
 
     uint32_t pos_tow_;
     uint32_t vel_tow_;

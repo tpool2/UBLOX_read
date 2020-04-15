@@ -58,6 +58,7 @@ UBLOX_ROS::UBLOX_ROS() :
 
     // Connect ROS services
     cfg_val_get = nh_.advertiseService("CfgValGet", &UBLOX_ROS::cfgValGet, this);
+    cfg_val_del_ = nh_.advertiseService("CfgValDel", &UBLOX_ROS::cfgValDel, this);
 
     //Get the serial port
     std::string serial_port = nh_private_.param<std::string>("serial_port", "/dev/ttyACM0");
@@ -632,6 +633,27 @@ bool UBLOX_ROS::cfgValGet(ublox::CfgValGet::Request &req, ublox::CfgValGet::Resp
     res.nack=std::get<0>(response).got_nack;
     res.gotcfg=std::get<0>(response).got_cfg_val;
     res.flags=std::get<0>(response).flags;
+
+    return true;
+}
+
+bool UBLOX_ROS::cfgValDel(ublox::CfgValDel::Request &req, ublox::CfgValDel::Response &res)
+{
+    ublox::CFG_VALDEL_t request;
+    request.version = 0;
+    request.layer = req.layer;
+    request.cfgDataKey=req.key;
+
+    ublox::CFG_VALDEL_TUPLE_t response = ublox_->cfgValDel(request);
+
+    res.version = std::get<1>(response).version;
+    res.layer = std::get<1>(response).layer;
+    res.transaction = 0;
+    res.key = std::get<1>(response).cfgDataKey;
+    res.got_Ack = std::get<0>(response).got_ack;
+    res.got_Nack = std::get<0>(response).got_nack;
+    res.got_Cfg_Msg = std::get<0>(response).got_cfg_val;
+    res.flags = std::get<0>(response).flags;
 
     return true;
 }

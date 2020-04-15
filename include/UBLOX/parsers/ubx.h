@@ -22,7 +22,7 @@ public:
 
     void configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size);
     CFG_VALGET_TUPLE_t get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
-    void del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
+    CFG_VALDEL_TUPLE_t del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
 
     // This function returns true when a new message has been parsed
     bool read_cb(uint8_t byte);
@@ -74,10 +74,11 @@ public:
     // Parsing State Working Memory
     uint8_t prev_byte_;
     uint16_t buffer_head_ = 0;
-    CFG_VALGET_DBG_t valget_dbg_;
+    CFG_VAL_DBG_t cfgval_dbg_;
     bool start_message_ = false;
     bool end_message_ = false;
     CFG_VALGET_t cfg_val_get;
+    CFG_VALDEL_t cfg_val_del_;
     parse_state_t parse_state_;
     uint8_t message_class_;
     uint8_t message_type_;

@@ -374,9 +374,9 @@ typedef union {
     uint8_t got_cfg_val       : 1;
     };
     uint8_t flags;
-}__attribute__((packed)) CFG_VALGET_DBG_t;
+}__attribute__((packed)) CFG_VAL_DBG_t;
 
-typedef std::tuple<CFG_VALGET_DBG_t, CFG_VALGET_t> CFG_VALGET_TUPLE_t;
+typedef std::tuple<CFG_VAL_DBG_t, CFG_VALGET_t> CFG_VALGET_TUPLE_t;
 
 typedef struct {
     enum {
@@ -609,13 +609,9 @@ typedef struct
     uint8_t reserved1[2];
     uint32_t cfgDataKey;
 
-    union
-    {
-        uint8_t bytes[4];
-        uint16_t half_word[2];
-        uint32_t word;
-    } cfgData;
 }__attribute__((packed)) CFG_VALDEL_t;
+
+typedef std::tuple<CFG_VAL_DBG_t, CFG_VALDEL_t> CFG_VALDEL_TUPLE_t;
 
 typedef struct {
     enum {
