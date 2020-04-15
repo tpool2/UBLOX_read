@@ -203,18 +203,9 @@ bool UBX::decode_message()
        }
        case CFG_VALDEL:
             DBG("VALDEL: ");
-            DBG("Key: %i \n", in_message_.CFG_VALDEL.cfgDataKey);
+            DBG("Key: %i ", in_message_.CFG_VALDEL.cfgDataKey);
             cfg_val_del_=in_message_.CFG_VALDEL;
             cfgval_dbg_.got_cfg_val=true;
-            break;
-
-        case CFG_VALSET:
-            DBG("VALSET: ");
-            DBG("Key: %i \n", in_message_.CFG_VALSET.cfgDataKey);
-            cfg_val_set_=in_message_.CFG_VALSET;
-            cfgval_dbg_.got_cfg_val=true;
-            break;
-
        default:
            DBG("unknown: %x\n", message_type_);
            break;
@@ -306,10 +297,9 @@ void UBX::set_nav_rate(uint16_t period_ms)
 /*
 Configures settings for the f9p module
 */
-CFG_VALSET_TUPLE_t UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size)
+void UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size)
 {
     memset(&out_message_, 0, sizeof(CFG_VALSET_t));
-    memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
     out_message_.CFG_VALSET.version = version;
     out_message_.CFG_VALSET.layer = layer;
     if(size == byte)
@@ -323,30 +313,24 @@ CFG_VALSET_TUPLE_t UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgDa
     out_message_.CFG_VALSET.cfgDataKey = cfgDataKey;
     send_message(CLASS_CFG, CFG_VALSET, out_message_, sizeof(CFG_VALSET_t));
     // std::cerr<<"Configured "<< cfgDataKey<<" to "<<cfgData<<std::endl;
-
-    clock_t start = clock();
-
-    while( (!cfgval_dbg_.got_ack && !cfgval_dbg_.got_nack) && time_elapsed(start) < 5);
-
-    return {cfgval_dbg_, cfg_val_set_};
 }
 
 CFG_VALGET_TUPLE_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
 {
-    DBG("%s\n", (UBX_cfg_map.right.find(cfgDataKey)->second).c_str());
-    memset(&out_message_, 0, sizeof(CFG_VALGET_t));
-    memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
-    out_message_.CFG_VALGET.version = version;
-    out_message_.CFG_VALGET.layer = layer;
-    out_message_.CFG_VALGET.cfgDataKey = cfgDataKey;
-    send_message(CLASS_CFG, CFG_VALGET, out_message_, sizeof(CFG_VALGET_t));
-//    std::cerr<<"Got configuration of "<<cfgDataKey<<" to "<<cfgData<<std::endl;
+       DBG("%s\n", (UBX_cfg_map.right.find(cfgDataKey)->second).c_str());
+       memset(&out_message_, 0, sizeof(CFG_VALGET_t));
+       memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
+       out_message_.CFG_VALGET.version = version;
+       out_message_.CFG_VALGET.layer = layer;
+       out_message_.CFG_VALGET.cfgDataKey = cfgDataKey;
+       send_message(CLASS_CFG, CFG_VALGET, out_message_, sizeof(CFG_VALGET_t));
+    //    std::cerr<<"Got configuration of "<<cfgDataKey<<" to "<<cfgData<<std::endl;
 
-    clock_t start = clock();
+        clock_t start = clock();
 
-    while( (!(cfgval_dbg_.got_ack && cfgval_dbg_.got_cfg_val) && !cfgval_dbg_.got_nack) && time_elapsed(start) < 5);
+        while( (!(cfgval_dbg_.got_ack && cfgval_dbg_.got_cfg_val) && !cfgval_dbg_.got_nack) && time_elapsed(start) < 5);
 
-    return {cfgval_dbg_, cfg_val_get};
+        return {cfgval_dbg_, cfg_val_get};
 
 }
 

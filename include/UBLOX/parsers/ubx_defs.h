@@ -493,13 +493,10 @@ typedef struct {
         uint8_t bytes[4];
         uint16_t half_word[2];
         uint32_t word;
-        uint64_t word2;
     } cfgData;
 
 
 }__attribute__((packed)) CFG_VALSET_t;
-
-typedef std::tuple<CFG_VAL_DBG_t, CFG_VALSET_t> CFG_VALSET_TUPLE_t;
 
 typedef struct
 {

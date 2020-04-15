@@ -440,10 +440,4 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
 
       return ubx_.del_configuration(request.version, request.layer, request.cfgDataKey);
   }
-
-  CFG_VALSET_TUPLE_t UBLOX::cfgValSet(const std::tuple<CFG_VALSET_t, uint8_t> &requests)
-  {
-      CFG_VALSET_t request = std::get<0>(requests);
-      return ubx_.configure(request.version, request.layer, request.cfgData.word2, request.cfgDataKey, std::get<1>(requests));
-  }
 }
