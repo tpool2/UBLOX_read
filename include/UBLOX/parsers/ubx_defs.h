@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <map>
+#include <boost/bimap.hpp>
 namespace ublox
 {
 

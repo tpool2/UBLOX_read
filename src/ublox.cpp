@@ -431,6 +431,7 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
 
   CFG_VALGET_TUPLE_t UBLOX::cfgValGet(const CFG_VALGET_t &request)
   {
+      
       return ubx_.get_configuration(request.version, request.layer, request.cfgDataKey);
   }
 }

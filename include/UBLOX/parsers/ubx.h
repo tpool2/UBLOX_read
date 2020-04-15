@@ -10,12 +10,15 @@
 
 namespace ublox
 {
+    typedef boost::bimaps::bimap<std::string, uint32_t> bimap_type;
+    typedef bimap_type::value_type value_type;
 
 class UBX
 {
 public:
 
     UBX(async_comm::Serial& ser);
+    void fill_cfg_map();
 
     void configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size);
     CFG_VALGET_TUPLE_t get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
@@ -60,6 +63,9 @@ public:
                             const uint16_t len, const UBX_message_t payload,
                             uint8_t &ck_a, uint8_t &ck_b) const;
 
+    // Translation function prior to cfgval functions
+    uint32_t translate(std::string key);
+
     inline double time_elapsed(clock_t start)
     {
         return ((float)(clock()-start))/CLOCKS_PER_SEC;
@@ -103,7 +109,7 @@ public:
 
     static std::map<uint8_t, std::map<uint8_t, std::string>> UBX_map;
 
-    static std::map<std::string, uint32_t> UBX_cfg_map;
+    bimap_type UBX_cfg_map;
     
     // local storage
     volatile bool new_data_;

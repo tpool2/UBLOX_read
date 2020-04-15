@@ -33,6 +33,8 @@ UBX::UBX(async_comm::Serial& ser) :
     new_data_ = false;
     end_message_ = false;
     memset(&valget_dbg_, 0, sizeof(CFG_VALGET_DBG_t));
+
+    fill_cfg_map();
 }
 
 bool UBX::parsing_message()
@@ -310,6 +312,7 @@ void UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t c
 
 CFG_VALGET_TUPLE_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
 {
+       DBG("%s\n", (UBX_cfg_map.right.find(cfgDataKey)->second).c_str());
        memset(&out_message_, 0, sizeof(CFG_VALGET_t));
        memset(&valget_dbg_, 0, sizeof(CFG_VALGET_DBG_t));
        out_message_.CFG_VALGET.version = version;
@@ -335,6 +338,15 @@ void UBX::del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
     out_message_.CFG_VALDEL.cfgDataKey = cfgDataKey;
     send_message(CLASS_CFG, CFG_VALDEL, out_message_, sizeof(CFG_VALDEL_t));
     std::cerr<<"Deleted configuration of "<<cfgDataKey<<std::endl;
+}
+
+uint32_t translate(std::string key)
+{
+    std::string::size_type leftover;
+
+    uint32_t numkey = std::stoi(key, &leftover, 0);
+
+    return numkey;
 }
 
 }
