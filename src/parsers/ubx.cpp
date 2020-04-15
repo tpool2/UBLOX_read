@@ -297,9 +297,10 @@ void UBX::set_nav_rate(uint16_t period_ms)
 /*
 Configures settings for the f9p module
 */
-void UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size)
+CFG_VAL_DBG_t UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size)
 {
     memset(&out_message_, 0, sizeof(CFG_VALSET_t));
+    memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
     out_message_.CFG_VALSET.version = version;
     out_message_.CFG_VALSET.layer = layer;
     if(size == byte)
@@ -313,6 +314,13 @@ void UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t c
     out_message_.CFG_VALSET.cfgDataKey = cfgDataKey;
     send_message(CLASS_CFG, CFG_VALSET, out_message_, sizeof(CFG_VALSET_t));
     // std::cerr<<"Configured "<< cfgDataKey<<" to "<<cfgData<<std::endl;
+
+    clock_t start = clock();
+
+    while( !cfgval_dbg_.got_ack && !cfgval_dbg_.got_nack && time_elapsed(start) < 5);
+
+    return cfgval_dbg_;
+
 }
 
 CFG_VALGET_TUPLE_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
