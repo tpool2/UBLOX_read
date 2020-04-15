@@ -59,6 +59,7 @@ UBLOX_ROS::UBLOX_ROS() :
     // Connect ROS services
     cfg_val_get = nh_.advertiseService("CfgValGet", &UBLOX_ROS::cfgValGet, this);
     cfg_val_del_ = nh_.advertiseService("CfgValDel", &UBLOX_ROS::cfgValDel, this);
+    cfg_val_set_ = nh_.advertiseService("CfgValSet", &UBLOX_ROS::cfgValSet, this);
 
     //Get the serial port
     std::string serial_port = nh_private_.param<std::string>("serial_port", "/dev/ttyACM0");
@@ -656,6 +657,23 @@ bool UBLOX_ROS::cfgValDel(ublox::CfgValDel::Request &req, ublox::CfgValDel::Resp
     res.flags = std::get<0>(response).flags;
 
     return true;
+}
+
+bool UBLOX_ROS::cfgValSet(ublox::CfgValSet::Request &req, ublox::CfgValSet::Response &res)
+{
+    ublox::CFG_VALSET_t request;
+    request.version = 0;
+    request.layer = req.layer;
+    request.cfgDataKey = req.key;
+    request.cfgData.word2 = req.cfgData;
+    
+
+    ublox::CFG_VALSET_TUPLE_t response = ublox_->cfgValSet({request, req.size});
+
+    res.got_Ack = std::get<0>(response).got_ack;
+    res.got_Nack = std::get<0>(response).got_nack;
+
+
 }
 
 }

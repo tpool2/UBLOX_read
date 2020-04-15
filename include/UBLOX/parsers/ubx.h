@@ -20,7 +20,7 @@ public:
     UBX(async_comm::Serial& ser);
     void fill_cfg_map();
 
-    void configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size);
+    CFG_VALSET_TUPLE_t configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size);
     CFG_VALGET_TUPLE_t get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
     CFG_VALDEL_TUPLE_t del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
 
@@ -79,6 +79,7 @@ public:
     bool end_message_ = false;
     CFG_VALGET_t cfg_val_get;
     CFG_VALDEL_t cfg_val_del_;
+    CFG_VALSET_t cfg_val_set_;
     parse_state_t parse_state_;
     uint8_t message_class_;
     uint8_t message_type_;
