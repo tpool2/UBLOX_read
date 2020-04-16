@@ -79,7 +79,8 @@ if (${BUILD_ROS})
 		DIRECTORY srv
 		FILES
 		CfgValGet.srv
-		CfgValDel.srv)
+		CfgValDel.srv
+		CfgValSet.srv)
 		
 	generate_messages(
   		DEPENDENCIES

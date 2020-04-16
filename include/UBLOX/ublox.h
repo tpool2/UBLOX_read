@@ -124,7 +124,7 @@ public:
 
     CFG_VALGET_TUPLE_t cfgValGet(const CFG_VALGET_t &request);
     CFG_VALDEL_TUPLE_t cfgValDel(const CFG_VALDEL_t &request);
-    CFG_VAL_DBG_t cfgValSet(const std::tuple<CFG_VALSET_t, uint8_t> &requests);
+    CFG_VAL_DBG_t cfgValSet(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size);
 
     uint8_t byte = 1;
     uint8_t word = 2;
