@@ -204,7 +204,6 @@ bool UBX::decode_message()
        case CFG_VALDEL:
             DBG("VALDEL: ");
             DBG("Key: %i ", in_message_.CFG_VALDEL.cfgDataKey);
-            cfg_val_del_=in_message_.CFG_VALDEL;
             cfgval_dbg_.got_cfg_val=true;
        default:
            DBG("unknown: %x\n", message_type_);
@@ -343,7 +342,7 @@ CFG_VALGET_TUPLE_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32
 }
 
 //Deletes configuration values specified by the key
-CFG_VALDEL_TUPLE_t UBX::del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
+CFG_VAL_DBG_t UBX::del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
 {
     memset(&out_message_, 0, sizeof(CFG_VALDEL_t));
     memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
@@ -355,9 +354,9 @@ CFG_VALDEL_TUPLE_t UBX::del_configuration(uint8_t version, uint8_t layer, uint32
 
     clock_t start = clock();
 
-    while( !(cfgval_dbg_.got_ack && cfgval_dbg_.got_cfg_val) && !cfgval_dbg_.got_nack && time_elapsed(start) < 5);
+    while( !cfgval_dbg_.got_ack && !cfgval_dbg_.got_nack && time_elapsed(start) < 5);
 
-    return {cfgval_dbg_, cfg_val_del_};
+    return cfgval_dbg_;
 }
 
 uint32_t translate(std::string key)

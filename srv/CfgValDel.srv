@@ -1,11 +1,5 @@
 uint8 layer
 uint32 key
 ---
-uint8 version
-uint8 layer
-uint8 transaction
-uint32 key
 bool got_Ack
 bool got_Nack
-bool got_Cfg_Msg
-uint8 flags

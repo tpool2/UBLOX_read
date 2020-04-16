@@ -435,10 +435,10 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
       return ubx_.get_configuration(request.version, request.layer, request.cfgDataKey);
   }
 
-  CFG_VALDEL_TUPLE_t UBLOX::cfgValDel(const CFG_VALDEL_t &request)
+  CFG_VAL_DBG_t UBLOX::cfgValDel(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
   {
 
-      return ubx_.del_configuration(request.version, request.layer, request.cfgDataKey);
+      return ubx_.del_configuration(version, layer, cfgDataKey);
   }
 
   CFG_VAL_DBG_t UBLOX::cfgValSet(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size)

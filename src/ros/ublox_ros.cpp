@@ -640,21 +640,11 @@ bool UBLOX_ROS::cfgValGet(ublox::CfgValGet::Request &req, ublox::CfgValGet::Resp
 
 bool UBLOX_ROS::cfgValDel(ublox::CfgValDel::Request &req, ublox::CfgValDel::Response &res)
 {
-    ublox::CFG_VALDEL_t request;
-    request.version = 0;
-    request.layer = req.layer;
-    request.cfgDataKey=req.key;
 
-    ublox::CFG_VALDEL_TUPLE_t response = ublox_->cfgValDel(request);
+    ublox::CFG_VAL_DBG_t response = ublox_->cfgValDel(0, req.layer, req.key);
 
-    res.version = std::get<1>(response).version;
-    res.layer = std::get<1>(response).layer;
-    res.transaction = 0;
-    res.key = std::get<1>(response).cfgDataKey;
-    res.got_Ack = std::get<0>(response).got_ack;
-    res.got_Nack = std::get<0>(response).got_nack;
-    res.got_Cfg_Msg = std::get<0>(response).got_cfg_val;
-    res.flags = std::get<0>(response).flags;
+    res.got_Ack = response.got_ack;
+    res.got_Nack = response.got_nack;
 
     return true;
 }

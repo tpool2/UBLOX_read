@@ -611,8 +611,6 @@ typedef struct
 
 }__attribute__((packed)) CFG_VALDEL_t;
 
-typedef std::tuple<CFG_VAL_DBG_t, CFG_VALDEL_t> CFG_VALDEL_TUPLE_t;
-
 typedef struct {
     enum {
         TIME_REF_UTC = 0,
