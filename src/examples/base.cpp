@@ -27,9 +27,10 @@ int main(int argc, char** argv)
     // Create a UBLOX instance
 
     std::string port = "/dev/ttyACM0";
+    int message_rate = 10;
     if(argc > 1)
         port = argv[1];
-    ublox::UBLOX ublox(port);
+    ublox::UBLOX ublox(port, message_rate);
     // ublox.initBase("localhost", 16140, "localhost", 16145);
 
     // look for Ctrl+C and quit

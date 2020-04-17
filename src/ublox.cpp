@@ -5,7 +5,7 @@
 namespace ublox
 {
 
-UBLOX::UBLOX(const std::string& port) :
+UBLOX::UBLOX(const std::string& port, int message_rate) :
     serial_(port, 460800),
     //115200
     ubx_(serial_)
@@ -20,8 +20,9 @@ UBLOX::UBLOX(const std::string& port) :
     serial_.init();
       
     // configure the parsers/Enable Messages
-    ubx_.set_nav_rate(100);
-    std::cerr<<"Set nav rate to "<<100<<std::endl;
+
+    ubx_.set_nav_rate(message_rate);
+
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_PVT, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_RELPOSNED, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_POSECEF, byte);
