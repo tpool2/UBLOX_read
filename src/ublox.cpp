@@ -224,10 +224,11 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
     type_ = BASE;
 
     //Instantiate an array of UDP objects
-    udparray_ = new async_comm::UDP*[std::max(1, rover_quantity)];
+    if(rover_quantity>0)
+        udparray_ = new async_comm::UDP*[rover_quantity];
 
     //Fill udp objects into the array.
-    for(int i = 0; i < std::max(1, rover_quantity); i++) {
+    for(int i = 0; i < rover_quantity; i++) {
         std::cerr<<"Initializing Base to Rover "<<std::to_string(i+1)<<" UDP\n";
 
         //Create pointer to UDP object within an array
@@ -427,4 +428,15 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
     }
 
   } // End function vector_math
+
+  CFG_VALGET_t UBLOX::cfgValGet(const CFG_VALGET_t &request)
+  {
+      CFG_VALGET_t response;
+      response.version=0x01;
+      response.layer=request.layer;
+      response.position=request.position;
+      response.cfgData=0x01;
+
+      return ubx_.cfgValGet(response);
+  }
 }

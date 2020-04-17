@@ -55,8 +55,11 @@ UBLOX_ROS::UBLOX_ROS() :
     obs_pub_ = nh_.advertise<ublox::ObsVec>("Obs", 10);
     // nav_sat_fix_pub_ = nh_.advertise<sensor_msgs::NavSatFix>("NavSatFix");
     // nav_sat_status_pub_ = nh_.advertise<sensor_msgs::NavSatStatus>("NavSatStatus");
-
     //Get parameters
+    // Connect ROS services
+    cfg_val_get = nh_.advertiseService("CfgValGet", &UBLOX_ROS::cfgValGet, this);
+
+    //Get the serial port
     std::string serial_port = nh_private_.param<std::string>("serial_port", "/dev/ttyACM0");
     std::string log_filename = nh_private_.param<std::string>("log_filename", "");
     int message_rate = nh_private_.param<int>("message_rate", 10); //rate at which GNSS measurements are takens in hz
@@ -590,6 +593,23 @@ void UBLOX_ROS::gephCB(const GlonassEphemeris &eph)
     out.dtaun = eph.dtaun;
 
     geph_pub_.publish(out);
+}
+
+bool UBLOX_ROS::cfgValGet(ublox::CfgValGet::Request &req, ublox::CfgValGet::Response &res)
+{
+    ublox::CFG_VALGET_t request;
+    request.version=req.version;
+    request.layer=req.layer;
+    request.position=req.position;
+    request.cfgDataKey=req.keys;
+
+    ublox::CFG_VALGET_t response = ublox_->cfgValGet(request);
+    
+    res.version=response.version;
+    res.layer=response.layer;
+    res.position=response.position;
+    res.cfgData.push_back(response.cfgData);
+    return true;
 }
 
 }
