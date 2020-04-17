@@ -336,7 +336,11 @@ void UBLOX_ROS::pvtCB(const ublox::NAV_PVT_t& msg)
     ecef_msg_.horizontal_accuracy = out.hAcc;
     ecef_msg_.vertical_accuracy = out.vAcc;
     ecef_msg_.speed_accuracy = out.sAcc;
+    // std::cerr << "pvt_tow_ = " << pvt_tow_ << "\n";
+    // std::cerr << "pos_tow_ = " << pos_tow_ << "\n";
+    // std::cerr << "vel_tow_ = " << vel_tow_ << "\n";
     if (pos_tow_ == pvt_tow_ && pos_tow_ == vel_tow_)
+        std::cerr <<"inside pvt if statement \n";
         ecef_pub_.publish(ecef_msg_);
 }
 
@@ -412,6 +416,7 @@ void UBLOX_ROS::posECEFCB(const ublox::NAV_POSECEF_t& msg)
     ecef_msg_.position[1] = msg.ecefY*1e-2;
     ecef_msg_.position[2] = msg.ecefZ*1e-2;
     if (pos_tow_ == pvt_tow_ && pos_tow_ == vel_tow_)
+        std::cerr << "inside pos ecef if statement \n";
         ecef_pub_.publish(ecef_msg_);
     ecef_pub_.publish(ecef_msg_);
 
@@ -422,10 +427,11 @@ void UBLOX_ROS::velECEFCB(const ublox::NAV_VELECEF_t& msg)
     vel_tow_ = msg.iTOW;
     ecef_msg_.header.stamp = ros::Time::now();
     ecef_msg_.velocity[0] = msg.ecefVX*1e-2;
-    ecef_msg_.velocity[0] = msg.ecefVY*1e-2;
-    ecef_msg_.velocity[0] = msg.ecefVZ*1e-2;
+    ecef_msg_.velocity[1] = msg.ecefVY*1e-2;
+    ecef_msg_.velocity[2] = msg.ecefVZ*1e-2;
 
     if (pos_tow_ == pvt_tow_ && pos_tow_ == vel_tow_)
+        std::cerr << "inside vel ecef if statement \n";
         ecef_pub_.publish(ecef_msg_);
     ecef_pub_.publish(ecef_msg_);
 }

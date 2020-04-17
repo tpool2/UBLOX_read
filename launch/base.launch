@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <launch>
   <arg name="base_serial_port" default="/dev/ttyACM0"/>
-  <arg name="base_host" default="169.254.0.3"/>
-  <arg name="rover_host" default="169.254.0.4"/>
+  <arg name="base_host" default="192.168.1.121"/>
+  <arg name="rover_host" default="192.168.1.100"/>
 	
 	<group ns="base">
 
