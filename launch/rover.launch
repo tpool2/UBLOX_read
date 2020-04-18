@@ -2,8 +2,8 @@
 <launch>
 	<!-- be sure to check the rover serial port, it is often not ACM0-->
   <arg name="rover_serial_port" default="/dev/ttyACM0"/>
-  <arg name="base_host" default="169.254.0.3"/>
-  <arg name="rover_host" default="169.254.0.4"/>
+  <arg name="base_host" default="192.168.1.121"/>
+  <arg name="rover_host" default="192.168.1.102"/>
 
 	<group ns = "rover">
 
