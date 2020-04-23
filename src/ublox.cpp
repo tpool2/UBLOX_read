@@ -104,6 +104,15 @@ void UBLOX::config_base_stationary(int on_off, int gps, int glonas, int beidou,
 
 }
 
+/**
+ * Configures moving base settings on F9P in the RAM layer (will be erased when device is rebooted)
+ * 
+ * @param on_off    0: all settings turned off 1: settings applied
+ * @param gps       0: ignore GPS 1: listen to GPS
+ * @param glonas    0: ignore 1: listen
+ * @param beidou    0: ignore 1: listen
+ * @param galileo   0: ignore 1: listen
+ */
 void UBLOX::config_base_moving(int on_off, int gps, int glonas, int beidou,
                   int galileo)
 {
@@ -118,7 +127,9 @@ void UBLOX::config_base_moving(int on_off, int gps, int glonas, int beidou,
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*glonas, CFG_VALSET_t::RTCM_1230USB, byte);
 }
 
-// Empty
+/**
+ * Configures rover settings on F9P
+ */
 void UBLOX::config_rover()
 {
     // configure the parsers/Enable Messages
@@ -131,6 +142,9 @@ void UBLOX::config_rover()
     //configuring SVIN messages is done in config_base_stationary()
 }
 
+/**
+ * Polls configuration values on F9P
+ */
 void UBLOX::poll_value() //See ubx_defs.h for more information
 {
     ubx_.get_configuration(CFG_VALGET_t::REQUEST, CFG_VALGET_t::RAM, CFG_VALGET_t::RTCM_1005USB); //CFG-MSGOUT-RTCM_3X_TYPE1005_USB -- Stationary RTK Reference Station ARP
@@ -138,6 +152,9 @@ void UBLOX::poll_value() //See ubx_defs.h for more information
     ubx_.get_configuration(CFG_VALGET_t::REQUEST, CFG_VALGET_t::RAM, CFG_VALGET_t::RTCM_1097USB); //CFG-MSGOUT-RTCM_3X_TYPE1097_USB __ Galileo MSM 7 (high precision)
 }
 
+/**
+ * Not in use anywhere at the moment
+ */
 void UBLOX::readFile(const std::string& filename)
 {
     std::ifstream file(filename,  std::ifstream::binary);
@@ -157,6 +174,11 @@ void UBLOX::readFile(const std::string& filename)
     // serial_read_cb((const uint8_t*)buffer, len);
 }
 
+/**
+ * @brief Writes a log file of activity from this class
+ * 
+ * @param filename Log filename (and path)
+ */
 void UBLOX::initLogFile(const std::string& filename)
 {
     if (log_file_.is_open())
@@ -165,15 +187,16 @@ void UBLOX::initLogFile(const std::string& filename)
     log_file_.open(filename);
 }
 
-/* Function initRover
-// Purpose: Initializes a rover
-// Inputs:  local_host: hostname for rover
-            local_port: port for rover
-            remote_host: hostname for base
-            remote_port: port for base
-// Diagram:
-            Base(remote)-------------->Rover(local)
-*/
+/** 
+ * @brief Initializes a rover
+ * 
+ * @param local_host: hostname for rover
+ * @param local_port: port for rover
+ * @param remote_host: hostname for base
+ * @param remote_port: port for base
+ *
+ * Base(remote)-------------->Rover(local)
+ */
 void UBLOX::initRover(std::string local_host, uint16_t local_port,
                       std::string remote_host, uint16_t remote_port)
 {
@@ -242,6 +265,11 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
         rtcm_.registerCallback([ this , i](uint8_t* buf, size_t size)
         {
             this->udparray_[i]->send_bytes(buf, size);
+        });
+
+        ubx_.registerCallback(CLASS_NAV, NAV_PVT, [this, i](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg)
+        {
+            DBG("PVTCB\n");
         });
 
         std::cerr<<"Initialized Base to Rover "+ std::to_string(i+1) +" UDP\n";
