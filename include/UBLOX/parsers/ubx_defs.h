@@ -624,6 +624,37 @@ typedef struct {
     uint16_t timeRef; // Time system to which measurements are aligned
 }__attribute__((packed)) CFG_RATE_t;
 
+typedef struct {
+    uint8_t eph     : 1,
+            alm     : 1,
+            health  : 1,
+            klob    : 1,
+            pos     : 1,
+            clkd    : 1,
+            osc     : 1,
+            utc     : 1,
+            rtc     : 1,
+            reserved: 6,
+            aop     : 1;
+
+}__attribute__((packed)) navBbrMask_t;
+
+typedef struct {
+    enum {
+        HARDWARE_RESET_IMMEDIATE = 0x00,
+        SOFTWARE_RESET_ALL = 0x01,
+        SOFTWARE_RESET_GNSS = 0x02,
+        HARDWARE_RESET_AFTER_SHUTDOWN = 0x04,
+        GNSS_STOP = 0x08,
+        GNSS_START = 0x09,
+    };
+
+    navBbrMask_t navBbrMask;
+    uint8_t resetMode;
+    uint8_t reserved;
+
+}__attribute__((packed)) CFG_RST_t;
+
 typedef struct  {
     enum {
         VALIDITY_FLAGS_VALIDDATE= 0b01, // Valid UTC Date (see Time Validity section for details)
@@ -900,6 +931,7 @@ typedef union {
     CFG_MSG_t CFG_MSG;
     CFG_PRT_t CFG_PRT;
     CFG_RATE_t CFG_RATE;
+    CFG_RST_t CFG_RST;
     CFG_NAV5_t CFG_NAV5;
     CFG_VALSET_t CFG_VALSET;
     CFG_VALGET_t CFG_VALGET;

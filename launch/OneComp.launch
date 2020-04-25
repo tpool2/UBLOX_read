@@ -4,8 +4,8 @@
 <launch>
 	<group ns="base">
 		<node name="f9p" pkg="ublox" type="ublox_ros">
-			<param name="serial_port" value="/dev/ttyACM0"/>
-			<param name="base_type" value="stationary"/>
+			<param name="serial_port" value="/dev/ttyACM1"/>
+			<param name="base_type" value="moving"/>
 			<param name="chain_level" value="0"/>
 			<param name="rover_quantity" value="1"/>
 			<param name="local_host" value="localhost"/>
@@ -17,7 +17,7 @@
 
 	<group ns="rover">
 		<node name="f9p" pkg="ublox" type="ublox_ros">
-			<param name="serial_port" value="/dev/ttyACM1"/>
+			<param name="serial_port" value="/dev/ttyACM0"/>
 			<param name="chain_level" value="1"/>
 			<param name="rover_quantity" value="0"/>
 			<param name="local_host" value="localhost"/>

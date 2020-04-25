@@ -120,6 +120,8 @@ public:
                       int galileo);
     void poll_value();
 
+    navBbrMask_t reset(uint16_t navBbrMask, uint8_t resetMode);
+
     void vector_math(double ned_1[], double ned_2[], double answer[]);
 
     CFG_VALGET_TUPLE_t cfgValGet(const CFG_VALGET_t &request);

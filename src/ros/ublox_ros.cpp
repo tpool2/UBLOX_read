@@ -60,6 +60,7 @@ UBLOX_ROS::UBLOX_ROS() :
     cfg_val_get = nh_.advertiseService("CfgValGet", &UBLOX_ROS::cfgValGet, this);
     cfg_val_del_ = nh_.advertiseService("CfgValDel", &UBLOX_ROS::cfgValDel, this);
     cfg_val_set_ = nh_.advertiseService("CfgValSet", &UBLOX_ROS::cfgValSet, this);
+    cfg_reset_ = nh_.advertiseService("CfgReset", &UBLOX_ROS::cfgReset, this);
 
     //Get the serial port
     std::string serial_port = nh_private_.param<std::string>("serial_port", "/dev/ttyACM0");
@@ -659,6 +660,27 @@ bool UBLOX_ROS::cfgValSet(ublox::CfgValSet::Request &req, ublox::CfgValSet::Resp
     res.got_Nack = response.got_nack;
 
     return true;
+}
+
+bool UBLOX_ROS::cfgReset(ublox::CfgReset::Request &req, ublox::CfgReset::Response &res)
+{
+    ublox::navBbrMask_t bitfield =  ublox_->reset(req.navBbrMask, req.resetMode);
+
+    // std::cerr<<"eph: "<< bitfield.eph<<std::endl;
+
+    res.eph = bitfield.eph;
+    res.alm = bitfield.alm;
+    res.health = bitfield.health;
+    res.klob = bitfield.klob;
+    res.pos = bitfield.pos;
+    res.clkd = bitfield.clkd;
+    res.osc = bitfield.osc;
+    res.utc = bitfield.utc;
+    res.rtc = bitfield.rtc;
+    res.aop = bitfield.aop;
+
+    return true;
+
 }
 
 }
