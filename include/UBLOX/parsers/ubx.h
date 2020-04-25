@@ -39,8 +39,9 @@ public:
         uint8_t cls;
         uint8_t type;
         ubx_cb cb;
+        uint8_t f9pID;
     };
-    void registerCallback(uint8_t cls, uint8_t type, ubx_cb cb);
+    void registerCallback(uint8_t cls, uint8_t type, ubx_cb cb, uint8_t f9pID=0);
     std::vector<callback_t> callbacks;
 
     bool parsing_message();
@@ -58,7 +59,7 @@ public:
     UBX_message_t in_message_;
 
     // low-level parsing functions
-    bool decode_message();
+    bool decode_message(uint8_t f9pID=0);
     void calculate_checksum(const uint8_t msg_cls, const uint8_t msg_id,
                             const uint16_t len, const UBX_message_t payload,
                             uint8_t &ck_a, uint8_t &ck_b) const;

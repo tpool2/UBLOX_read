@@ -152,7 +152,7 @@ bool UBX::read_cb(uint8_t byte)
     Returns true if the checksum is successful. Otherwise returns false.
 
 */
-bool UBX::decode_message()
+bool UBX::decode_message(uint8_t f9pID)
 {
     // First, check the checksum
     uint8_t ck_a, ck_b;
@@ -219,7 +219,7 @@ bool UBX::decode_message()
     // call callbacks
     for (auto& cb : callbacks)
     {
-        if (message_class_ == cb.cls && message_type_ == cb.type)
+        if (message_class_ == cb.cls && message_type_ == cb.type && f9pID==cb.f9pID)
             cb.cb(message_class_, message_type_, in_message_);
     }
 
@@ -228,9 +228,9 @@ bool UBX::decode_message()
 }
 
 void UBX::registerCallback(uint8_t cls, uint8_t type,
-                std::function<void(uint8_t, uint8_t, const UBX_message_t&)> cb)
+                std::function<void(uint8_t, uint8_t, const UBX_message_t&)> cb, uint8_t f9pID)
 {
-    callbacks.push_back({cls, type, cb});
+    callbacks.push_back({cls, type, cb, f9pID});
 }
 
 void UBX::calculate_checksum(const uint8_t msg_cls, const uint8_t msg_id, const uint16_t len, const UBX_message_t payload, uint8_t& ck_a, uint8_t& ck_b) const
