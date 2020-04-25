@@ -79,6 +79,35 @@ private:
     ublox::PosVelEcef ecef_msg_;
     void cb_rov1(const ublox::RelPos &msg);
     void cb_rov2(const ublox::RelPos &msg);
+    
+
+    template<class T> std::function<T(ublox::UBX_message_t)> returnUBX(uint8_t cls, uint8_t id)
+    {
+        if(cls==ublox::CLASS_NAV && id==ublox::NAV_PVT)
+        {
+            return [](ublox::UBX_message_t ubx_msg)-> ublox::NAV_PVT_t 
+            {
+                return ubx_msg.NAV_PVT;
+            };
+        }
+    };
+
+    template<class M> void createCallbackTest(uint8_t cls, uint8_t type, 
+        void(ublox_ros::UBLOX_ROS::*fp)(const M &msg), ublox_ros::UBLOX_ROS *obj, uint8_t f9pID=0)
+    {
+        do
+        {
+            auto UBXfunc = returnUBX<M>(cls, type);
+            
+            auto trampoline = [obj, fp, UBXfunc](uint8_t _class, uint8_t _type, const ublox::UBX_message_t ubx_msg)
+            {
+                (obj->*fp)(UBXfunc(ubx_msg));
+            };
+
+            this->ublox_->registerUBXCallback(cls, type, trampoline);
+        } while (0);
+    };
+    
 };
 
 }

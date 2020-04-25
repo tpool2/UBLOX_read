@@ -67,6 +67,8 @@ public:
     // Translation function prior to cfgval functions
     uint32_t translate(std::string key);
 
+    template<class T> T get_form(UBX_message_t ubx_msg, uint8_t cls, uint8_t id);
+
     inline double time_elapsed(clock_t start)
     {
         return ((float)(clock()-start))/CLOCKS_PER_SEC;
