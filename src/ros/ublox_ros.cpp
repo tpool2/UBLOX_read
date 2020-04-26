@@ -11,32 +11,7 @@ using namespace std;
 
 #include <UBLOX/ublox_ros.h>
 
-// #define createCallback(cls, type, fun, arg)\
-// do{\
-//     auto trampoline = [this](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg)\
-//     {\
-//         this->fun(msg.arg);\
-//     };\
-//     ublox_->registerUBXCallback(cls, type, trampoline);\
-// }while(0)
-
 constexpr double deg2rad(double x) { return M_PI/180.0 * x; }
-
-// Function slice
-// This function slices into an iteratable
-// Inputs:  iteratable to be slice
-//          starting index (included in the slicing)
-//          ending index (not included in the slicing)
-// Returns: a neatly sliced iteratable
-template <class T> T slice(T iteratable, int xstart, int xend) {
-  // Declare subvariable
-  T subiterate = new T[xend-xstart];
-
-  for(int i=xstart; i< xend; i++) {
-
-    subiterate[i-xstart] = iteratable[i];
-  }
-}
 
 namespace ublox_ros
 {

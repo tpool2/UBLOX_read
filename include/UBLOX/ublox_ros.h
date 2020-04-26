@@ -79,8 +79,15 @@ private:
     ublox::PosVelEcef ecef_msg_;
     void cb_rov1(const ublox::RelPos &msg);
     void cb_rov2(const ublox::RelPos &msg);
-    
 
+
+    /**
+     * @brief creates a callback for the ubx message type
+     * @param cls uint8_t class code -- See ubx_defs.h
+     * @param type uint8_t type within class -- see ubx_defs.h
+     * @param functionaddress within UBLOX_ROS
+     * @param pointer to object from which the function is called
+     */
     template<class M> void createCallback(uint8_t cls, uint8_t type, 
         void(ublox_ros::UBLOX_ROS::*fp)(const M &msg), ublox_ros::UBLOX_ROS *obj, uint8_t f9pID=0)
     {
@@ -94,6 +101,24 @@ private:
             this->ublox_->registerUBXCallback(cls, type, trampoline);
         } while (0);
     };
+
+    /**
+     * @brief Slices into an iterable
+     * @param iterable
+     * @param xstart starting index (inclusive)
+     * @param xend ending index (not inclusive)
+     * @return a neatly sliced iterable [xstart, xend)
+     */
+    template <class T> T slice(T iteratable, int xstart, int xend) 
+    {
+        // Declare subvariable
+        T subiterate = new T[xend-xstart];
+
+        for(int i=xstart; i< xend; i++) 
+        {
+            subiterate[i-xstart] = iteratable[i];
+        }
+    }
     
 };
 
