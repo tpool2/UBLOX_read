@@ -11,14 +11,14 @@ using namespace std;
 
 #include <UBLOX/ublox_ros.h>
 
-#define createCallback(cls, type, fun, arg)\
-do{\
-    auto trampoline = [this](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg)\
-    {\
-        this->fun(msg.arg);\
-    };\
-    ublox_->registerUBXCallback(cls, type, trampoline);\
-}while(0)
+// #define createCallback(cls, type, fun, arg)\
+// do{\
+//     auto trampoline = [this](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg)\
+//     {\
+//         this->fun(msg.arg);\
+//     };\
+//     ublox_->registerUBXCallback(cls, type, trampoline);\
+// }while(0)
 
 constexpr double deg2rad(double x) { return M_PI/180.0 * x; }
 
@@ -259,14 +259,12 @@ UBLOX_ROS::UBLOX_ROS() :
 
     // connect callbacks
     // createCallback(ublox::CLASS_NAV, ublox::NAV_PVT, pvtCB, NAV_PVT);
-    createCallback(ublox::CLASS_NAV, ublox::NAV_RELPOSNED, relposCB, NAV_RELPOSNED);
-    createCallback(ublox::CLASS_NAV, ublox::NAV_POSECEF, posECEFCB, NAV_POSECEF);
-    createCallback(ublox::CLASS_NAV, ublox::NAV_VELECEF, velECEFCB, NAV_VELECEF);
-    createCallback(ublox::CLASS_NAV, ublox::NAV_SVIN, svinCB, NAV_SVIN);
-    createCallback(ublox::CLASS_RXM, ublox::RXM_RAWX, obsCB, RXM_RAWX);
-
-    // auto testfunc = returnUBX<ublox::NAV_PVT_t>(ublox::CLASS_NAV, ublox::NAV_PVT);
-    createCallbackTest(ublox::CLASS_NAV, ublox::NAV_PVT, &UBLOX_ROS::pvtCB, this);
+    createCallback(ublox::CLASS_NAV, ublox::NAV_RELPOSNED, &UBLOX_ROS::relposCB, this);
+    createCallback(ublox::CLASS_NAV, ublox::NAV_POSECEF, &UBLOX_ROS::posECEFCB, this);
+    createCallback(ublox::CLASS_NAV, ublox::NAV_VELECEF, &UBLOX_ROS::velECEFCB, this);
+    createCallback(ublox::CLASS_NAV, ublox::NAV_SVIN, &UBLOX_ROS::svinCB, this);
+    createCallback(ublox::CLASS_RXM, ublox::RXM_RAWX, &UBLOX_ROS::obsCB, this);
+    createCallback(ublox::CLASS_NAV, ublox::NAV_PVT, &UBLOX_ROS::pvtCB, this);
 
     if (!log_filename.empty())
     {
@@ -300,8 +298,9 @@ void UBLOX_ROS::cb_rov2(const ublox::RelPos &msg) {
     ned_2[2] = msg.relPosNED[2];  //Down
 }
 
-void UBLOX_ROS::pvtCB(const ublox::NAV_PVT_t& msg)
+void UBLOX_ROS::pvtCB(const ublox::UBX_message_t &ubx_msg)
 {
+    ublox::NAV_PVT_t msg = ubx_msg.NAV_PVT;
     pos_tow_ = msg.iTOW;
     ublox::PositionVelocityTime out;
     // out.iTOW = msg.iTow;
@@ -349,8 +348,10 @@ void UBLOX_ROS::pvtCB(const ublox::NAV_PVT_t& msg)
 }
 
 
-void UBLOX_ROS::relposCB(const ublox::NAV_RELPOSNED_t& msg)
+void UBLOX_ROS::relposCB(const ublox::UBX_message_t &ubx_msg)
 {
+    ublox::NAV_RELPOSNED_t msg = ubx_msg.NAV_RELPOSNED;
+    
     // Create the message to be outputted
     ublox::RelPos out;
 
@@ -393,8 +394,9 @@ void UBLOX_ROS::relposCB(const ublox::NAV_RELPOSNED_t& msg)
     relpos_pub_.publish(out);
 }
 
-void UBLOX_ROS::svinCB(const ublox::NAV_SVIN_t& msg)
+void UBLOX_ROS::svinCB(const ublox::UBX_message_t &ubx_msg)
 {
+    ublox::NAV_SVIN_t msg = ubx_msg.NAV_SVIN;
     ublox::SurveyStatus out;
     out.header.stamp = ros::Time::now(); /// TODO: do this right
     out.dur = msg.dur;
@@ -412,8 +414,9 @@ void UBLOX_ROS::svinCB(const ublox::NAV_SVIN_t& msg)
 
 }
 
-void UBLOX_ROS::posECEFCB(const ublox::NAV_POSECEF_t& msg)
+void UBLOX_ROS::posECEFCB(const ublox::UBX_message_t &ubx_msg)
 {
+    ublox::NAV_POSECEF_t msg = ubx_msg.NAV_POSECEF;
     pos_tow_ = msg.iTOW;
     ecef_msg_.header.stamp = ros::Time::now();
     ecef_msg_.position[0] = msg.ecefX*1e-2;
@@ -425,8 +428,9 @@ void UBLOX_ROS::posECEFCB(const ublox::NAV_POSECEF_t& msg)
 
 }
 
-void UBLOX_ROS::velECEFCB(const ublox::NAV_VELECEF_t& msg)
+void UBLOX_ROS::velECEFCB(const ublox::UBX_message_t &ubx_msg)
 {
+    ublox::NAV_VELECEF_t msg = ubx_msg.NAV_VELECEF;
     vel_tow_ = msg.iTOW;
     ecef_msg_.header.stamp = ros::Time::now();
     ecef_msg_.velocity[0] = msg.ecefVX*1e-2;
@@ -438,8 +442,9 @@ void UBLOX_ROS::velECEFCB(const ublox::NAV_VELECEF_t& msg)
     ecef_pub_.publish(ecef_msg_);
 }
 
-void UBLOX_ROS::obsCB(const ublox::RXM_RAWX_t &msg)
+void UBLOX_ROS::obsCB(const ublox::UBX_message_t &ubx_msg)
 {
+    ublox::RXM_RAWX_t msg = ubx_msg.RXM_RAWX;
     ublox::ObsVec out;
     UTCTime utc =UTCTime::fromGPS(msg.week, msg.rcvTow*1e3);
     out.header.stamp.sec = utc.sec;

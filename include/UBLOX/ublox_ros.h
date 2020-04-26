@@ -45,13 +45,13 @@ private:
     ros::Publisher geph_pub_;
     ros::Publisher obs_pub_;
 
-    void pvtCB(const ublox::NAV_PVT_t& msg);
-    void relposCB(const ublox::NAV_RELPOSNED_t& msg);
-    void posECEFCB(const ublox::NAV_POSECEF_t& msg);
-    void velECEFCB(const ublox::NAV_VELECEF_t& msg);
-    void svinCB(const ublox::NAV_SVIN_t& msg);
+    void pvtCB(const ublox::UBX_message_t &ubxmsg);
+    void relposCB(const ublox::UBX_message_t &ubx_msg);
+    void posECEFCB(const ublox::UBX_message_t &ubx_msg);
+    void velECEFCB(const ublox::UBX_message_t &ubx_msg);
+    void svinCB(const ublox::UBX_message_t &ubx_msg);
 
-    void obsCB(const ublox::RXM_RAWX_t& msg);
+    void obsCB(const ublox::UBX_message_t &ubx_msg);
     void ephCB(const Ephemeris& eph);
     void gephCB(const GlonassEphemeris& eph);
 
@@ -81,27 +81,14 @@ private:
     void cb_rov2(const ublox::RelPos &msg);
     
 
-    template<class T> std::function<T(ublox::UBX_message_t)> returnUBX(uint8_t cls, uint8_t id)
-    {
-        if(cls==ublox::CLASS_NAV && id==ublox::NAV_PVT)
-        {
-            return [](ublox::UBX_message_t ubx_msg)-> ublox::NAV_PVT_t 
-            {
-                return ubx_msg.NAV_PVT;
-            };
-        }
-    };
-
-    template<class M> void createCallbackTest(uint8_t cls, uint8_t type, 
+    template<class M> void createCallback(uint8_t cls, uint8_t type, 
         void(ublox_ros::UBLOX_ROS::*fp)(const M &msg), ublox_ros::UBLOX_ROS *obj, uint8_t f9pID=0)
     {
         do
         {
-            auto UBXfunc = returnUBX<M>(cls, type);
-            
-            auto trampoline = [obj, fp, UBXfunc](uint8_t _class, uint8_t _type, const ublox::UBX_message_t ubx_msg)
+            auto trampoline = [obj, fp](uint8_t _class, uint8_t _type, const ublox::UBX_message_t &ubx_msg)
             {
-                (obj->*fp)(UBXfunc(ubx_msg));
+                (obj->*fp)(ubx_msg);
             };
 
             this->ublox_->registerUBXCallback(cls, type, trampoline);
