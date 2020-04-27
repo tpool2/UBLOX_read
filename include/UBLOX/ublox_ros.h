@@ -45,13 +45,15 @@ private:
     ros::Publisher geph_pub_;
     ros::Publisher obs_pub_;
 
-    void pvtCB(const ublox::UBX_message_t &ubxmsg);
-    void relposCB(const ublox::UBX_message_t &ubx_msg);
-    void posECEFCB(const ublox::UBX_message_t &ubx_msg);
-    void velECEFCB(const ublox::UBX_message_t &ubx_msg);
-    void svinCB(const ublox::UBX_message_t &ubx_msg);
+    ros::Publisher base_ecef_pub_;
 
-    void obsCB(const ublox::UBX_message_t &ubx_msg);
+    void pvtCB(const ublox::UBX_message_t &ubxmsg, uint8_t f9pID=0);
+    void relposCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
+    void posECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
+    void velECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
+    void svinCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
+    void obsCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
+
     void ephCB(const Ephemeris& eph);
     void gephCB(const GlonassEphemeris& eph);
 
@@ -89,13 +91,13 @@ private:
      * @param pointer to object from which the function is called
      */
     template<class M> void createCallback(uint8_t cls, uint8_t type, 
-        void(ublox_ros::UBLOX_ROS::*fp)(const M &msg), ublox_ros::UBLOX_ROS *obj, uint8_t f9pID=0)
+        void(ublox_ros::UBLOX_ROS::*fp)(const M &msg, uint8_t), ublox_ros::UBLOX_ROS *obj, uint8_t f9pID=0)
     {
         do
         {
-            auto trampoline = [obj, fp](uint8_t _class, uint8_t _type, const ublox::UBX_message_t &ubx_msg)
+            auto trampoline = [obj, fp](uint8_t _class, uint8_t _type, const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0)
             {
-                (obj->*fp)(ubx_msg);
+                (obj->*fp)(ubx_msg, f9pID);
             };
 
             this->ublox_->registerUBXCallback(cls, type, trampoline);

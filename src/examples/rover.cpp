@@ -14,7 +14,7 @@ void inthand(int signum)
     stop = true;
 }
 
-void relposned_callback(uint8_t cls, uint8_t type, const ublox::UBX_message_t& in_msg)
+void relposned_callback(uint8_t cls, uint8_t type, const ublox::UBX_message_t& in_msg, uint8_t f9pID=0)
 {
     int RTK_flag;
     const ublox::NAV_RELPOSNED_t& msg(in_msg.NAV_RELPOSNED);

@@ -50,7 +50,7 @@ bool UBX::new_data()
     return tmp;
 }
 
-bool UBX::read_cb(uint8_t byte)
+bool UBX::read_cb(uint8_t byte, uint8_t f9pID)
 {
     switch (parse_state_)
     {
@@ -124,7 +124,7 @@ bool UBX::read_cb(uint8_t byte)
     // If we have a complete packet, then try to parse it
     if (parse_state_ == GOT_CK_B)
     {
-        if (decode_message())
+        if (decode_message(f9pID))
         {
             parse_state_ = START;
             end_message_ = true;
@@ -220,7 +220,7 @@ bool UBX::decode_message(uint8_t f9pID)
     for (auto& cb : callbacks)
     {
         if (message_class_ == cb.cls && message_type_ == cb.type && f9pID==cb.f9pID)
-            cb.cb(message_class_, message_type_, in_message_);
+            cb.cb(message_class_, message_type_, in_message_, f9pID);
     }
 
     new_data_ = true;
@@ -228,7 +228,7 @@ bool UBX::decode_message(uint8_t f9pID)
 }
 
 void UBX::registerCallback(uint8_t cls, uint8_t type,
-                std::function<void(uint8_t, uint8_t, const UBX_message_t&)> cb, uint8_t f9pID)
+                ubx_cb cb, uint8_t f9pID)
 {
     callbacks.push_back({cls, type, cb, f9pID});
 }

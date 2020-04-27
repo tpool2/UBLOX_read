@@ -25,7 +25,7 @@ public:
     CFG_VAL_DBG_t del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
 
     // This function returns true when a new message has been parsed
-    bool read_cb(uint8_t byte);
+    bool read_cb(uint8_t byte, uint8_t f9pID=0);
 
     // returns true if there is new data that hasn't been read
     // subsequent calls to new_data will return false after the
@@ -33,7 +33,7 @@ public:
     bool new_data();
 
     // callback handling
-    typedef std::function<void(uint8_t, uint8_t, const UBX_message_t&)> ubx_cb;
+    typedef std::function<void(uint8_t, uint8_t, const UBX_message_t&, uint8_t)> ubx_cb;
     struct callback_t
     {
         uint8_t cls;

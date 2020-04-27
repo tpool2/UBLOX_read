@@ -30,7 +30,7 @@ UBLOX_ROS::UBLOX_ROS() :
     obs_pub_ = nh_.advertise<ublox::ObsVec>("Obs", 10);
     // nav_sat_fix_pub_ = nh_.advertise<sensor_msgs::NavSatFix>("NavSatFix");
     // nav_sat_status_pub_ = nh_.advertise<sensor_msgs::NavSatStatus>("NavSatStatus");
-    //Get parameters
+
     // Connect ROS services
     cfg_val_get = nh_.advertiseService("CfgValGet", &UBLOX_ROS::cfgValGet, this);
     cfg_val_del_ = nh_.advertiseService("CfgValDel", &UBLOX_ROS::cfgValDel, this);
@@ -233,7 +233,6 @@ UBLOX_ROS::UBLOX_ROS() :
     }
 
     // connect callbacks
-    // createCallback(ublox::CLASS_NAV, ublox::NAV_PVT, pvtCB, NAV_PVT);
     createCallback(ublox::CLASS_NAV, ublox::NAV_RELPOSNED, &UBLOX_ROS::relposCB, this);
     createCallback(ublox::CLASS_NAV, ublox::NAV_POSECEF, &UBLOX_ROS::posECEFCB, this);
     createCallback(ublox::CLASS_NAV, ublox::NAV_VELECEF, &UBLOX_ROS::velECEFCB, this);
@@ -273,7 +272,7 @@ void UBLOX_ROS::cb_rov2(const ublox::RelPos &msg) {
     ned_2[2] = msg.relPosNED[2];  //Down
 }
 
-void UBLOX_ROS::pvtCB(const ublox::UBX_message_t &ubx_msg)
+void UBLOX_ROS::pvtCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 {
     ublox::NAV_PVT_t msg = ubx_msg.NAV_PVT;
     pos_tow_ = msg.iTOW;
@@ -319,11 +318,16 @@ void UBLOX_ROS::pvtCB(const ublox::UBX_message_t &ubx_msg)
     ecef_msg_.vertical_accuracy = out.vAcc;
     ecef_msg_.speed_accuracy = out.sAcc;
     if (pos_tow_ == pvt_tow_ && pos_tow_ == vel_tow_)
-        ecef_pub_.publish(ecef_msg_);
+    {
+        if(f9pID==0)
+        {
+            ecef_pub_.publish(ecef_msg_);
+        }
+    }
 }
 
 
-void UBLOX_ROS::relposCB(const ublox::UBX_message_t &ubx_msg)
+void UBLOX_ROS::relposCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 {
     ublox::NAV_RELPOSNED_t msg = ubx_msg.NAV_RELPOSNED;
     
@@ -369,7 +373,7 @@ void UBLOX_ROS::relposCB(const ublox::UBX_message_t &ubx_msg)
     relpos_pub_.publish(out);
 }
 
-void UBLOX_ROS::svinCB(const ublox::UBX_message_t &ubx_msg)
+void UBLOX_ROS::svinCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 {
     ublox::NAV_SVIN_t msg = ubx_msg.NAV_SVIN;
     ublox::SurveyStatus out;
@@ -389,7 +393,7 @@ void UBLOX_ROS::svinCB(const ublox::UBX_message_t &ubx_msg)
 
 }
 
-void UBLOX_ROS::posECEFCB(const ublox::UBX_message_t &ubx_msg)
+void UBLOX_ROS::posECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 {
     ublox::NAV_POSECEF_t msg = ubx_msg.NAV_POSECEF;
     pos_tow_ = msg.iTOW;
@@ -398,12 +402,18 @@ void UBLOX_ROS::posECEFCB(const ublox::UBX_message_t &ubx_msg)
     ecef_msg_.position[1] = msg.ecefY*1e-2;
     ecef_msg_.position[2] = msg.ecefZ*1e-2;
     if (pos_tow_ == pvt_tow_ && pos_tow_ == vel_tow_)
+    {
+        if(f9pID==0)
+        {
+            ecef_pub_.publish(ecef_msg_);
+        }
+    }
+    if(f9pID==0)
         ecef_pub_.publish(ecef_msg_);
-    ecef_pub_.publish(ecef_msg_);
 
 }
 
-void UBLOX_ROS::velECEFCB(const ublox::UBX_message_t &ubx_msg)
+void UBLOX_ROS::velECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 {
     ublox::NAV_VELECEF_t msg = ubx_msg.NAV_VELECEF;
     vel_tow_ = msg.iTOW;
@@ -413,11 +423,17 @@ void UBLOX_ROS::velECEFCB(const ublox::UBX_message_t &ubx_msg)
     ecef_msg_.velocity[0] = msg.ecefVZ*1e-2;
 
     if (pos_tow_ == pvt_tow_ && pos_tow_ == vel_tow_)
+    {
+        if(f9pID==0)
+        {
+            ecef_pub_.publish(ecef_msg_);
+        }
+    }
+    if(f9pID==0)
         ecef_pub_.publish(ecef_msg_);
-    ecef_pub_.publish(ecef_msg_);
 }
 
-void UBLOX_ROS::obsCB(const ublox::UBX_message_t &ubx_msg)
+void UBLOX_ROS::obsCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 {
     ublox::RXM_RAWX_t msg = ubx_msg.RXM_RAWX;
     ublox::ObsVec out;

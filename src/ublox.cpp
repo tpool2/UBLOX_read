@@ -32,7 +32,7 @@ UBLOX::UBLOX(const std::string& port, int message_rate) :
     //configuring SVIN messages is done in config_base_stationary()
 
 
-    auto eph_cb = [this](uint8_t cls, uint8_t type, const ublox::UBX_message_t& in_msg)
+    auto eph_cb = [this](uint8_t cls, uint8_t type, const ublox::UBX_message_t& in_msg, uint8_t f9pID=0)
     {
       this->nav_.convertUBX(in_msg.RXM_SFRBX);
     };
@@ -267,9 +267,10 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
             this->udparray_[i]->send_bytes(buf, size);
         });
 
-        ubx_.registerCallback(CLASS_NAV, NAV_PVT, [this, i](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg)
+        ubx_.registerCallback(CLASS_NAV, NAV_VELECEF, [this, i](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg, uint8_t f9pID=0)
         {
-            DBG("PVTCB\n");
+            this->udparray_[i]->send_bytes(msg.buffer, sizeof(msg.buffer));
+            DBG("Send base vel data\n");
         });
 
         std::cerr<<"Initialized Base to Rover "+ std::to_string(i+1) +" UDP\n";
@@ -372,11 +373,21 @@ UBLOX::~UBLOX()
 
 void UBLOX::udp_read_cb(const uint8_t* buf, size_t size)
 {
-
     assert(type_ == ROVER || type_ == BROVER);
-    for (int i = 0; i < size; i++)
+
+    if(buf[0]==START_BYTE_1 && buf[1]==START_BYTE_2)
     {
-        rtcm_.read_cb(buf[i]);
+        for (int i = 0; i < size; i++)
+        {
+            ubx_.read_cb(buf[i], 1);
+        }
+    }
+    else if(buf[0]==rtcm::START_BYTE)
+    {
+        for (int i = 0; i < size; i++)
+        {
+            rtcm_.read_cb(buf[i]);
+        }
     }
 }
 
