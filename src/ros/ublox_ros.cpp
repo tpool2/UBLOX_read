@@ -28,6 +28,7 @@ UBLOX_ROS::UBLOX_ROS() :
     eph_pub_ = nh_.advertise<ublox::Ephemeris>("Ephemeris", 10);
     geph_pub_ = nh_.advertise<ublox::GlonassEphemeris>("GlonassEphemeris", 10);
     obs_pub_ = nh_.advertise<ublox::ObsVec>("Obs", 10);
+    base_ecef_pub_ = nh_.advertise<ublox::PosVelEcef>("base/PosVelEcef", 10);
     // nav_sat_fix_pub_ = nh_.advertise<sensor_msgs::NavSatFix>("NavSatFix");
     // nav_sat_status_pub_ = nh_.advertise<sensor_msgs::NavSatStatus>("NavSatStatus");
 
@@ -410,6 +411,8 @@ void UBLOX_ROS::posECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
     }
     if(f9pID==0)
         ecef_pub_.publish(ecef_msg_);
+    else if(f9pID==1)
+        base_ecef_pub_.publish(ecef_msg_);
 
 }
 
@@ -431,6 +434,8 @@ void UBLOX_ROS::velECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
     }
     if(f9pID==0)
         ecef_pub_.publish(ecef_msg_);
+    else if(f9pID==1)
+        base_ecef_pub_.publish(ecef_msg_);
 }
 
 void UBLOX_ROS::obsCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
