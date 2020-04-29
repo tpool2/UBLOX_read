@@ -87,7 +87,8 @@ UBLOX_ROS::UBLOX_ROS() :
             //The first local host corresponds to the first rover.
             local_host[0] = nh_private_.param<std::string>("local_host", "localhost");
             local_port[0] = nh_private_.param<int>("local_port", 16140);
-            //First rover.
+            
+            //First rover
             rover_host[0] = nh_private_.param<std::string>("rover_host", "localhost");
             rover_port[0] = nh_private_.param<int>("rover_port", 16145);
 
@@ -95,22 +96,12 @@ UBLOX_ROS::UBLOX_ROS() :
             j=1;
         }
 
-        //Input parameters from xml file into respective arrays for rovers.
-        //?? are these used for anything other than print statements?
         for(int i=1+j; i <= rover_quantity; i++) {
             local_host[i-1] = nh_private_.param<std::string>("local_host"+std::to_string(i), "localhost");
             local_port[i-1] = nh_private_.param<int>("local_port"+std::to_string(i), 16140);
             rover_host[i-1] = nh_private_.param<std::string>("rover_host"+std::to_string(i), "localhost");
             rover_port[i-1] = nh_private_.param<int>("rover_port"+std::to_string(i), 16145);
         }
-
-        //Return outputs for all local hosts and rovers hooked up.
-        // for(int i = 0; i < rover_quantity; i++) {
-        //     std::cerr<<"local_host " + std::to_string(i+1) + ": " << local_host[i] << "\n";
-        //     std::cerr<<"local_port " + std::to_string(i+1) + ": " << local_port[i] << "\n";
-        //     std::cerr<<"rover_host " + std::to_string(i+1) + ": " << rover_host[i] << "\n";
-        //     std::cerr<<"rover_port " + std::to_string(i+1) + ": " << rover_port[i] << "\n";
-        // }
 
         ublox_->initBase(local_host, local_port, rover_host, rover_port,
           base_type, rover_quantity, gps, glonas, beidou, galileo, surveytime,
@@ -195,13 +186,6 @@ UBLOX_ROS::UBLOX_ROS() :
         // Add in extra local host values.
         local_host[j] = nh_private_.param<std::string>("local_host"+std::to_string(j+1), "localhost");
         local_port[j] = nh_private_.param<int>("local_port"+std::to_string(j+1), 16140);
-
-        // for(int i = 0; i < rover_quantity; i++) {
-        //     std::cerr<<"local_host " + std::to_string(i+1) + ": " << local_host[i] << "\n";
-        //     std::cerr<<"local_port " + std::to_string(i+1) + ": " << local_port[i] << "\n";
-        //     std::cerr<<"rover_host " + std::to_string(i+1) + ": " << rover_host[i] << "\n";
-        //     std::cerr<<"rover_port " + std::to_string(i+1) + ": " << rover_port[i] << "\n";
-        // }
 
         //Determine whether the brover is moving or stationary?
         std::string base_type = "moving";

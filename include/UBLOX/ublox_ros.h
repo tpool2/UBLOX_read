@@ -47,11 +47,29 @@ private:
 
     ros::Publisher base_ecef_pub_;
 
+    /**
+     * @brief Callback for filling a PosVelTime ROS message from a UBX callback
+     */
     void pvtCB(const ublox::UBX_message_t &ubxmsg, uint8_t f9pID=0);
+    /**
+     * @brief Callback for filling a RelPos ROS message from a UBX callback
+     */
     void relposCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
+    /**
+     * @brief Callback for filling a PosVelEcef ROS message with position data from a UBX callback
+     */
     void posECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
+    /**
+     * @brief Callback for filling a PosVelEcef ROS message with velocity data from a UBX callback
+     */
     void velECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
+    /**
+     * @brief Callback for filling a SurveyStatus ROS message from a UBX callback
+     */
     void svinCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
+    /**
+     * @brief Callback for filling a Observation ROS message from a UBX callback
+     */
     void obsCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
 
     void ephCB(const Ephemeris& eph);

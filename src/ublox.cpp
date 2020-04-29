@@ -226,17 +226,6 @@ void UBLOX::initRover(std::string local_host, uint16_t local_port,
     std::cerr<<"Initialized Rover\n";
 }
 
-/*
-  initBase function
-  Purpose: Initializes the base to send corrections to rovers
-  Inputs: local_host[] an array of strings containing the local hosts for base. (remote hose for rover)
-          local_port[] an array of uint16_t that contains local port numbers for base. (remote ports for rover)
-          remote_host[] an array of strings containing the rover hosts for base (local host for rover)
-          remote_port[] an array of uint16_t that contains rover ports for base. (local ports for rover)
-          base_type stationary or moving base
-          rover_quantity number of rovers (number of elements in each array)
-Diagram:    Base(local)--------->remote(rover)
-*/
 void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
                 std::string remote_host[], uint16_t remote_port[],
                 std::string base_type, int rover_quantity, int gps,
@@ -280,24 +269,6 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
     config_f9p();
 }
 
-/*
-initBrover() function
-Purpose: Used to initialize a moving base that receives RTK corrections from another base.
-Inputs:   local_host[] an array of strings containing the local hosts for base. (remote hose for rover)
-          local_port[] an array of uint16_t that contains local port numbers for base. (remote ports for rover)
-          base_host[] an array containing only one element which is the base host for the unit
-          base_port[] an array containing only one element which is the base port for the unit
-          rover_host[] an array of strings containing the rover hosts for the brover
-          rover_port[] an array of uint16_t that contains rover ports for the brover
-          base_type: stationary or moving base
-          rover_quantity: number of rovers
-          int gps: 1 is on, 0 is off
-          int glonas: 1 is on, 0 is off
-          int beidou: 1 is on, 0 is off
-          int galileo: 1 is on, 0 is off
-Diagram:
-            Base-------->Brover(local)--------->Rover
-*/
 void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
                 std::string base_host[], uint16_t base_port[],
                 std::string rover_host[], uint16_t rover_port[],
@@ -430,12 +401,6 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
       }
 
 }
-
-// Function vector_math
-  // Purpose: Compute NED, absolute distance, roll, pitch, and yaw
-  // Inputs: ned_1 and ned_2 have three elements
-  // Returns: A data structure of the same type as ned_1 and ned_2 which contains
-  // NED, absolute distance, roll, pitch, and yaw
   void UBLOX::vector_math(double ned_1[], double ned_2[], double answer[]) {
 
     // For loop to calculate difference in NED values.

@@ -33,26 +33,21 @@ public:
     UBLOX(const std::string& port, int message_rate);
     ~UBLOX();
 
-    // legacy initBase function
-    void initBase(std::string local_host, uint16_t local_port,
-                  std::string remote_host, uint16_t remote_port,
-                  std::string base_type);
-
+    /**
+     * @brief Initializes the base to send corrections to rovers
+     * @param local_host an array of strings containing the local hosts for base. (remote host for rover)
+     * @param local_port an array of uint16_t that contains local port numbers for base. (remote ports for rover)
+     * @param remote_host an array of strings containing the rover hosts for base (local host for rover)
+     * @param remote_port an array of uint16_t that contains rover ports for base. (local ports for rover)
+     * @param base_type stationary or moving base
+     * @param rover_quantity number of rovers (number of elements in each array)
+     * @ref Diagram:    Base(local)--------->remote(rover)
+     */
     void initBase(std::string local_host[], uint16_t local_port[],
                     std::string remote_host[], uint16_t remote_port[],
                     std::string base_type, int rover_quantity, int gps,
                     int glonas, int beidou, int galileo, int surveytime,
                     int surveyacc);
-
-    void initBase(std::string local_host[], uint16_t local_port[],
-                    std::string remote_host[], uint16_t remote_port[],
-                    std::string base_type, int rover_quantity, int gps,
-                    int glonas, int beidou, int galileo);
-
-    // Current initBase function supports multiple rovers
-    void initBase(std::string local_host[], uint16_t local_port[],
-                    std::string remote_host[], uint16_t remote_port[],
-                    std::string base_type, int rover_quantity);
 
     void initRover(std::string local_host, uint16_t local_port,
                    std::string remote_host, uint16_t remote_port,
@@ -62,12 +57,23 @@ public:
                     std::string remote_host, uint16_t remote_port);
 
 
-    // base_type refers to whether the brover is stationary or moving
-    void initBrover(std::string local_host[], uint16_t local_port[],
-                    std::string base_host[], uint16_t base_port[],
-                    std::string rover_host[], uint16_t rover_port[],
-                    std::string base_type, int rover_quantity);
-
+    /**
+     * @brief Used to initialize a moving base that receives RTK corrections from another base.
+     * @param local_host an array of strings containing the local hosts for base. (remote host for rover)
+     * @param local_port an array of uint16_t that contains local port numbers for base. (remote ports for rover)
+     * @param base_host an array containing only one element which is the base host for the unit
+     * @param base_port an array containing only one element which is the base port for the unit
+     * @param rover_host an array of strings containing the rover hosts for the brover
+     * @param rover_port an array of uint16_t that contains rover ports for the brover
+     * @param base_type: stationary or moving base
+     * @param rover_quantity: number of rovers
+     * @param gps 1 is on, 0 is off
+     * @param glonas 1 is on, 0 is off
+     * @param beidou 1 is on, 0 is off
+     * @param galileo 1 is on, 0 is off
+     * @ref Diagram:
+            Base-------->Brover(local)--------->Rover
+     */
     void initBrover(std::string local_host[], uint16_t local_port[],
                     std::string base_host[], uint16_t base_port[],
                     std::string rover_host[], uint16_t rover_port[],
@@ -120,6 +126,12 @@ public:
                       int galileo);
     void poll_value();
 
+    /**
+     * @brief Computes NED, absolute distance, pitch, and yaw
+     * @param ned_1 array of length 3 NED
+     * @param ned_2 array of length 3 NED
+     * @return array of NED, absolute distance, roll (set to 0), pitch, yaw
+     */
     void vector_math(double ned_1[], double ned_2[], double answer[]);
 
     CFG_VALGET_TUPLE_t cfgValGet(const CFG_VALGET_t &request);
