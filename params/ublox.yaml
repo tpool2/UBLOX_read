@@ -8,7 +8,7 @@ GALILEO: 1
 base_type: "moving"  
 
 #if stationary the survey time and survey accuracy minimums
-Surveytime: 30
+Surveytime: 120
 Surveyacc: 5000000
 
 #GNSS message output rate
