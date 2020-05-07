@@ -242,7 +242,7 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
 
         ubx_.registerCallback(CLASS_NAV, NAV_POSECEF, [this, i](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg, uint8_t f9pID=0)
         {
-            uint8_t buffer[BUFFER_SIZE];
+            memset(&buffer, 0, sizeof(buffer));
             buffer[0] = START_BYTE_1;
             buffer[1] = START_BYTE_2;
             buffer[2] = _class;
@@ -255,7 +255,7 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
             }
 
             uint8_t ck_a, ck_b;
-            calculate_checksum(_class, _type, sizeof(NAV_POSECEF_t), msg.buffer, ck_a, ck_b);
+            ubx_.calculate_checksum(_class, _type, sizeof(NAV_POSECEF_t), msg, ck_a, ck_b);
             buffer[6+sizeof(NAV_POSECEF_t)] = ck_a;
             buffer[7+sizeof(NAV_POSECEF_t)] = ck_b;
             

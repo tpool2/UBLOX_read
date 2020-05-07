@@ -103,7 +103,7 @@ public:
     RTCM rtcm_;
     NavParser nav_;
 
-    ublox::UBX_message_t temp;
+    uint8_t buffer[BUFFER_SIZE];
 
     std::ofstream log_file_;
 
