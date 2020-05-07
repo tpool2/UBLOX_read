@@ -78,16 +78,6 @@ The UBLOX GNSS **Base** sends its GNSS data to the computer in RTCM format. The 
 
 The **Rover** module then uses this information to calculate RTK corrections and achieve accurate relative position information. The relative position data is sent back to the **Rover** computer via the serial connections
 
-
-## Functionality
- * Change baudrate of GPS
- * Enable messages
- * Parse messages
- * Change navigation and message publishing rate
- * auto baudrate detection
- * changing the dynamic mode
- * accessing lat/lon/altitude measurements, fix type and NED velocity
-
 ## ROS Messages
  * **PosVelTime:** GNSS Positional/Velocity Data given in lla with an accurate timestamp
  * **PosVelEcef** GNSS Positional Data given in ECEF frame. (Velocity is copied from PosVelTime message)
