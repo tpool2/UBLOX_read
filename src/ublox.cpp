@@ -40,6 +40,15 @@ UBLOX::UBLOX(const std::string& port, int message_rate) :
 
 }
 
+void UBLOX::config_gnss(bool gps, bool glonas, bool beidou, bool galileo)
+{
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, gps, CFG_VALSET_t::SIGNAL_GPS, byte);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, glonas, CFG_VALSET_t::SIGNAL_GAL, byte);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, beidou, CFG_VALSET_t::SIGNAL_BDS, byte);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, galileo, CFG_VALSET_t::SIGNAL_GAL, byte);
+}
+
+
 void UBLOX::config_f9p() //See ubx_defs.h for more information
 {
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, CFG_VALSET_t::DYNMODE_AIRBORNE_1G, CFG_VALSET_t::DYNMODEL, byte); //Dynamic platform model
@@ -51,12 +60,7 @@ void UBLOX::config_f9p() //See ubx_defs.h for more information
         poll_value();
 }
 
-/*
-Function config_base
-Configures whether the base is stationary or moving.
-Inputs: base type
-Outputs: calls the correct base configuration function and outputs to the command line the status of the base.
-*/
+
 void UBLOX::config_base(std::string base_type, int gps, int glonas, int beidou,
                   int galileo, int surveytime, int surveyacc)
 {
@@ -84,9 +88,6 @@ void UBLOX::config_base(std::string base_type, int gps, int glonas, int beidou,
 void UBLOX::config_base_stationary(int on_off, int gps, int glonas, int beidou,
                   int galileo, int surveytime, int surveyacc)
 {
-    // ubx_.del_configuration(CFG_VALDEL_t::VERSION_0, CFG_VALDEL_t::RAM, CFG_VALDEL_t::TMODE_SVIN_MIN_DUR);
-    // These values control whether RTK corrections are calculated for the
-    // following constellations
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::RTCM_1005USB, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off*gps, CFG_VALSET_t::RTCM_1074USB, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off*glonas, CFG_VALSET_t::RTCM_1084USB, byte);
@@ -104,15 +105,7 @@ void UBLOX::config_base_stationary(int on_off, int gps, int glonas, int beidou,
 
 }
 
-/**
- * Configures moving base settings on F9P in the RAM layer (will be erased when device is rebooted)
- * 
- * @param on_off    0: all settings turned off 1: settings applied
- * @param gps       0: ignore GPS 1: listen to GPS
- * @param glonas    0: ignore 1: listen
- * @param beidou    0: ignore 1: listen
- * @param galileo   0: ignore 1: listen
- */
+
 void UBLOX::config_base_moving(int on_off, int gps, int glonas, int beidou,
                   int galileo)
 {
@@ -187,16 +180,7 @@ void UBLOX::initLogFile(const std::string& filename)
     log_file_.open(filename);
 }
 
-/** 
- * @brief Initializes a rover
- * 
- * @param local_host: hostname for rover
- * @param local_port: port for rover
- * @param remote_host: hostname for base
- * @param remote_port: port for base
- *
- * Base(remote)-------------->Rover(local)
- */
+
 void UBLOX::initRover(std::string local_host, uint16_t local_port,
                       std::string remote_host, uint16_t remote_port)
 {

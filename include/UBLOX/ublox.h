@@ -53,6 +53,15 @@ public:
                    std::string remote_host, uint16_t remote_port,
                    uint32_t constellation[]);
 
+    /** 
+ * @brief Initializes a rover
+ * @param local_host: hostname for rover
+ * @param local_port: port for rover
+ * @param remote_host: hostname for base
+ * @param remote_port: port for base
+ *
+ * Base(remote)-------------->Rover(local)
+ */
      void initRover(std::string local_host, uint16_t local_port,
                     std::string remote_host, uint16_t remote_port);
 
@@ -116,12 +125,33 @@ public:
     void udp_read_cb(const uint8_t *buf, size_t size);
     void rtcm_complete_cb(const uint8_t* buf, size_t size);
 
+    void config_gnss(bool gps, bool glonas, bool beidou, bool galileo);
+
     void config_f9p();
     void config_rover();
+    /**
+     * @brief Configures the base setup by calling the correct base configuration function
+     * @param base_type string moving or stationary
+     * @param gps       0: ignore GPS 1: listen to GPS
+     * @param glonas    0: ignore 1: listen
+     * @param beidou    0: ignore 1: listen
+     * @param galileo   0: ignore 1: listen
+     * @param surveytime Time in sec for surveyin completion
+     * @param surveyac Survey accuracy threshold required for surveyin completion
+     */
     void config_base(std::string base_type, int gps, int glonas, int beidou,
                       int galileo, int surveytime, int surveyacc);
     void config_base_stationary(int on_off, int gps, int glonas, int beidou,
                       int galileo, int surveytime, int surveyacc);
+    /**
+ * Configures moving base settings on F9P in the RAM layer (will be erased when device is rebooted)
+ * 
+ * @param on_off    0: all settings turned off 1: settings applied
+ * @param gps       0: ignore GPS 1: listen to GPS
+ * @param glonas    0: ignore 1: listen
+ * @param beidou    0: ignore 1: listen
+ * @param galileo   0: ignore 1: listen
+ */
     void config_base_moving(int on_off, int gps, int glonas, int beidou,
                       int galileo);
     void poll_value();
