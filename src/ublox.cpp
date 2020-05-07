@@ -242,7 +242,8 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
 
         ubx_.registerCallback(CLASS_NAV, NAV_POSECEF, [this, i](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg, uint8_t f9pID=0)
         {
-            this->udparray_[i]->send_bytes(msg.buffer, sizeof(msg.buffer));
+            this->udparray_[i]->send_bytes(temp.buffer, sizeof(temp.buffer));
+            DBG("%i\n", msg.buffer[0]);
             DBG("Send base vel data\n");
         });
 
@@ -340,11 +341,17 @@ void UBLOX::udp_read_cb(const uint8_t* buf, size_t size)
     }
     else if(buf[0]==rtcm::START_BYTE)
     {
+        DBG("Received rtcm data\n");
         for (int i = 0; i < size; i++)
         {
             rtcm_.read_cb(buf[i]);
         }
     }
+    else
+    {
+        DBG("Got something bad: %i\n", buf[0]);
+    }
+    
 }
 
 void UBLOX::serial_read_cb(const uint8_t *buf, size_t size)

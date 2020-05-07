@@ -103,6 +103,8 @@ public:
     RTCM rtcm_;
     NavParser nav_;
 
+    ublox::UBX_message_t temp;
+
     std::ofstream log_file_;
 
     inline void registerUBXCallback(uint8_t cls, uint8_t type, UBX::ubx_cb cb)
