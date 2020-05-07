@@ -256,7 +256,7 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
             this->udparray_[i]->send_bytes(buf, size);
         });
 
-        ubx_.registerCallback(CLASS_NAV, NAV_VELECEF, [this, i](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg, uint8_t f9pID=0)
+        ubx_.registerCallback(CLASS_NAV, NAV_POSECEF, [this, i](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg, uint8_t f9pID=0)
         {
             this->udparray_[i]->send_bytes(msg.buffer, sizeof(msg.buffer));
             DBG("Send base vel data\n");
@@ -348,6 +348,7 @@ void UBLOX::udp_read_cb(const uint8_t* buf, size_t size)
 
     if(buf[0]==START_BYTE_1 && buf[1]==START_BYTE_2)
     {
+        DBG("Received baseveldata\n");
         for (int i = 0; i < size; i++)
         {
             ubx_.read_cb(buf[i], 1);

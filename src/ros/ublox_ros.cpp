@@ -380,6 +380,10 @@ void UBLOX_ROS::svinCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 
 void UBLOX_ROS::posECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 {
+    if(f9pID==1)
+    {
+        DBG("Calling posecef cb for basevel");
+    }
     ublox::NAV_POSECEF_t msg = ubx_msg.NAV_POSECEF;
     pos_tow_ = msg.iTOW;
     ecef_msg_.header.stamp = ros::Time::now();
