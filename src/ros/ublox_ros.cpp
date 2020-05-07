@@ -159,10 +159,10 @@ UBLOX_ROS::UBLOX_ROS() :
 
         // Get Constallation settings
         uint32_t constellation [6];
-        uint8_t gps = nh_.param<uint8_t>("GPS", 1);
-        uint8_t glonas = nh_.param<uint8_t>("GLONAS", 0);
-        uint8_t beidou = nh_.param<uint8_t>("BEIDOU", 0);
-        uint8_t galileo = nh_.param<uint8_t>("GALILEO", 1);
+        uint8_t gps = nh_.param<int>("GPS", 1);
+        uint8_t glonas = nh_.param<int>("GLONAS", 0);
+        uint8_t beidou = nh_.param<int>("BEIDOU", 0);
+        uint8_t galileo = nh_.param<int>("GALILEO", 1);
 
         uint8_t j = 0;
         if(nh_private_.hasParam("local_host")) {
@@ -381,7 +381,7 @@ void UBLOX_ROS::posECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 {
     if(f9pID==1)
     {
-        DBG("Calling posecef cb for basevel");
+        std::cerr<<("Calling posecef cb for basevel\n");
     }
     ublox::NAV_POSECEF_t msg = ubx_msg.NAV_POSECEF;
     pos_tow_ = msg.iTOW;
