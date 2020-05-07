@@ -1,6 +1,4 @@
 <?xml version="1.0"?>
-
-
 <launch>
 	<group ns="base">
 		<node name="f9p" pkg="ublox" type="ublox_ros">
