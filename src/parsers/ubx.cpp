@@ -154,6 +154,10 @@ bool UBX::read_cb(uint8_t byte, uint8_t f9pID)
 */
 bool UBX::decode_message(uint8_t f9pID)
 {
+    if(f9pID==1)
+    {
+        DBG("Decoding baseveldata\n");
+    }
     // First, check the checksum
     uint8_t ck_a, ck_b;
     calculate_checksum(message_class_, message_type_, length_, in_message_, ck_a, ck_b);
