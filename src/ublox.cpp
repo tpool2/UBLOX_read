@@ -351,10 +351,11 @@ void UBLOX::udp_read_cb(const uint8_t* buf, size_t size)
 
     if(buf[0]==START_BYTE_1 && buf[1]==START_BYTE_2)
     {
-        DBG("Received baseveldata\n");
+        DBG("Received baseveldata and size: %i\n", size);
         for (int i = 0; i < size; i++)
         {
-            ubx_.read_cb(buf[i], 1);
+            DBG("buf[%i]=%i\n",i, buf[i]);
+            DBG("Returning: %i\n", ubx_.read_cb(buf[i], 1));
         }
     }
     else if(buf[0]==rtcm::START_BYTE)

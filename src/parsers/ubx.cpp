@@ -10,7 +10,8 @@ using namespace std;
 
 #define DEG2RAD (3.14159 / 180.0)
 // #ifndef NDEBUG
-#define DBG(...) //fprintf(stderr, __VA_ARGS__)
+#define DBG(...) fprintf(stderr, __VA_ARGS__)
+// #define DBG(...) //fprintf(stderr, __VA_ARGS__)
 // #define DBG(...) fprintf(stderr, )
 // #else
 // #define DBG(...)
@@ -121,6 +122,7 @@ bool UBX::read_cb(uint8_t byte, uint8_t f9pID)
         break;
     }
 
+    if(f9pID==1) DBG("Parse State: %i\n", parse_state_);
     // If we have a complete packet, then try to parse it
     if (parse_state_ == GOT_CK_B)
     {
@@ -156,13 +158,19 @@ bool UBX::decode_message(uint8_t f9pID)
 {
     if(f9pID==1)
     {
-        DBG("Decoding baseveldata\n");
+        // DBG("Decoding baseveldata\n");
     }
     // First, check the checksum
     uint8_t ck_a, ck_b;
     calculate_checksum(message_class_, message_type_, length_, in_message_, ck_a, ck_b);
     if (ck_a != ck_a_ || ck_b != ck_b_)
+    {
+        if(f9pID==1)
+        {
+            // DBG("Returning false because checksums did not match!\n");
+        }
         return false;
+    }
     uint8_t version; //0 poll request, 1 poll (receiver to return config data key and value pairs)
     uint8_t layer;
     uint8_t reserved1[2];
@@ -220,11 +228,21 @@ bool UBX::decode_message(uint8_t f9pID)
         break;
     }
 
+    if(f9pID==1)
+    {
+        // DBG("Looking for callbacks...\n");
+    }
     // call callbacks
     for (auto& cb : callbacks)
     {
-        if (message_class_ == cb.cls && message_type_ == cb.type && f9pID==cb.f9pID)
+        if (message_class_ == cb.cls && message_type_ == cb.type)
+        {
+            if(f9pID==1)
+            {
+                // DBG("Calling the correct callback!\n");
+            }
             cb.cb(message_class_, message_type_, in_message_, f9pID);
+        }
     }
 
     new_data_ = true;
