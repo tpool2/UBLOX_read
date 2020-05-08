@@ -21,7 +21,7 @@
 
 	</group>
 
-	<group ns="base">
+	<group ns="rover">
 
 		<node name="f9p" pkg="ublox" type="ublox_ros">
 			<param name="serial_port" value="$(arg rover_serial_port)"/>
