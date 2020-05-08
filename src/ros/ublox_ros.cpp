@@ -316,6 +316,8 @@ void UBLOX_ROS::pvtCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 
 void UBLOX_ROS::relposCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 {
+    std::cerr<<"relposCB"<<std::endl;
+    
     ublox::NAV_RELPOSNED_t msg = ubx_msg.NAV_RELPOSNED;
     
     // Create the message to be outputted

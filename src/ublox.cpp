@@ -237,6 +237,7 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
 
         rtcm_.registerCallback([ this , i](uint8_t* buf, size_t size)
         {
+            DBG("Sending RTCM Data\n");
             this->udparray_[i]->send_bytes(buf, size);
         });
 
@@ -353,7 +354,7 @@ void UBLOX::udp_read_cb(const uint8_t* buf, size_t size)
     }
     else if(buf[0]==rtcm::START_BYTE)
     {
-        // DBG("Received rtcm data\n");
+        DBG("Received rtcm data\n");
         for (int i = 0; i < size; i++)
         {
             rtcm_.read_cb(buf[i]);
