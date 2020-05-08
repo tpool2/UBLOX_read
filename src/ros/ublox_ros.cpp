@@ -307,6 +307,10 @@ void UBLOX_ROS::pvtCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
         {
             ecef_pub_.publish(ecef_msg_);
         }
+        else if(f9pID==1)
+        {
+            base_ecef_pub_.publish(ecef_msg_);
+        }
     }
 }
 

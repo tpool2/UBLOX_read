@@ -283,6 +283,30 @@ void UBX::calculate_checksum(const uint8_t msg_cls, const uint8_t msg_id, const 
     }
 }
 
+uint8_t* UBX::create_message(uint8_t msg_class, uint8_t msg_id, const UBX_message_t& message, uint16_t len)
+{
+    uint8_t buffer[ublox::BUFFER_SIZE];
+
+    memset(&buffer, 0, sizeof(buffer));
+    buffer[0] = START_BYTE_1;
+    buffer[1] = START_BYTE_2;
+    buffer[2] = msg_class;
+    buffer[3] =  msg_id;
+    buffer[4] = len & 0xFF;
+    buffer[5] = (len >> 8) & 0xFF;
+    for(int i=0; i<len; i++)
+    {
+        buffer[i+6] = message.buffer[i];
+    }
+
+    uint8_t ck_a, ck_b;
+    calculate_checksum(msg_class, msg_id, len, message, ck_a, ck_b);
+    buffer[6+sizeof(NAV_POSECEF_t)] = ck_a;
+    buffer[7+sizeof(NAV_POSECEF_t)] = ck_b;
+
+    return buffer;
+}
+
 // Sending messages to the f9p
 // These messages are either CFG_VALSET, CFG_VALGET, or CFG_VALDEL
 // Returns true if successfully send the message to the f9p module
