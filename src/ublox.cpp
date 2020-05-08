@@ -252,6 +252,12 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
             this->udparray_[i]->send_bytes(buffer, 8+sizeof(NAV_PVT_t));
         });
 
+        ubx_.registerCallback(CLASS_NAV, NAV_VELECEF, [this, i](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg, uint8_t f9pID=0)
+        {
+            ubx_.create_message(buffer, CLASS_NAV, NAV_VELECEF, msg, sizeof(NAV_VELECEF_t));
+            this->udparray_[i]->send_bytes(buffer, 8+sizeof(NAV_VELECEF_t));
+        });
+
         std::cerr<<"Initialized Base to Rover "+ std::to_string(i+1) +" UDP\n";
     }
 

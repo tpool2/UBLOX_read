@@ -46,6 +46,7 @@ private:
     ros::Publisher obs_pub_;
 
     ros::Publisher base_ecef_pub_;
+    ros::Publisher base_pvt_pub_;
 
     /**
      * @brief Callback for filling a PosVelTime ROS message from a UBX callback

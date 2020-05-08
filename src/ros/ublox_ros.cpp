@@ -29,6 +29,7 @@ UBLOX_ROS::UBLOX_ROS() :
     geph_pub_ = nh_.advertise<ublox::GlonassEphemeris>("GlonassEphemeris", 10);
     obs_pub_ = nh_.advertise<ublox::ObsVec>("Obs", 10);
     base_ecef_pub_ = nh_.advertise<ublox::PosVelEcef>("base/PosVelEcef", 10);
+    base_pvt_pub_ = nh_.advertise<ublox::PositionVelocityTime>("base/PosVelTime", 10);
     // nav_sat_fix_pub_ = nh_.advertise<sensor_msgs::NavSatFix>("NavSatFix");
     // nav_sat_status_pub_ = nh_.advertise<sensor_msgs::NavSatStatus>("NavSatStatus");
 
@@ -291,7 +292,14 @@ void UBLOX_ROS::pvtCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
     out.headAcc = msg.headAcc*1e-5;
     out.pDOP = msg.pDOP*0.01;
     out.headVeh = msg.headVeh*1e-5;
-    pvt_pub_.publish(out);
+    if(f9pID==0)
+    {
+        pvt_pub_.publish(out);
+    }
+    else if(f9pID==1)
+    {
+        base_pvt_pub_.publish(out);
+    }
 
     ecef_msg_.header.stamp = ros::Time::now();
     ecef_msg_.fix = out.fixType;
@@ -406,7 +414,6 @@ void UBLOX_ROS::posECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
     else if(f9pID==1)
     {
         base_ecef_pub_.publish(ecef_msg_);
-        // std::cerr<<"Publish ecef position\n";
     }
 
 }
@@ -428,12 +435,13 @@ void UBLOX_ROS::velECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
         }
     }
     if(f9pID==0)
+    {
         ecef_pub_.publish(ecef_msg_);
+    }
     else if(f9pID==1)
     {
 
         base_ecef_pub_.publish(ecef_msg_);
-        // std::cerr<<"Publish velecef\n";
     }
 }
 
