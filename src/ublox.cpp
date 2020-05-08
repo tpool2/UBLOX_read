@@ -242,34 +242,14 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
 
         ubx_.registerCallback(CLASS_NAV, NAV_POSECEF, [this, i](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg, uint8_t f9pID=0)
         {
-            memset(&buffer, 0, sizeof(buffer));
-            buffer[0] = START_BYTE_1;
-            buffer[1] = START_BYTE_2;
-            buffer[2] = _class;
-            buffer[3] =  _type;
-            buffer[4] = sizeof(NAV_POSECEF_t) & 0xFF;
-            buffer[5] = (sizeof(NAV_POSECEF_t) >> 8) & 0xFF;
-            for(int i=0; i<sizeof(NAV_POSECEF_t); i++)
-            {
-                buffer[i+6] = msg.buffer[i];
-            }
-
-            uint8_t ck_a, ck_b;
-            ubx_.calculate_checksum(_class, _type, sizeof(NAV_POSECEF_t), msg, ck_a, ck_b);
-            buffer[6+sizeof(NAV_POSECEF_t)] = ck_a;
-            buffer[7+sizeof(NAV_POSECEF_t)] = ck_b;
-            
-
+            ubx_.create_message(buffer, CLASS_NAV, NAV_POSECEF, msg, sizeof(NAV_POSECEF_t));
             this->udparray_[i]->send_bytes(buffer, 8+sizeof(NAV_POSECEF_t));
-            DBG("%i\n", msg.buffer[0]);
-            DBG("Send base vel data\n");
         });
 
         ubx_.registerCallback(CLASS_NAV, NAV_PVT, [this, i](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg, uint8_t f9pID=0)
         {
-            uint8_t *_buffer;
-            _buffer = ubx_.create_message(CLASS_NAV, NAV_PVT, msg, sizeof(NAV_PVT_t));
-            this->udparray_[i]->send_bytes(_buffer, 8+sizeof(NAV_PVT_t));
+            ubx_.create_message(buffer, CLASS_NAV, NAV_PVT, msg, sizeof(NAV_PVT_t));
+            this->udparray_[i]->send_bytes(buffer, 8+sizeof(NAV_PVT_t));
         });
 
         std::cerr<<"Initialized Base to Rover "+ std::to_string(i+1) +" UDP\n";
@@ -358,16 +338,16 @@ void UBLOX::udp_read_cb(const uint8_t* buf, size_t size)
 
     if(buf[0]==START_BYTE_1 && buf[1]==START_BYTE_2)
     {
-        DBG("Received baseveldata and size: %i\n", size);
+        // DBG("Received baseveldata and size: %i\n", size);
         for (int i = 0; i < size; i++)
         {
-            DBG("buf[%i]=%i\n",i, buf[i]);
-            DBG("Returning: %i\n", ubx_.read_cb(buf[i], 1));
+            // DBG("buf[%i]=%i\n",i, buf[i]);
+            ubx_.read_cb(buf[i], 1);
         }
     }
     else if(buf[0]==rtcm::START_BYTE)
     {
-        DBG("Received rtcm data\n");
+        // DBG("Received rtcm data\n");
         for (int i = 0; i < size; i++)
         {
             rtcm_.read_cb(buf[i]);

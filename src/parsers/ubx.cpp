@@ -122,7 +122,7 @@ bool UBX::read_cb(uint8_t byte, uint8_t f9pID)
         break;
     }
 
-    if(f9pID==1) DBG("Parse State: %i\n", parse_state_);
+    // if(f9pID==1) DBG("Parse State: %i\n", parse_state_);
     // If we have a complete packet, then try to parse it
     if (parse_state_ == GOT_CK_B)
     {
@@ -138,7 +138,7 @@ bool UBX::read_cb(uint8_t byte, uint8_t f9pID)
         else
         {
             // indicate error if it didn't work
-            DBG("\n failed to parse message\n");
+            DBG("\n failed to parse message, f9pID: %i, ParseState: %i, MSG_ID: %i\n", f9pID, parse_state_, message_type_);
             num_errors_++;
             parse_state_ = START;
             start_message_ = false;
@@ -167,7 +167,9 @@ bool UBX::decode_message(uint8_t f9pID)
     {
         if(f9pID==1)
         {
-            // DBG("Returning false because checksums did not match!\n");
+            DBG("Returning false because checksums did not match!\n");
+            DBG("Message cka: %i, calculated cka: %i\n", ck_a_, ck_a);
+            DBG("Message ckb: %i, calculated ckb: %i\n", ck_b_, ck_b);
         }
         return false;
     }
@@ -230,7 +232,7 @@ bool UBX::decode_message(uint8_t f9pID)
 
     if(f9pID==1)
     {
-        // DBG("Looking for callbacks...\n");
+        // DBG("Looking for callbacks of class: %i, type: %i\n", message_class_, message_type_);
     }
     // call callbacks
     for (auto& cb : callbacks)
@@ -239,7 +241,7 @@ bool UBX::decode_message(uint8_t f9pID)
         {
             if(f9pID==1)
             {
-                // DBG("Calling the correct callback!\n");
+                // DBG("Calling class: %i, type: %i\n", cb.cls, cb.type);
             }
             cb.cb(message_class_, message_type_, in_message_, f9pID);
         }
@@ -305,6 +307,28 @@ uint8_t* UBX::create_message(uint8_t msg_class, uint8_t msg_id, const UBX_messag
     buffer[7+sizeof(NAV_POSECEF_t)] = ck_b;
 
     return buffer;
+}
+
+void UBX::create_message(uint8_t* buffer, uint8_t msg_class, uint8_t msg_id, const UBX_message_t& message, uint16_t len)
+{
+    memset(buffer, 0, len);
+    buffer[0] = START_BYTE_1;
+    buffer[1] = START_BYTE_2;
+    buffer[2] = msg_class;
+    buffer[3] =  msg_id;
+    buffer[4] = len & 0xFF;
+    buffer[5] = (len >> 8) & 0xFF;
+    for(int i=0; i<len; i++)
+    {
+        buffer[i+6] = message.buffer[i];
+    }
+
+    uint8_t ck_a, ck_b;
+    calculate_checksum(msg_class, msg_id, len, message, ck_a, ck_b);
+    buffer[6+len] = ck_a;
+    buffer[7+len] = ck_b;
+    // DBG("Create message cka: %i\n", ck_a);
+    // DBG("Create message ckb: %i\n", ck_b);
 }
 
 // Sending messages to the f9p

@@ -307,10 +307,11 @@ void UBLOX_ROS::pvtCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
         {
             ecef_pub_.publish(ecef_msg_);
         }
-        else if(f9pID==1)
-        {
-            base_ecef_pub_.publish(ecef_msg_);
-        }
+    }
+    else if(f9pID==1)
+    {
+        // std::cerr<<"Publish base lla\n";
+        base_ecef_pub_.publish(ecef_msg_);
     }
 }
 
@@ -385,7 +386,7 @@ void UBLOX_ROS::posECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 {
     if(f9pID==1)
     {
-        std::cerr<<("Calling posecef cb for basevel\n");
+        // std::cerr<<("Calling posecef cb for basevel\n");
     }
     ublox::NAV_POSECEF_t msg = ubx_msg.NAV_POSECEF;
     pos_tow_ = msg.iTOW;
@@ -403,7 +404,10 @@ void UBLOX_ROS::posECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
     if(f9pID==0)
         ecef_pub_.publish(ecef_msg_);
     else if(f9pID==1)
+    {
         base_ecef_pub_.publish(ecef_msg_);
+        // std::cerr<<"Publish ecef position\n";
+    }
 
 }
 
@@ -426,7 +430,11 @@ void UBLOX_ROS::velECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
     if(f9pID==0)
         ecef_pub_.publish(ecef_msg_);
     else if(f9pID==1)
+    {
+
         base_ecef_pub_.publish(ecef_msg_);
+        // std::cerr<<"Publish velecef\n";
+    }
 }
 
 void UBLOX_ROS::obsCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
