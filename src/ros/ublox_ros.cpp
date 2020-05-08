@@ -260,66 +260,56 @@ void UBLOX_ROS::cb_rov2(const ublox::RelPos &msg) {
 void UBLOX_ROS::pvtCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 {
     ublox::NAV_PVT_t msg = ubx_msg.NAV_PVT;
-    pos_tow_ = msg.iTOW;
-    ublox::PositionVelocityTime out;
-    // out.iTOW = msg.iTow;
-    out.header.stamp = ros::Time::now(); ///TODO: Do this right
-    out.year = msg.year;
-    out.month = msg.month;
-    out.day = msg.day;
-    out.hour = msg.hour;
-    out.min = msg.min;
-    out.sec = msg.sec;
-    out.nano = msg.nano;
-    out.tAcc = msg.tAcc;
-    out.valid = msg.valid;
-    out.fixType = msg.fixType;
-    out.flags = msg.flags;
-    out.flags2 = msg.flags2;
-    out.numSV = msg.numSV;
-    out.lla[0] = msg.lat*1e-7;
-    out.lla[1] = msg.lon*1e-7;
-    out.lla[2] = msg.height*1e-3;
-    out.hMSL = msg.hMSL*1e-3;
-    out.hAcc = msg.hAcc*1e-3;
-    out.vAcc = msg.vAcc*1e-3;
-    out.velNED[0] = msg.velN*1e-3;
-    out.velNED[1] = msg.velE*1e-3;
-    out.velNED[2] = msg.velD*1e-3;
-    out.gSpeed = msg.gSpeed*1e-3;
-    out.headMot = msg.headMot*1e-5;
-    out.sAcc = msg.sAcc*1e-3;
-    out.headAcc = msg.headAcc*1e-5;
-    out.pDOP = msg.pDOP*0.01;
-    out.headVeh = msg.headVeh*1e-5;
-    if(f9pID==0)
-    {
-        pvt_pub_.publish(out);
-    }
-    else if(f9pID==1)
-    {
-        base_pvt_pub_.publish(out);
-    }
 
-    ecef_msg_.header.stamp = ros::Time::now();
-    ecef_msg_.fix = out.fixType;
-    ecef_msg_.lla[0] = out.lla[0];
-    ecef_msg_.lla[1] = out.lla[1];
-    ecef_msg_.lla[2] = out.lla[2];
-    ecef_msg_.horizontal_accuracy = out.hAcc;
-    ecef_msg_.vertical_accuracy = out.vAcc;
-    ecef_msg_.speed_accuracy = out.sAcc;
-    if (pos_tow_ == pvt_tow_ && pos_tow_ == vel_tow_)
+    if(!evalF9PID(f9pID)) return;
+
+    *pvt_tow_ptr_ = msg.iTOW;
+    // out.iTOW = msg.iTow;
+    pvt_ptr_->header.stamp = ros::Time::now(); ///TODO: Do this right
+    pvt_ptr_->year = msg.year;
+    pvt_ptr_->month = msg.month;
+    pvt_ptr_->day = msg.day;
+    pvt_ptr_->hour = msg.hour;
+    pvt_ptr_->min = msg.min;
+    pvt_ptr_->sec = msg.sec;
+    pvt_ptr_->nano = msg.nano;
+    pvt_ptr_->tAcc = msg.tAcc;
+    pvt_ptr_->valid = msg.valid;
+    pvt_ptr_->fixType = msg.fixType;
+    pvt_ptr_->flags = msg.flags;
+    pvt_ptr_->flags2 = msg.flags2;
+    pvt_ptr_->numSV = msg.numSV;
+    pvt_ptr_->lla[0] = msg.lat*1e-7;
+    pvt_ptr_->lla[1] = msg.lon*1e-7;
+    pvt_ptr_->lla[2] = msg.height*1e-3;
+    pvt_ptr_->hMSL = msg.hMSL*1e-3;
+    pvt_ptr_->hAcc = msg.hAcc*1e-3;
+    pvt_ptr_->vAcc = msg.vAcc*1e-3;
+    pvt_ptr_->velNED[0] = msg.velN*1e-3;
+    pvt_ptr_->velNED[1] = msg.velE*1e-3;
+    pvt_ptr_->velNED[2] = msg.velD*1e-3;
+    pvt_ptr_->gSpeed = msg.gSpeed*1e-3;
+    pvt_ptr_->headMot = msg.headMot*1e-5;
+    pvt_ptr_->sAcc = msg.sAcc*1e-3;
+    pvt_ptr_->headAcc = msg.headAcc*1e-5;
+    pvt_ptr_->pDOP = msg.pDOP*0.01;
+    pvt_ptr_->headVeh = msg.headVeh*1e-5;
+
+    pvt_pub_ptr_->publish(*pvt_ptr_);
+
+    ecef_ptr_->header.stamp = ros::Time::now();
+    ecef_ptr_->fix = pvt_ptr_->fixType;
+    ecef_ptr_->lla[0] = pvt_ptr_->lla[0];
+    ecef_ptr_->lla[1] = pvt_ptr_->lla[1];
+    ecef_ptr_->lla[2] = pvt_ptr_->lla[2];
+    ecef_ptr_->horizontal_accuracy = pvt_ptr_->hAcc;
+    ecef_ptr_->vertical_accuracy = pvt_ptr_->vAcc;
+    ecef_ptr_->speed_accuracy = pvt_ptr_->sAcc;
+
+    if (*ecef_pos_tow_ptr_ == *pvt_tow_ptr_ && 
+        *ecef_pos_tow_ptr_ == *ecef_vel_tow_ptr_)
     {
-        if(f9pID==0)
-        {
-            ecef_pub_.publish(ecef_msg_);
-        }
-    }
-    else if(f9pID==1)
-    {
-        // std::cerr<<"Publish base lla\n";
-        base_ecef_pub_.publish(ecef_msg_);
+        ecef_pub_ptr_->publish(*ecef_ptr_);
     }
 }
 
@@ -392,28 +382,20 @@ void UBLOX_ROS::svinCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 
 void UBLOX_ROS::posECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 {
-    if(f9pID==1)
-    {
-        // std::cerr<<("Calling posecef cb for basevel\n");
-    }
     ublox::NAV_POSECEF_t msg = ubx_msg.NAV_POSECEF;
-    pos_tow_ = msg.iTOW;
-    ecef_msg_.header.stamp = ros::Time::now();
-    ecef_msg_.position[0] = msg.ecefX*1e-2;
-    ecef_msg_.position[1] = msg.ecefY*1e-2;
-    ecef_msg_.position[2] = msg.ecefZ*1e-2;
-    if (pos_tow_ == pvt_tow_ && pos_tow_ == vel_tow_)
+
+    if(!evalF9PID(f9pID)) return;
+
+    *ecef_pos_tow_ptr_ = msg.iTOW;
+    ecef_ptr_->header.stamp = ros::Time::now();
+    ecef_ptr_->position[0] = msg.ecefX*1e-2;
+    ecef_ptr_->position[1] = msg.ecefY*1e-2;
+    ecef_ptr_->position[2] = msg.ecefZ*1e-2;
+
+    if (*ecef_pos_tow_ptr_ == *pvt_tow_ptr_ && 
+        *ecef_pos_tow_ptr_ == *ecef_vel_tow_ptr_)
     {
-        if(f9pID==0)
-        {
-            ecef_pub_.publish(ecef_msg_);
-        }
-    }
-    if(f9pID==0)
-        ecef_pub_.publish(ecef_msg_);
-    else if(f9pID==1)
-    {
-        base_ecef_pub_.publish(ecef_msg_);
+        ecef_pub_ptr_->publish(*ecef_ptr_);
     }
 
 }
@@ -421,27 +403,19 @@ void UBLOX_ROS::posECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 void UBLOX_ROS::velECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 {
     ublox::NAV_VELECEF_t msg = ubx_msg.NAV_VELECEF;
-    vel_tow_ = msg.iTOW;
-    ecef_msg_.header.stamp = ros::Time::now();
-    ecef_msg_.velocity[0] = msg.ecefVX*1e-2;
-    ecef_msg_.velocity[0] = msg.ecefVY*1e-2;
-    ecef_msg_.velocity[0] = msg.ecefVZ*1e-2;
 
-    if (pos_tow_ == pvt_tow_ && pos_tow_ == vel_tow_)
-    {
-        if(f9pID==0)
-        {
-            ecef_pub_.publish(ecef_msg_);
-        }
-    }
-    if(f9pID==0)
-    {
-        ecef_pub_.publish(ecef_msg_);
-    }
-    else if(f9pID==1)
-    {
+    if(!evalF9PID(f9pID)) return;
 
-        base_ecef_pub_.publish(ecef_msg_);
+    *ecef_vel_tow_ptr_ = msg.iTOW;
+    ecef_ptr_->header.stamp = ros::Time::now();
+    ecef_ptr_->velocity[0] = msg.ecefVX*1e-2;
+    ecef_ptr_->velocity[1] = msg.ecefVY*1e-2;
+    ecef_ptr_->velocity[2] = msg.ecefVZ*1e-2;
+
+    if (*ecef_pos_tow_ptr_ == *pvt_tow_ptr_ && 
+        *ecef_pos_tow_ptr_ == *ecef_vel_tow_ptr_)
+    {
+        ecef_pub_ptr_->publish(*ecef_ptr_);
     }
 }
 
@@ -646,6 +620,36 @@ bool UBLOX_ROS::cfgValSet(ublox::CfgValSet::Request &req, ublox::CfgValSet::Resp
     res.got_Nack = response.got_nack;
 
     return true;
+}
+
+bool UBLOX_ROS::evalF9PID(uint8_t f9pID)
+{
+    switch(f9pID)
+    {
+        case 0:
+            ecef_ptr_= &ecef_msg_;
+            ecef_pub_ptr_ = &ecef_pub_;
+            pvt_ptr_ = &pvt_msg_;
+            pvt_pub_ptr_ = &pvt_pub_;
+            ecef_pos_tow_ptr_ = &ecef_pos_tow_;
+            ecef_vel_tow_ptr_ = &ecef_vel_tow_;
+            pvt_tow_ptr_ = &pvt_tow_;
+            return true;
+            break;
+        case 1:
+            ecef_ptr_= &base_ecef_msg_;
+            ecef_pub_ptr_ = &base_ecef_pub_;
+            pvt_ptr_ = &base_pvt_msg_;
+            pvt_pub_ptr_ = &base_pvt_pub_;
+            ecef_pos_tow_ptr_ = &base_ecef_pos_tow_;
+            ecef_vel_tow_ptr_ = &base_ecef_vel_tow_;
+            pvt_tow_ptr_ = &base_pvt_tow_;
+            return true;
+            break;
+        default:
+            return false;
+            break;
+    }
 }
 
 }

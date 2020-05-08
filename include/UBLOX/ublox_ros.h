@@ -47,6 +47,8 @@ private:
 
     ros::Publisher base_ecef_pub_;
     ros::Publisher base_pvt_pub_;
+    ros::Publisher *ecef_pub_ptr_;
+    ros::Publisher *pvt_pub_ptr_;
 
     /**
      * @brief Callback for filling a PosVelTime ROS message from a UBX callback
@@ -83,9 +85,18 @@ private:
     ros::ServiceServer cfg_val_del_;
     ros::ServiceServer cfg_val_set_;
 
-    uint32_t pos_tow_;
-    uint32_t vel_tow_;
+    uint32_t ecef_pos_tow_;
+    uint32_t ecef_vel_tow_;
     uint32_t pvt_tow_;
+
+    uint32_t base_ecef_pos_tow_;
+    uint32_t base_ecef_vel_tow_;
+    uint32_t base_pvt_tow_;
+
+    uint32_t *ecef_pos_tow_ptr_;
+    uint32_t *ecef_vel_tow_ptr_;
+    uint32_t *pvt_tow_ptr_;
+
     uint32_t pvt_week_;
     // int message_rate;
 
@@ -98,6 +109,13 @@ private:
     ros::Subscriber sub2;
 
     ublox::PosVelEcef ecef_msg_;
+    ublox::PosVelEcef base_ecef_msg_;
+    ublox::PosVelEcef *ecef_ptr_;
+
+    ublox::PositionVelocityTime pvt_msg_;
+    ublox::PositionVelocityTime base_pvt_msg_;
+    ublox::PositionVelocityTime *pvt_ptr_;
+
     void cb_rov1(const ublox::RelPos &msg);
     void cb_rov2(const ublox::RelPos &msg);
 
@@ -140,6 +158,8 @@ private:
             subiterate[i-xstart] = iteratable[i];
         }
     }
+
+    bool evalF9PID(uint8_t f9pID);
     
 };
 
