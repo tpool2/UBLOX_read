@@ -341,7 +341,20 @@ void UBLOX_ROS::relposCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
     out.accNED[2] = msg.accD*1e-3*.1;
     out.accLength = msg.accLength*1e-3*.1;
     out.accHeading = deg2rad(msg.accHeading*1e-5);
-    out.flags = msg.flags;
+    out.flags = msg.flags.all_flags;
+
+
+    relpos_flag_msg_.header.stamp = out.header.stamp;
+    relpos_flag_msg_.gnssFixOk = msg.flags.gnssFixOk;
+    relpos_flag_msg_.diffSoln = msg.flags.diffSoln;
+    relpos_flag_msg_.relPosValid = msg.flags.relPosValid;
+    relpos_flag_msg_.carrSoln = msg.flags.carrSoln[0] + 2*msg.flags.carrSoln[1];
+    relpos_flag_msg_.isMoving = msg.flags.isMoving;
+    relpos_flag_msg_.refPosMiss = msg.flags.refPosMiss;
+    relpos_flag_msg_.refObsMiss = msg.flags.refObsMiss;
+    relpos_flag_msg_.relPosHeadingValid = msg.flags.relPosHeadingValid;
+    relpos_flag_msg_.relPosNormalized = msg.flags.relPosNormalized;
+    relpos_flag_msg_.flags = msg.flags.all_flags;
 
     if (arrow_flag == true) {
 
@@ -360,6 +373,7 @@ void UBLOX_ROS::relposCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
   }
     // Publish the RelPos ROS message
     relpos_pub_.publish(out);
+    relposflag_pub_.publish(relpos_flag_msg_);
 }
 
 void UBLOX_ROS::svinCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)

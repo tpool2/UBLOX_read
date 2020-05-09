@@ -18,7 +18,7 @@ void relposned_callback(uint8_t cls, uint8_t type, const ublox::UBX_message_t& i
 {
     int RTK_flag;
     const ublox::NAV_RELPOSNED_t& msg(in_msg.NAV_RELPOSNED);
-    if (msg.flags && 0b000000010)
+    if (msg.flags.diffSoln)
     {
         printf("RTK");
         RTK_flag = 1;
@@ -31,13 +31,13 @@ void relposned_callback(uint8_t cls, uint8_t type, const ublox::UBX_message_t& i
     }
     if (RTK_flag == 1)
     {
-        if (msg.flags && 0b000100000)
+        if (msg.flags.isMoving)
             printf(", Moving Base");
-        if (msg.flags && 0b000001000)
+        if (msg.flags.carrSoln[0])
             printf(" , Floating \n");
-        else if (msg.flags && 0b000010000)
+        else if (msg.flags.carrSoln[1])
             printf(" , Fixed \n");
-        if (msg.flags && 0b000000100)
+        if (msg.flags.relPosValid)
             printf("valid relative position components \n");
         printf("%d relative t: %d, NED: %d, %d, %d, Distance: %d\n",
                i,

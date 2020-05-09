@@ -10,6 +10,7 @@
 #include "ublox/PosVelEcef.h"
 #include "ublox/PositionVelocityTime.h"
 #include "ublox/RelPos.h"
+#include "ublox/RelPosFlags.h"
 #include "ublox/SurveyStatus.h"
 #include "ublox/Ephemeris.h"
 #include "ublox/GlonassEphemeris.h"
@@ -38,6 +39,7 @@ private:
     ros::Publisher pvt_pub_;
     ros::Publisher survey_status_pub_;
     ros::Publisher relpos_pub_;
+    ros::Publisher relposflag_pub_;
     ros::Publisher ecef_pub_;
     ros::Publisher nav_sat_fix_pub_;
     ros::Publisher nav_sat_status_pub_;
@@ -115,6 +117,8 @@ private:
     ublox::PositionVelocityTime pvt_msg_;
     ublox::PositionVelocityTime base_pvt_msg_;
     ublox::PositionVelocityTime *pvt_ptr_;
+
+    ublox::RelPosFlags relpos_flag_msg_;
 
     void cb_rov1(const ublox::RelPos &msg);
     void cb_rov2(const ublox::RelPos &msg);

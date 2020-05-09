@@ -70,6 +70,7 @@ if (${BUILD_ROS})
 		PosVelEcef.msg
 		PositionVelocityTime.msg
 		RelPos.msg
+		RelPosFlags.msg
 		SurveyStatus.msg
 		Ephemeris.msg
 		GlonassEphemeris.msg
