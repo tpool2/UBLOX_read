@@ -3,7 +3,8 @@ Header header
 bool gnssFixOk
 bool diffSoln
 bool relPosValid
-uint8 carrSoln
+bool floatCarrSoln
+bool fixedCarrSoln
 bool isMoving
 bool refPosMiss
 bool refObsMiss

@@ -33,9 +33,9 @@ void relposned_callback(uint8_t cls, uint8_t type, const ublox::UBX_message_t& i
     {
         if (msg.flags.isMoving)
             printf(", Moving Base");
-        if (msg.flags.carrSoln & 0b01)
+        if (msg.flags.floatCarrSoln)
             printf(" , Floating \n");
-        else if (msg.flags.carrSoln & 0b10)
+        else if (msg.flags.fixedCarrSoln)
             printf(" , Fixed \n");
         if (msg.flags.relPosValid)
             printf("valid relative position components \n");

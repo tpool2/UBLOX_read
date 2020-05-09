@@ -349,7 +349,8 @@ void UBLOX_ROS::relposCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
     relpos_flag_msg_.gnssFixOk = msg.flags.gnssFixOk;
     relpos_flag_msg_.diffSoln = msg.flags.diffSoln;
     relpos_flag_msg_.relPosValid = msg.flags.relPosValid;
-    relpos_flag_msg_.carrSoln = msg.flags.carrSoln;
+    relpos_flag_msg_.floatCarrSoln = msg.flags.floatCarrSoln;
+    relpos_flag_msg_.fixedCarrSoln = msg.flags.fixedCarrSoln;
     relpos_flag_msg_.isMoving = msg.flags.isMoving;
     relpos_flag_msg_.refPosMiss = msg.flags.refPosMiss;
     relpos_flag_msg_.refObsMiss = msg.flags.refObsMiss;

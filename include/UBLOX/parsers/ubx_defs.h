@@ -706,7 +706,8 @@ typedef struct  {
             bool gnssFixOk;
             bool diffSoln;
             bool relPosValid;
-            uint8_t carrSoln: 2;
+            bool floatCarrSoln;
+            bool fixedCarrSoln;
             bool isMoving;
             bool refPosMiss;
             bool refObsMiss;
