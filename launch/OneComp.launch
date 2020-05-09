@@ -24,6 +24,7 @@
 			<param name="local_port" value="16145"/>
 			<param name="base_host" value="localhost"/>
 			<param name="base_port" value="16140"/>
-		</node> 
+		</node>
+		<node pkg="rosbag" type="record" name="record" output="screen" args="--all -o ../data/basevel/basevel.bag "/> 
 	</group>
 </launch>

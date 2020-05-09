@@ -23,6 +23,7 @@ UBLOX_ROS::UBLOX_ROS() :
     // Connect ROS topics
     pvt_pub_ = nh_.advertise<ublox::PositionVelocityTime>("PosVelTime", 10);
     relpos_pub_ = nh_.advertise<ublox::RelPos>("RelPos", 10);
+    relposflag_pub_ = nh_.advertise<ublox::RelPosFlags>("RelPosFlags", 10);
     ecef_pub_ = nh_.advertise<ublox::PosVelEcef>("PosVelEcef", 10);
     survey_status_pub_ = nh_.advertise<ublox::SurveyStatus>("SurveyStatus", 10);
     eph_pub_ = nh_.advertise<ublox::Ephemeris>("Ephemeris", 10);
@@ -316,7 +317,7 @@ void UBLOX_ROS::pvtCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 
 void UBLOX_ROS::relposCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 {
-    std::cerr<<"relposCB"<<std::endl;
+    // std::cerr<<"relposCB"<<std::endl;
     
     ublox::NAV_RELPOSNED_t msg = ubx_msg.NAV_RELPOSNED;
     
@@ -348,7 +349,7 @@ void UBLOX_ROS::relposCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
     relpos_flag_msg_.gnssFixOk = msg.flags.gnssFixOk;
     relpos_flag_msg_.diffSoln = msg.flags.diffSoln;
     relpos_flag_msg_.relPosValid = msg.flags.relPosValid;
-    relpos_flag_msg_.carrSoln = msg.flags.carrSoln[0] + 2*msg.flags.carrSoln[1];
+    relpos_flag_msg_.carrSoln = msg.flags.carrSoln;
     relpos_flag_msg_.isMoving = msg.flags.isMoving;
     relpos_flag_msg_.refPosMiss = msg.flags.refPosMiss;
     relpos_flag_msg_.refObsMiss = msg.flags.refObsMiss;

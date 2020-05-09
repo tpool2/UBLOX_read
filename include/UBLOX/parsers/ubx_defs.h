@@ -706,14 +706,14 @@ typedef struct  {
             bool gnssFixOk;
             bool diffSoln;
             bool relPosValid;
-            bool carrSoln[2];
+            uint8_t carrSoln: 2;
             bool isMoving;
             bool refPosMiss;
             bool refObsMiss;
             bool relPosHeadingValid;
             bool relPosNormalized;
             bool reserved[22];
-        };
+        }__attribute__((packed));
         
     }__attribute__((packed)) RELPOSFLAGS_t;
 
