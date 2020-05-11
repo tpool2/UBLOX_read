@@ -24,6 +24,13 @@ public:
     CFG_VALGET_TUPLE_t get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
     CFG_VAL_DBG_t del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
 
+    /**
+     * @brief Resets the Configurations on the F9P
+     * @param navBbrMask bitfield (size 2 bytes) containing areas to reset. See ubx_defs for more information
+     * @param resetMode uint8_t specifying which reset mode to follow.
+     */
+    void reset(navBbrMask_t navBbrMask, uint8_t resetMode);
+
     // This function returns true when a new message has been parsed
     bool read_cb(uint8_t byte, uint8_t f9pID=0);
 

@@ -158,6 +158,7 @@ public:
                       int galileo);
     void poll_value();
 
+
     /**
      * @brief Computes NED, absolute distance, pitch, and yaw
      * @param ned_1 array of length 3 NED
@@ -169,6 +170,7 @@ public:
     CFG_VALGET_TUPLE_t cfgValGet(const CFG_VALGET_t &request);
     CFG_VAL_DBG_t cfgValDel(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
     CFG_VAL_DBG_t cfgValSet(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size);
+    navBbrMask_t reset(uint16_t navBbrMask, uint8_t resetMode);
 
     uint8_t byte = 1;
     uint8_t word = 2;

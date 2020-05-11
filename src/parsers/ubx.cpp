@@ -432,6 +432,15 @@ CFG_VAL_DBG_t UBX::del_configuration(uint8_t version, uint8_t layer, uint32_t cf
     return cfgval_dbg_;
 }
 
+void UBX::reset(navBbrMask_t navBbrMask, uint8_t resetMode)
+{
+    memset(&out_message_, 0, sizeof(CFG_RST_t));
+    out_message_.CFG_RST.navBbrMask=navBbrMask;
+    out_message_.CFG_RST.resetMode=resetMode;
+    send_message(CLASS_CFG, CFG_RST, out_message_, sizeof(CFG_RST_t));
+    DBG("Reset Successful\n");
+}
+
 uint32_t translate(std::string key)
 {
     std::string::size_type leftover;
