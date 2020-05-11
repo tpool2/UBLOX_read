@@ -56,11 +56,14 @@ UBLOX_ROS::UBLOX_ROS() :
     // nav_sat_fix_pub_ = nh_.advertise<sensor_msgs::NavSatFix>("NavSatFix");
     // nav_sat_status_pub_ = nh_.advertise<sensor_msgs::NavSatStatus>("NavSatStatus");
     //Get parameters
+
+
     // Connect ROS services
     cfg_val_get = nh_.advertiseService("CfgValGet", &UBLOX_ROS::cfgValGet, this);
     cfg_val_del_ = nh_.advertiseService("CfgValDel", &UBLOX_ROS::cfgValDel, this);
     cfg_val_set_ = nh_.advertiseService("CfgValSet", &UBLOX_ROS::cfgValSet, this);
     cfg_reset_ = nh_.advertiseService("CfgReset", &UBLOX_ROS::cfgReset, this);
+    cfg_val_get_all_ = nh_.advertiseService("CfgValGetAll", &UBLOX_ROS::cfgValGetAll, this);
 
     //Get the serial port
     std::string serial_port = nh_private_.param<std::string>("serial_port", "/dev/ttyACM0");
@@ -590,6 +593,12 @@ void UBLOX_ROS::gephCB(const GlonassEphemeris &eph)
     out.dtaun = eph.dtaun;
 
     geph_pub_.publish(out);
+}
+
+bool UBLOX_ROS::cfgValGetAll(ublox::CfgValGetAll::Request &req, ublox::CfgValGetAll::Response &res)
+{
+    std::cerr<<req.filepath<<"\n";
+    return true;
 }
 
 bool UBLOX_ROS::cfgValGet(ublox::CfgValGet::Request &req, ublox::CfgValGet::Response &res)

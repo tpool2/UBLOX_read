@@ -448,6 +448,13 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
       return ubx_.configure(version, layer, cfgData, cfgDataKey, size);
   }
 
+  std::vector<std::string> UBLOX::cfgValGetAll(std::string filepath)
+  {
+      DBG("%s\n",filepath);
+      std::ofstream ofs(filepath);
+      ofs << "Hello World!";
+  }
+
     navBbrMask_t UBLOX::reset(uint16_t navBbrMask, uint8_t resetMode)
     {
         union {

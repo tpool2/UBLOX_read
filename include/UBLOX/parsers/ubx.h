@@ -13,6 +13,38 @@ namespace ublox
     typedef boost::bimaps::bimap<std::string, uint32_t> bimap_type;
     typedef bimap_type::value_type value_type;
 
+    typedef struct {
+        CFG_KEY_ID_t keyID;
+        std::string keyName;
+        uint8_t cfgValue;
+    } CFG_8_Bit_t;
+
+    typedef struct {
+        CFG_KEY_ID_t keyID;
+        std::string keyName;
+        uint16_t cfgValue;
+    } CFG_16_Bit_t;
+
+    typedef struct {
+        CFG_KEY_ID_t keyID;
+        std::string keyName;
+        uint32_t cfgValue;
+    } CFG_32_Bit_t;
+
+    typedef struct {
+        CFG_KEY_ID_t keyID;
+        std::string keyName;
+        uint64_t cfgValue;
+    } CFG_64_Bit_t;
+
+    typedef struct {
+        std::vector<CFG_8_Bit_t> cfg8bit;
+        std::vector<CFG_16_Bit_t> cfg16bit;
+        std::vector<CFG_32_Bit_t> cfg32bit;
+        std::vector<CFG_64_Bit_t> cfg64bit;
+    }
+    cfgVectors_t;
+
 class UBX
 {
 public:
@@ -23,6 +55,8 @@ public:
     CFG_VAL_DBG_t configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size);
     CFG_VALGET_TUPLE_t get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
     CFG_VAL_DBG_t del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
+
+    cfgVectors_t get_configuration(uint8_t version, uint8_t layer, uint16_t position, uint32_t cfgDataKey);
 
     /**
      * @brief Resets the Configurations on the F9P
