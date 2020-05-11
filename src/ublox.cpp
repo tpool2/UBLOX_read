@@ -32,22 +32,13 @@ UBLOX::UBLOX(const std::string& port, int message_rate) :
     //configuring SVIN messages is done in config_base_stationary()
 
 
-    auto eph_cb = [this](uint8_t cls, uint8_t type, const ublox::UBX_message_t& in_msg, uint8_t f9pID=0)
+    auto eph_cb = [this](uint8_t cls, uint8_t type, const ublox::UBX_message_t& in_msg)
     {
       this->nav_.convertUBX(in_msg.RXM_SFRBX);
     };
     ubx_.registerCallback(ublox::CLASS_RXM, ublox::RXM_SFRBX, eph_cb);
 
 }
-
-void UBLOX::config_gnss(bool gps, bool glonas, bool beidou, bool galileo)
-{
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, gps, CFG_VALSET_t::SIGNAL_GPS, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, glonas, CFG_VALSET_t::SIGNAL_GAL, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, beidou, CFG_VALSET_t::SIGNAL_BDS, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, galileo, CFG_VALSET_t::SIGNAL_GAL, byte);
-}
-
 
 void UBLOX::config_f9p() //See ubx_defs.h for more information
 {
@@ -60,7 +51,12 @@ void UBLOX::config_f9p() //See ubx_defs.h for more information
         poll_value();
 }
 
-
+/*
+Function config_base
+Configures whether the base is stationary or moving.
+Inputs: base type
+Outputs: calls the correct base configuration function and outputs to the command line the status of the base.
+*/
 void UBLOX::config_base(std::string base_type, int gps, int glonas, int beidou,
                   int galileo, int surveytime, int surveyacc)
 {
@@ -88,6 +84,9 @@ void UBLOX::config_base(std::string base_type, int gps, int glonas, int beidou,
 void UBLOX::config_base_stationary(int on_off, int gps, int glonas, int beidou,
                   int galileo, int surveytime, int surveyacc)
 {
+    // ubx_.del_configuration(CFG_VALDEL_t::VERSION_0, CFG_VALDEL_t::RAM, CFG_VALDEL_t::TMODE_SVIN_MIN_DUR);
+    // These values control whether RTK corrections are calculated for the
+    // following constellations
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::RTCM_1005USB, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off*gps, CFG_VALSET_t::RTCM_1074USB, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off*glonas, CFG_VALSET_t::RTCM_1084USB, byte);
@@ -105,7 +104,6 @@ void UBLOX::config_base_stationary(int on_off, int gps, int glonas, int beidou,
 
 }
 
-
 void UBLOX::config_base_moving(int on_off, int gps, int glonas, int beidou,
                   int galileo)
 {
@@ -120,9 +118,7 @@ void UBLOX::config_base_moving(int on_off, int gps, int glonas, int beidou,
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*glonas, CFG_VALSET_t::RTCM_1230USB, byte);
 }
 
-/**
- * Configures rover settings on F9P
- */
+// Empty
 void UBLOX::config_rover()
 {
     // configure the parsers/Enable Messages
@@ -135,9 +131,6 @@ void UBLOX::config_rover()
     //configuring SVIN messages is done in config_base_stationary()
 }
 
-/**
- * Polls configuration values on F9P
- */
 void UBLOX::poll_value() //See ubx_defs.h for more information
 {
     ubx_.get_configuration(CFG_VALGET_t::REQUEST, CFG_VALGET_t::RAM, CFG_VALGET_t::RTCM_1005USB); //CFG-MSGOUT-RTCM_3X_TYPE1005_USB -- Stationary RTK Reference Station ARP
@@ -145,9 +138,6 @@ void UBLOX::poll_value() //See ubx_defs.h for more information
     ubx_.get_configuration(CFG_VALGET_t::REQUEST, CFG_VALGET_t::RAM, CFG_VALGET_t::RTCM_1097USB); //CFG-MSGOUT-RTCM_3X_TYPE1097_USB __ Galileo MSM 7 (high precision)
 }
 
-/**
- * Not in use anywhere at the moment
- */
 void UBLOX::readFile(const std::string& filename)
 {
     std::ifstream file(filename,  std::ifstream::binary);
@@ -167,11 +157,6 @@ void UBLOX::readFile(const std::string& filename)
     // serial_read_cb((const uint8_t*)buffer, len);
 }
 
-/**
- * @brief Writes a log file of activity from this class
- * 
- * @param filename Log filename (and path)
- */
 void UBLOX::initLogFile(const std::string& filename)
 {
     if (log_file_.is_open())
@@ -180,7 +165,15 @@ void UBLOX::initLogFile(const std::string& filename)
     log_file_.open(filename);
 }
 
-
+/* Function initRover
+// Purpose: Initializes a rover
+// Inputs:  local_host: hostname for rover
+            local_port: port for rover
+            remote_host: hostname for base
+            remote_port: port for base
+// Diagram:
+            Base(remote)-------------->Rover(local)
+*/
 void UBLOX::initRover(std::string local_host, uint16_t local_port,
                       std::string remote_host, uint16_t remote_port)
 {
@@ -210,6 +203,17 @@ void UBLOX::initRover(std::string local_host, uint16_t local_port,
     std::cerr<<"Initialized Rover\n";
 }
 
+/*
+  initBase function
+  Purpose: Initializes the base to send corrections to rovers
+  Inputs: local_host[] an array of strings containing the local hosts for base. (remote hose for rover)
+          local_port[] an array of uint16_t that contains local port numbers for base. (remote ports for rover)
+          remote_host[] an array of strings containing the rover hosts for base (local host for rover)
+          remote_port[] an array of uint16_t that contains rover ports for base. (local ports for rover)
+          base_type stationary or moving base
+          rover_quantity number of rovers (number of elements in each array)
+Diagram:    Base(local)--------->remote(rover)
+*/
 void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
                 std::string remote_host[], uint16_t remote_port[],
                 std::string base_type, int rover_quantity, int gps,
@@ -237,26 +241,7 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
 
         rtcm_.registerCallback([ this , i](uint8_t* buf, size_t size)
         {
-            // DBG("Sending RTCM Data\n");
             this->udparray_[i]->send_bytes(buf, size);
-        });
-
-        ubx_.registerCallback(CLASS_NAV, NAV_POSECEF, [this, i](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg, uint8_t f9pID=0)
-        {
-            ubx_.create_message(buffer, CLASS_NAV, NAV_POSECEF, msg, sizeof(NAV_POSECEF_t));
-            this->udparray_[i]->send_bytes(buffer, 8+sizeof(NAV_POSECEF_t));
-        });
-
-        ubx_.registerCallback(CLASS_NAV, NAV_PVT, [this, i](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg, uint8_t f9pID=0)
-        {
-            ubx_.create_message(buffer, CLASS_NAV, NAV_PVT, msg, sizeof(NAV_PVT_t));
-            this->udparray_[i]->send_bytes(buffer, 8+sizeof(NAV_PVT_t));
-        });
-
-        ubx_.registerCallback(CLASS_NAV, NAV_VELECEF, [this, i](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg, uint8_t f9pID=0)
-        {
-            ubx_.create_message(buffer, CLASS_NAV, NAV_VELECEF, msg, sizeof(NAV_VELECEF_t));
-            this->udparray_[i]->send_bytes(buffer, 8+sizeof(NAV_VELECEF_t));
         });
 
         std::cerr<<"Initialized Base to Rover "+ std::to_string(i+1) +" UDP\n";
@@ -266,6 +251,24 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
     config_f9p();
 }
 
+/*
+initBrover() function
+Purpose: Used to initialize a moving base that receives RTK corrections from another base.
+Inputs:   local_host[] an array of strings containing the local hosts for base. (remote hose for rover)
+          local_port[] an array of uint16_t that contains local port numbers for base. (remote ports for rover)
+          base_host[] an array containing only one element which is the base host for the unit
+          base_port[] an array containing only one element which is the base port for the unit
+          rover_host[] an array of strings containing the rover hosts for the brover
+          rover_port[] an array of uint16_t that contains rover ports for the brover
+          base_type: stationary or moving base
+          rover_quantity: number of rovers
+          int gps: 1 is on, 0 is off
+          int glonas: 1 is on, 0 is off
+          int beidou: 1 is on, 0 is off
+          int galileo: 1 is on, 0 is off
+Diagram:
+            Base-------->Brover(local)--------->Rover
+*/
 void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
                 std::string base_host[], uint16_t base_port[],
                 std::string rover_host[], uint16_t rover_port[],
@@ -341,30 +344,12 @@ UBLOX::~UBLOX()
 
 void UBLOX::udp_read_cb(const uint8_t* buf, size_t size)
 {
-    assert(type_ == ROVER || type_ == BROVER);
 
-    if(buf[0]==START_BYTE_1 && buf[1]==START_BYTE_2)
+    assert(type_ == ROVER || type_ == BROVER);
+    for (int i = 0; i < size; i++)
     {
-        // DBG("Received baseveldata and size: %i\n", size);
-        for (int i = 0; i < size; i++)
-        {
-            // DBG("buf[%i]=%i\n",i, buf[i]);
-            ubx_.read_cb(buf[i], 1);
-        }
+        rtcm_.read_cb(buf[i]);
     }
-    else if(buf[0]==rtcm::START_BYTE)
-    {
-        // DBG("Received rtcm data\n");
-        for (int i = 0; i < size; i++)
-        {
-            rtcm_.read_cb(buf[i]);
-        }
-    }
-    else
-    {
-        DBG("Got something bad: %i\n", buf[0]);
-    }
-    
 }
 
 void UBLOX::serial_read_cb(const uint8_t *buf, size_t size)
@@ -406,6 +391,12 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
       }
 
 }
+
+// Function vector_math
+  // Purpose: Compute NED, absolute distance, roll, pitch, and yaw
+  // Inputs: ned_1 and ned_2 have three elements
+  // Returns: A data structure of the same type as ned_1 and ned_2 which contains
+  // NED, absolute distance, roll, pitch, and yaw
   void UBLOX::vector_math(double ned_1[], double ned_2[], double answer[]) {
 
     // For loop to calculate difference in NED values.

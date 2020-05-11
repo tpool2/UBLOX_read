@@ -32,7 +32,7 @@ public:
     void reset(navBbrMask_t navBbrMask, uint8_t resetMode);
 
     // This function returns true when a new message has been parsed
-    bool read_cb(uint8_t byte, uint8_t f9pID=0);
+    bool read_cb(uint8_t byte);
 
     // returns true if there is new data that hasn't been read
     // subsequent calls to new_data will return false after the
@@ -40,15 +40,14 @@ public:
     bool new_data();
 
     // callback handling
-    typedef std::function<void(uint8_t, uint8_t, const UBX_message_t&, uint8_t)> ubx_cb;
+    typedef std::function<void(uint8_t, uint8_t, const UBX_message_t&)> ubx_cb;
     struct callback_t
     {
         uint8_t cls;
         uint8_t type;
         ubx_cb cb;
-        uint8_t f9pID;
     };
-    void registerCallback(uint8_t cls, uint8_t type, ubx_cb cb, uint8_t f9pID=0);
+    void registerCallback(uint8_t cls, uint8_t type, ubx_cb cb);
     std::vector<callback_t> callbacks;
 
     bool parsing_message();
@@ -56,12 +55,6 @@ public:
     size_t num_messages_received();
 
     void set_nav_rate(uint16_t period_ms);
-
-    uint8_t* create_message(uint8_t msg_class, uint8_t msg_id,
-                      const UBX_message_t& message, uint16_t len);
-
-    void create_message(uint8_t* buffer, uint8_t msg_class, uint8_t msg_id,
-                      const UBX_message_t& message, uint16_t len);
 
     // Send the supplied message
     bool send_message(uint8_t msg_class, uint8_t msg_id,
@@ -72,15 +65,13 @@ public:
     UBX_message_t in_message_;
 
     // low-level parsing functions
-    bool decode_message(uint8_t f9pID=0);
+    bool decode_message();
     void calculate_checksum(const uint8_t msg_cls, const uint8_t msg_id,
                             const uint16_t len, const UBX_message_t payload,
                             uint8_t &ck_a, uint8_t &ck_b) const;
 
     // Translation function prior to cfgval functions
     uint32_t translate(std::string key);
-
-    template<class T> T get_form(UBX_message_t ubx_msg, uint8_t cls, uint8_t id);
 
     inline double time_elapsed(clock_t start)
     {

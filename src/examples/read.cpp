@@ -11,7 +11,7 @@ void inthand(int signum)
     stop = true;
 }
 
-void pvt_callback(uint8_t cls, uint8_t type, const ublox::UBX_message_t& in_msg, uint8_t f9pID)
+void pvt_callback(uint8_t cls, uint8_t type, const ublox::UBX_message_t& in_msg)
 {
     const ublox::NAV_PVT_t& msg(in_msg.NAV_PVT);
     printf("t: %d %d/%d, %d:%d:%d.%d, lla: %.3f, %.3f, %.3f, vel: %2.3f, %2.3f, %2.3f\n",

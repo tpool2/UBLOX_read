@@ -11,7 +11,32 @@ using namespace std;
 
 #include <UBLOX/ublox_ros.h>
 
+#define createCallback(cls, type, fun, arg)\
+do{\
+    auto trampoline = [this](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg)\
+    {\
+        this->fun(msg.arg);\
+    };\
+    ublox_->registerUBXCallback(cls, type, trampoline);\
+}while(0)
+
 constexpr double deg2rad(double x) { return M_PI/180.0 * x; }
+
+// Function slice
+// This function slices into an iteratable
+// Inputs:  iteratable to be slice
+//          starting index (included in the slicing)
+//          ending index (not included in the slicing)
+// Returns: a neatly sliced iteratable
+template <class T> T slice(T iteratable, int xstart, int xend) {
+  // Declare subvariable
+  T subiterate = new T[xend-xstart];
+
+  for(int i=xstart; i< xend; i++) {
+
+    subiterate[i-xstart] = iteratable[i];
+  }
+}
 
 namespace ublox_ros
 {
@@ -23,17 +48,14 @@ UBLOX_ROS::UBLOX_ROS() :
     // Connect ROS topics
     pvt_pub_ = nh_.advertise<ublox::PositionVelocityTime>("PosVelTime", 10);
     relpos_pub_ = nh_.advertise<ublox::RelPos>("RelPos", 10);
-    relposflag_pub_ = nh_.advertise<ublox::RelPosFlags>("RelPosFlags", 10);
     ecef_pub_ = nh_.advertise<ublox::PosVelEcef>("PosVelEcef", 10);
     survey_status_pub_ = nh_.advertise<ublox::SurveyStatus>("SurveyStatus", 10);
     eph_pub_ = nh_.advertise<ublox::Ephemeris>("Ephemeris", 10);
     geph_pub_ = nh_.advertise<ublox::GlonassEphemeris>("GlonassEphemeris", 10);
     obs_pub_ = nh_.advertise<ublox::ObsVec>("Obs", 10);
-    base_ecef_pub_ = nh_.advertise<ublox::PosVelEcef>("base/PosVelEcef", 10);
-    base_pvt_pub_ = nh_.advertise<ublox::PositionVelocityTime>("base/PosVelTime", 10);
     // nav_sat_fix_pub_ = nh_.advertise<sensor_msgs::NavSatFix>("NavSatFix");
     // nav_sat_status_pub_ = nh_.advertise<sensor_msgs::NavSatStatus>("NavSatStatus");
-
+    //Get parameters
     // Connect ROS services
     cfg_val_get = nh_.advertiseService("CfgValGet", &UBLOX_ROS::cfgValGet, this);
     cfg_val_del_ = nh_.advertiseService("CfgValDel", &UBLOX_ROS::cfgValDel, this);
@@ -85,13 +107,12 @@ UBLOX_ROS::UBLOX_ROS() :
         uint16_t* rover_port = new uint16_t[std::max(1, rover_quantity)];
         
         //Account for the case when no numbers are used for the first rover.
-        uint8_t j = 0;
+        int j = 0;
         if(nh_private_.hasParam("local_host")) {
             //The first local host corresponds to the first rover.
             local_host[0] = nh_private_.param<std::string>("local_host", "localhost");
             local_port[0] = nh_private_.param<int>("local_port", 16140);
-            
-            //First rover
+            //First rover.
             rover_host[0] = nh_private_.param<std::string>("rover_host", "localhost");
             rover_port[0] = nh_private_.param<int>("rover_port", 16145);
 
@@ -99,12 +120,22 @@ UBLOX_ROS::UBLOX_ROS() :
             j=1;
         }
 
+        //Input parameters from xml file into respective arrays for rovers.
+        //?? are these used for anything other than print statements?
         for(int i=1+j; i <= rover_quantity; i++) {
             local_host[i-1] = nh_private_.param<std::string>("local_host"+std::to_string(i), "localhost");
             local_port[i-1] = nh_private_.param<int>("local_port"+std::to_string(i), 16140);
             rover_host[i-1] = nh_private_.param<std::string>("rover_host"+std::to_string(i), "localhost");
             rover_port[i-1] = nh_private_.param<int>("rover_port"+std::to_string(i), 16145);
         }
+
+        //Return outputs for all local hosts and rovers hooked up.
+        // for(int i = 0; i < rover_quantity; i++) {
+        //     std::cerr<<"local_host " + std::to_string(i+1) + ": " << local_host[i] << "\n";
+        //     std::cerr<<"local_port " + std::to_string(i+1) + ": " << local_port[i] << "\n";
+        //     std::cerr<<"rover_host " + std::to_string(i+1) + ": " << rover_host[i] << "\n";
+        //     std::cerr<<"rover_port " + std::to_string(i+1) + ": " << rover_port[i] << "\n";
+        // }
 
         ublox_->initBase(local_host, local_port, rover_host, rover_port,
           base_type, rover_quantity, gps, glonas, beidou, galileo, surveytime,
@@ -162,12 +193,12 @@ UBLOX_ROS::UBLOX_ROS() :
 
         // Get Constallation settings
         uint32_t constellation [6];
-        uint8_t gps = nh_.param<int>("GPS", 1);
-        uint8_t glonas = nh_.param<int>("GLONAS", 0);
-        uint8_t beidou = nh_.param<int>("BEIDOU", 0);
-        uint8_t galileo = nh_.param<int>("GALILEO", 1);
+        int gps = nh_.param<int>("GPS", 1);
+        int glonas = nh_.param<int>("GLONAS", 0);
+        int beidou = nh_.param<int>("BEIDOU", 0);
+        int galileo = nh_.param<int>("GALILEO", 1);
 
-        uint8_t j = 0;
+        int j = 0;
         if(nh_private_.hasParam("local_host")) {
 
             local_host[0] = nh_private_.param<std::string>("local_host", "localhost");
@@ -189,6 +220,13 @@ UBLOX_ROS::UBLOX_ROS() :
         // Add in extra local host values.
         local_host[j] = nh_private_.param<std::string>("local_host"+std::to_string(j+1), "localhost");
         local_port[j] = nh_private_.param<int>("local_port"+std::to_string(j+1), 16140);
+
+        // for(int i = 0; i < rover_quantity; i++) {
+        //     std::cerr<<"local_host " + std::to_string(i+1) + ": " << local_host[i] << "\n";
+        //     std::cerr<<"local_port " + std::to_string(i+1) + ": " << local_port[i] << "\n";
+        //     std::cerr<<"rover_host " + std::to_string(i+1) + ": " << rover_host[i] << "\n";
+        //     std::cerr<<"rover_port " + std::to_string(i+1) + ": " << rover_port[i] << "\n";
+        // }
 
         //Determine whether the brover is moving or stationary?
         std::string base_type = "moving";
@@ -221,17 +259,18 @@ UBLOX_ROS::UBLOX_ROS() :
     }
 
     // connect callbacks
-    createCallback(ublox::CLASS_NAV, ublox::NAV_RELPOSNED, &UBLOX_ROS::relposCB, this);
-    createCallback(ublox::CLASS_NAV, ublox::NAV_POSECEF, &UBLOX_ROS::posECEFCB, this);
-    createCallback(ublox::CLASS_NAV, ublox::NAV_VELECEF, &UBLOX_ROS::velECEFCB, this);
-    createCallback(ublox::CLASS_NAV, ublox::NAV_SVIN, &UBLOX_ROS::svinCB, this);
-    createCallback(ublox::CLASS_RXM, ublox::RXM_RAWX, &UBLOX_ROS::obsCB, this);
-    createCallback(ublox::CLASS_NAV, ublox::NAV_PVT, &UBLOX_ROS::pvtCB, this);
+    createCallback(ublox::CLASS_NAV, ublox::NAV_PVT, pvtCB, NAV_PVT);
+    createCallback(ublox::CLASS_NAV, ublox::NAV_RELPOSNED, relposCB, NAV_RELPOSNED);
+    createCallback(ublox::CLASS_NAV, ublox::NAV_POSECEF, posECEFCB, NAV_POSECEF);
+    createCallback(ublox::CLASS_NAV, ublox::NAV_VELECEF, velECEFCB, NAV_VELECEF);
+    createCallback(ublox::CLASS_NAV, ublox::NAV_SVIN, svinCB, NAV_SVIN);
+    createCallback(ublox::CLASS_RXM, ublox::RXM_RAWX, obsCB, RXM_RAWX);
 
     if (!log_filename.empty())
     {
         ublox_->initLogFile(log_filename);
         //ublox_->readFile(log_filename);
+
     }
 }
 
@@ -259,69 +298,57 @@ void UBLOX_ROS::cb_rov2(const ublox::RelPos &msg) {
     ned_2[2] = msg.relPosNED[2];  //Down
 }
 
-void UBLOX_ROS::pvtCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
+void UBLOX_ROS::pvtCB(const ublox::NAV_PVT_t& msg)
 {
-    ublox::NAV_PVT_t msg = ubx_msg.NAV_PVT;
-
-    if(!evalF9PID(f9pID)) return;
-
-    *pvt_tow_ptr_ = msg.iTOW;
+    pos_tow_ = msg.iTOW;
+    ublox::PositionVelocityTime out;
     // out.iTOW = msg.iTow;
-    pvt_ptr_->header.stamp = ros::Time::now(); ///TODO: Do this right
-    pvt_ptr_->year = msg.year;
-    pvt_ptr_->month = msg.month;
-    pvt_ptr_->day = msg.day;
-    pvt_ptr_->hour = msg.hour;
-    pvt_ptr_->min = msg.min;
-    pvt_ptr_->sec = msg.sec;
-    pvt_ptr_->nano = msg.nano;
-    pvt_ptr_->tAcc = msg.tAcc;
-    pvt_ptr_->valid = msg.valid;
-    pvt_ptr_->fixType = msg.fixType;
-    pvt_ptr_->flags = msg.flags;
-    pvt_ptr_->flags2 = msg.flags2;
-    pvt_ptr_->numSV = msg.numSV;
-    pvt_ptr_->lla[0] = msg.lat*1e-7;
-    pvt_ptr_->lla[1] = msg.lon*1e-7;
-    pvt_ptr_->lla[2] = msg.height*1e-3;
-    pvt_ptr_->hMSL = msg.hMSL*1e-3;
-    pvt_ptr_->hAcc = msg.hAcc*1e-3;
-    pvt_ptr_->vAcc = msg.vAcc*1e-3;
-    pvt_ptr_->velNED[0] = msg.velN*1e-3;
-    pvt_ptr_->velNED[1] = msg.velE*1e-3;
-    pvt_ptr_->velNED[2] = msg.velD*1e-3;
-    pvt_ptr_->gSpeed = msg.gSpeed*1e-3;
-    pvt_ptr_->headMot = msg.headMot*1e-5;
-    pvt_ptr_->sAcc = msg.sAcc*1e-3;
-    pvt_ptr_->headAcc = msg.headAcc*1e-5;
-    pvt_ptr_->pDOP = msg.pDOP*0.01;
-    pvt_ptr_->headVeh = msg.headVeh*1e-5;
+    out.header.stamp = ros::Time::now(); ///TODO: Do this right
+    out.year = msg.year;
+    out.month = msg.month;
+    out.day = msg.day;
+    out.hour = msg.hour;
+    out.min = msg.min;
+    out.sec = msg.sec;
+    out.nano = msg.nano;
+    out.tAcc = msg.tAcc;
+    out.valid = msg.valid;
+    out.fixType = msg.fixType;
+    out.flags = msg.flags;
+    out.flags2 = msg.flags2;
+    out.numSV = msg.numSV;
+    out.lla[0] = msg.lat*1e-7;
+    out.lla[1] = msg.lon*1e-7;
+    out.lla[2] = msg.height*1e-3;
+    out.hMSL = msg.hMSL*1e-3;
+    out.hAcc = msg.hAcc*1e-3;
+    out.vAcc = msg.vAcc*1e-3;
+    out.velNED[0] = msg.velN*1e-3;
+    out.velNED[1] = msg.velE*1e-3;
+    out.velNED[2] = msg.velD*1e-3;
+    out.gSpeed = msg.gSpeed*1e-3;
+    out.headMot = msg.headMot*1e-5;
+    out.sAcc = msg.sAcc*1e-3;
+    out.headAcc = msg.headAcc*1e-5;
+    out.pDOP = msg.pDOP*0.01;
+    out.headVeh = msg.headVeh*1e-5;
+    pvt_pub_.publish(out);
 
-    pvt_pub_ptr_->publish(*pvt_ptr_);
-
-    ecef_ptr_->header.stamp = ros::Time::now();
-    ecef_ptr_->fix = pvt_ptr_->fixType;
-    ecef_ptr_->lla[0] = pvt_ptr_->lla[0];
-    ecef_ptr_->lla[1] = pvt_ptr_->lla[1];
-    ecef_ptr_->lla[2] = pvt_ptr_->lla[2];
-    ecef_ptr_->horizontal_accuracy = pvt_ptr_->hAcc;
-    ecef_ptr_->vertical_accuracy = pvt_ptr_->vAcc;
-    ecef_ptr_->speed_accuracy = pvt_ptr_->sAcc;
-
-    if (*ecef_pos_tow_ptr_ == *pvt_tow_ptr_ && 
-        *ecef_pos_tow_ptr_ == *ecef_vel_tow_ptr_)
-    {
-        ecef_pub_ptr_->publish(*ecef_ptr_);
-    }
+    ecef_msg_.header.stamp = ros::Time::now();
+    ecef_msg_.fix = out.fixType;
+    ecef_msg_.lla[0] = out.lla[0];
+    ecef_msg_.lla[1] = out.lla[1];
+    ecef_msg_.lla[2] = out.lla[2];
+    ecef_msg_.horizontal_accuracy = out.hAcc;
+    ecef_msg_.vertical_accuracy = out.vAcc;
+    ecef_msg_.speed_accuracy = out.sAcc;
+    if (pos_tow_ == pvt_tow_ && pos_tow_ == vel_tow_)
+        ecef_pub_.publish(ecef_msg_);
 }
 
 
-void UBLOX_ROS::relposCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
+void UBLOX_ROS::relposCB(const ublox::NAV_RELPOSNED_t& msg)
 {
-    // std::cerr<<"relposCB"<<std::endl;
-    
-    ublox::NAV_RELPOSNED_t msg = ubx_msg.NAV_RELPOSNED;
-    
     // Create the message to be outputted
     ublox::RelPos out;
 
@@ -343,21 +370,7 @@ void UBLOX_ROS::relposCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
     out.accNED[2] = msg.accD*1e-3*.1;
     out.accLength = msg.accLength*1e-3*.1;
     out.accHeading = deg2rad(msg.accHeading*1e-5);
-    out.flags = msg.flags.all_flags;
-
-    memset(&relpos_flag_msg_, 0, sizeof(ublox::RelPosFlags));
-    relpos_flag_msg_.header.stamp = out.header.stamp;
-    relpos_flag_msg_.gnssFixOk = msg.flags.gnssFixOk;
-    relpos_flag_msg_.diffSoln = msg.flags.diffSoln;
-    relpos_flag_msg_.relPosValid = msg.flags.relPosValid;
-    relpos_flag_msg_.floatCarrSoln = msg.flags.floatCarrSoln;
-    relpos_flag_msg_.fixedCarrSoln = msg.flags.fixedCarrSoln;
-    relpos_flag_msg_.isMoving = msg.flags.isMoving;
-    relpos_flag_msg_.refPosMiss = msg.flags.refPosMiss;
-    relpos_flag_msg_.refObsMiss = msg.flags.refObsMiss;
-    relpos_flag_msg_.relPosHeadingValid = msg.flags.relPosHeadingValid;
-    relpos_flag_msg_.relPosNormalized = msg.flags.relPosNormalized;
-    relpos_flag_msg_.flags = msg.flags.all_flags;
+    out.flags = msg.flags;
 
     if (arrow_flag == true) {
 
@@ -376,12 +389,10 @@ void UBLOX_ROS::relposCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
   }
     // Publish the RelPos ROS message
     relpos_pub_.publish(out);
-    relposflag_pub_.publish(relpos_flag_msg_);
 }
 
-void UBLOX_ROS::svinCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
+void UBLOX_ROS::svinCB(const ublox::NAV_SVIN_t& msg)
 {
-    ublox::NAV_SVIN_t msg = ubx_msg.NAV_SVIN;
     ublox::SurveyStatus out;
     out.header.stamp = ros::Time::now(); /// TODO: do this right
     out.dur = msg.dur;
@@ -399,48 +410,34 @@ void UBLOX_ROS::svinCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 
 }
 
-void UBLOX_ROS::posECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
+void UBLOX_ROS::posECEFCB(const ublox::NAV_POSECEF_t& msg)
 {
-    ublox::NAV_POSECEF_t msg = ubx_msg.NAV_POSECEF;
-
-    if(!evalF9PID(f9pID)) return;
-
-    *ecef_pos_tow_ptr_ = msg.iTOW;
-    ecef_ptr_->header.stamp = ros::Time::now();
-    ecef_ptr_->position[0] = msg.ecefX*1e-2;
-    ecef_ptr_->position[1] = msg.ecefY*1e-2;
-    ecef_ptr_->position[2] = msg.ecefZ*1e-2;
-
-    if (*ecef_pos_tow_ptr_ == *pvt_tow_ptr_ && 
-        *ecef_pos_tow_ptr_ == *ecef_vel_tow_ptr_)
-    {
-        ecef_pub_ptr_->publish(*ecef_ptr_);
-    }
+    pos_tow_ = msg.iTOW;
+    ecef_msg_.header.stamp = ros::Time::now();
+    ecef_msg_.position[0] = msg.ecefX*1e-2;
+    ecef_msg_.position[1] = msg.ecefY*1e-2;
+    ecef_msg_.position[2] = msg.ecefZ*1e-2;
+    if (pos_tow_ == pvt_tow_ && pos_tow_ == vel_tow_)
+        ecef_pub_.publish(ecef_msg_);
+    ecef_pub_.publish(ecef_msg_);
 
 }
 
-void UBLOX_ROS::velECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
+void UBLOX_ROS::velECEFCB(const ublox::NAV_VELECEF_t& msg)
 {
-    ublox::NAV_VELECEF_t msg = ubx_msg.NAV_VELECEF;
+    vel_tow_ = msg.iTOW;
+    ecef_msg_.header.stamp = ros::Time::now();
+    ecef_msg_.velocity[0] = msg.ecefVX*1e-2;
+    ecef_msg_.velocity[0] = msg.ecefVY*1e-2;
+    ecef_msg_.velocity[0] = msg.ecefVZ*1e-2;
 
-    if(!evalF9PID(f9pID)) return;
-
-    *ecef_vel_tow_ptr_ = msg.iTOW;
-    ecef_ptr_->header.stamp = ros::Time::now();
-    ecef_ptr_->velocity[0] = msg.ecefVX*1e-2;
-    ecef_ptr_->velocity[1] = msg.ecefVY*1e-2;
-    ecef_ptr_->velocity[2] = msg.ecefVZ*1e-2;
-
-    if (*ecef_pos_tow_ptr_ == *pvt_tow_ptr_ && 
-        *ecef_pos_tow_ptr_ == *ecef_vel_tow_ptr_)
-    {
-        ecef_pub_ptr_->publish(*ecef_ptr_);
-    }
+    if (pos_tow_ == pvt_tow_ && pos_tow_ == vel_tow_)
+        ecef_pub_.publish(ecef_msg_);
+    ecef_pub_.publish(ecef_msg_);
 }
 
-void UBLOX_ROS::obsCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
+void UBLOX_ROS::obsCB(const ublox::RXM_RAWX_t &msg)
 {
-    ublox::RXM_RAWX_t msg = ubx_msg.RXM_RAWX;
     ublox::ObsVec out;
     UTCTime utc =UTCTime::fromGPS(msg.week, msg.rcvTow*1e3);
     out.header.stamp.sec = utc.sec;
@@ -481,7 +478,7 @@ void UBLOX_ROS::obsCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 //        case ublox::Observation::BEIDOU_B2I_D2:
 //            out.obs[i].freq = Ephemeris::BEIDOU_FREQ_B2;
 //            break;
-        default:
+        default:      // and tip of the arrow for /RelPos
             out.obs[i].freq = 0;
             break;
         }
@@ -641,36 +638,6 @@ bool UBLOX_ROS::cfgValSet(ublox::CfgValSet::Request &req, ublox::CfgValSet::Resp
     return true;
 }
 
-
-bool UBLOX_ROS::evalF9PID(uint8_t f9pID)
-{
-    switch(f9pID)
-    {
-        case 0:
-            ecef_ptr_= &ecef_msg_;
-            ecef_pub_ptr_ = &ecef_pub_;
-            pvt_ptr_ = &pvt_msg_;
-            pvt_pub_ptr_ = &pvt_pub_;
-            ecef_pos_tow_ptr_ = &ecef_pos_tow_;
-            ecef_vel_tow_ptr_ = &ecef_vel_tow_;
-            pvt_tow_ptr_ = &pvt_tow_;
-            return true;
-            break;
-        case 1:
-            ecef_ptr_= &base_ecef_msg_;
-            ecef_pub_ptr_ = &base_ecef_pub_;
-            pvt_ptr_ = &base_pvt_msg_;
-            pvt_pub_ptr_ = &base_pvt_pub_;
-            ecef_pos_tow_ptr_ = &base_ecef_pos_tow_;
-            ecef_vel_tow_ptr_ = &base_ecef_vel_tow_;
-            pvt_tow_ptr_ = &base_pvt_tow_;
-            return true;
-            break;
-        default:
-            return false;
-            break;
-    }
-
 bool UBLOX_ROS::cfgReset(ublox::CfgReset::Request &req, ublox::CfgReset::Response &res)
 {
     ublox::navBbrMask_t bitfield =  ublox_->reset(req.navBbrMask, req.resetMode);
@@ -689,7 +656,6 @@ bool UBLOX_ROS::cfgReset(ublox::CfgReset::Request &req, ublox::CfgReset::Respons
     res.aop = bitfield.aop;
 
     return true;
-
 
 }
 

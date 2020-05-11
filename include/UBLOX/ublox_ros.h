@@ -10,7 +10,6 @@
 #include "ublox/PosVelEcef.h"
 #include "ublox/PositionVelocityTime.h"
 #include "ublox/RelPos.h"
-#include "ublox/RelPosFlags.h"
 #include "ublox/SurveyStatus.h"
 #include "ublox/Ephemeris.h"
 #include "ublox/GlonassEphemeris.h"
@@ -40,7 +39,6 @@ private:
     ros::Publisher pvt_pub_;
     ros::Publisher survey_status_pub_;
     ros::Publisher relpos_pub_;
-    ros::Publisher relposflag_pub_;
     ros::Publisher ecef_pub_;
     ros::Publisher nav_sat_fix_pub_;
     ros::Publisher nav_sat_status_pub_;
@@ -48,36 +46,13 @@ private:
     ros::Publisher geph_pub_;
     ros::Publisher obs_pub_;
 
-    ros::Publisher base_ecef_pub_;
-    ros::Publisher base_pvt_pub_;
-    ros::Publisher *ecef_pub_ptr_;
-    ros::Publisher *pvt_pub_ptr_;
+    void pvtCB(const ublox::NAV_PVT_t& msg);
+    void relposCB(const ublox::NAV_RELPOSNED_t& msg);
+    void posECEFCB(const ublox::NAV_POSECEF_t& msg);
+    void velECEFCB(const ublox::NAV_VELECEF_t& msg);
+    void svinCB(const ublox::NAV_SVIN_t& msg);
 
-    /**
-     * @brief Callback for filling a PosVelTime ROS message from a UBX callback
-     */
-    void pvtCB(const ublox::UBX_message_t &ubxmsg, uint8_t f9pID=0);
-    /**
-     * @brief Callback for filling a RelPos ROS message from a UBX callback
-     */
-    void relposCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
-    /**
-     * @brief Callback for filling a PosVelEcef ROS message with position data from a UBX callback
-     */
-    void posECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
-    /**
-     * @brief Callback for filling a PosVelEcef ROS message with velocity data from a UBX callback
-     */
-    void velECEFCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
-    /**
-     * @brief Callback for filling a SurveyStatus ROS message from a UBX callback
-     */
-    void svinCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
-    /**
-     * @brief Callback for filling a Observation ROS message from a UBX callback
-     */
-    void obsCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
-
+    void obsCB(const ublox::RXM_RAWX_t& msg);
     void ephCB(const Ephemeris& eph);
     void gephCB(const GlonassEphemeris& eph);
 
@@ -90,18 +65,9 @@ private:
     ros::ServiceServer cfg_val_set_;
     ros::ServiceServer cfg_reset_;
 
-    uint32_t ecef_pos_tow_;
-    uint32_t ecef_vel_tow_;
+    uint32_t pos_tow_;
+    uint32_t vel_tow_;
     uint32_t pvt_tow_;
-
-    uint32_t base_ecef_pos_tow_;
-    uint32_t base_ecef_vel_tow_;
-    uint32_t base_pvt_tow_;
-
-    uint32_t *ecef_pos_tow_ptr_;
-    uint32_t *ecef_vel_tow_ptr_;
-    uint32_t *pvt_tow_ptr_;
-
     uint32_t pvt_week_;
     // int message_rate;
 
@@ -114,60 +80,8 @@ private:
     ros::Subscriber sub2;
 
     ublox::PosVelEcef ecef_msg_;
-    ublox::PosVelEcef base_ecef_msg_;
-    ublox::PosVelEcef *ecef_ptr_;
-
-    ublox::PositionVelocityTime pvt_msg_;
-    ublox::PositionVelocityTime base_pvt_msg_;
-    ublox::PositionVelocityTime *pvt_ptr_;
-
-    ublox::RelPosFlags relpos_flag_msg_;
-
     void cb_rov1(const ublox::RelPos &msg);
     void cb_rov2(const ublox::RelPos &msg);
-
-
-    /**
-     * @brief creates a callback for the ubx message type
-     * @param cls uint8_t class code -- See ubx_defs.h
-     * @param type uint8_t type within class -- see ubx_defs.h
-     * @param functionaddress within UBLOX_ROS
-     * @param pointer to object from which the function is called
-     */
-    template<class M> void createCallback(uint8_t cls, uint8_t type, 
-        void(ublox_ros::UBLOX_ROS::*fp)(const M &msg, uint8_t), ublox_ros::UBLOX_ROS *obj, uint8_t f9pID=0)
-    {
-        do
-        {
-            auto trampoline = [obj, fp](uint8_t _class, uint8_t _type, const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0)
-            {
-                (obj->*fp)(ubx_msg, f9pID);
-            };
-
-            this->ublox_->registerUBXCallback(cls, type, trampoline);
-        } while (0);
-    };
-
-    /**
-     * @brief Slices into an iterable
-     * @param iterable
-     * @param xstart starting index (inclusive)
-     * @param xend ending index (not inclusive)
-     * @return a neatly sliced iterable [xstart, xend)
-     */
-    template <class T> T slice(T iteratable, int xstart, int xend) 
-    {
-        // Declare subvariable
-        T subiterate = new T[xend-xstart];
-
-        for(int i=xstart; i< xend; i++) 
-        {
-            subiterate[i-xstart] = iteratable[i];
-        }
-    }
-
-    bool evalF9PID(uint8_t f9pID);
-    
 };
 
 }

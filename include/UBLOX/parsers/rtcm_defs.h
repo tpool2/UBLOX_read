@@ -1,13 +1,3 @@
-#ifndef RTCM_DEFS_H_
-#define RTCM_DEFS_H_
-
-namespace rtcm
-{
-    enum
-    {
-        START_BYTE=211
-    };
-}
 //#pragma once
 //#include "UBLOX/bitfield.h"
 
@@ -273,4 +263,3 @@ namespace rtcm
 //    BitField<365,1> One_M;
 //};
 //}
-#endif
