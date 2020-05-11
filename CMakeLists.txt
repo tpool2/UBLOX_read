@@ -93,7 +93,8 @@ if (${BUILD_ROS})
   		CATKIN_DEPENDS std_msgs message_runtime
 	)
 
-	add_executable(ublox_ros src/ros/ublox_ros.cpp)
+	add_executable(ublox_ros 
+		src/ros/ublox_ros.cpp src/ros/cb_ros.cpp src/ros/ros_srv.cpp)
 	target_link_libraries(ublox_ros UBLOX ${catkin_LIBRARIES})
     target_include_directories(ublox_ros PUBLIC ../../devel/include ${catkin_INCLUDE_DIRS})
     add_dependencies(ublox_ros ${catkin_EXPORTED_TARGETS})

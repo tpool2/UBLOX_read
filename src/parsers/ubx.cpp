@@ -327,7 +327,7 @@ CFG_VAL_DBG_t UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, u
 
 CFG_VALGET_TUPLE_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
 {
-       DBG("%s\n", (UBX_cfg_map.right.find(cfgDataKey)->second).c_str());
+    //    DBG("%s\n", (UBX_cfg_map.right.find(cfgDataKey)->second).c_str());
        memset(&out_message_, 0, sizeof(CFG_VALGET_t));
        memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
        out_message_.CFG_VALGET.version = version;

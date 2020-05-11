@@ -15,26 +15,26 @@ namespace ublox
 
     typedef struct {
         CFG_KEY_ID_t keyID;
-        std::string keyName;
         uint8_t cfgValue;
+        std::string keyName;
     } CFG_8_Bit_t;
 
     typedef struct {
         CFG_KEY_ID_t keyID;
-        std::string keyName;
         uint16_t cfgValue;
+        std::string keyName;
     } CFG_16_Bit_t;
 
     typedef struct {
         CFG_KEY_ID_t keyID;
-        std::string keyName;
         uint32_t cfgValue;
+        std::string keyName;
     } CFG_32_Bit_t;
 
     typedef struct {
         CFG_KEY_ID_t keyID;
-        std::string keyName;
         uint64_t cfgValue;
+        std::string keyName;
     } CFG_64_Bit_t;
 
     typedef struct {
