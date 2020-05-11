@@ -13,6 +13,7 @@ if (NOT ${async_comm_FOUND})
 	add_subdirectory(lib/async_comm)
 	set(async_comm_LIBRARIES async_comm)
 	set(async_comm_INCLUDE_DIRS lib/async_comm/include;${Boost_INCLUDE_DIRS})
+
 endif()
 
 
@@ -81,6 +82,7 @@ if (${BUILD_ROS})
 		DIRECTORY srv
 		FILES
 		CfgValGet.srv
+		CfgValGetAll.srv
 		CfgValDel.srv
 		CfgValSet.srv
 		CfgReset.srv)
@@ -94,7 +96,8 @@ if (${BUILD_ROS})
   		CATKIN_DEPENDS std_msgs message_runtime
 	)
 
-	add_executable(ublox_ros src/ros/ublox_ros.cpp)
+	add_executable(ublox_ros 
+		src/ros/ublox_ros.cpp src/ros/cb_ros.cpp src/ros/ros_srv.cpp src/ros/init_modules.cpp)
 	target_link_libraries(ublox_ros UBLOX ${catkin_LIBRARIES})
     target_include_directories(ublox_ros PUBLIC ../../devel/include ${catkin_INCLUDE_DIRS})
     add_dependencies(ublox_ros ${catkin_EXPORTED_TARGETS})

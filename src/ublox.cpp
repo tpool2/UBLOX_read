@@ -442,7 +442,7 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
   CFG_VALGET_TUPLE_t UBLOX::cfgValGet(const CFG_VALGET_t &request)
   {
       
-      return ubx_.get_configuration(request.version, request.layer, request.cfgDataKey);
+      return ubx_.get_configuration(request.version, request.layer, request.cfgDataKey.keyID);
   }
 
   CFG_VAL_DBG_t UBLOX::cfgValDel(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
@@ -455,6 +455,13 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
   {
 
       return ubx_.configure(version, layer, cfgData, cfgDataKey, size);
+  }
+
+  std::vector<std::string> UBLOX::cfgValGetAll(std::string filepath)
+  {
+      DBG("%s\n",filepath);
+      std::ofstream ofs(filepath);
+      ofs << "Hello World!";
   }
 
     navBbrMask_t UBLOX::reset(uint16_t navBbrMask, uint8_t resetMode)
