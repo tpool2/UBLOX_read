@@ -109,12 +109,6 @@ namespace ublox_ros
         base_host[0] = nh_private_.param<std::string>("base_host", "localhost");
         base_port[0] = nh_private_.param<int>("base_port", 16140);
 
-        // Get Constallation settings
-        uint32_t constellation [6];
-        gps_ = nh_.param<int>("GPS", 1);
-        glonas_ = nh_.param<int>("GLONAS", 0);
-        int beidou = nh_.param<int>("BEIDOU", 0);
-        int galileo = nh_.param<int>("GALILEO", 1);
 
         int j = 0;
         if(nh_private_.hasParam("local_host")) {
