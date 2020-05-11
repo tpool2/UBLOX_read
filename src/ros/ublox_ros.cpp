@@ -11,14 +11,9 @@ using namespace std;
 
 #include <UBLOX/ublox_ros.h>
 
-#define createCallback(cls, type, fun, arg)\
-do{\
-    auto trampoline = [this](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg)\
-    {\
-        this->fun(msg.arg);\
-    };\
-    ublox_->registerUBXCallback(cls, type, trampoline);\
-}while(0)
+
+constexpr double deg2rad(double x) { return M_PI/180.0 * x; }
+
 
 namespace ublox_ros
 {
@@ -30,14 +25,16 @@ UBLOX_ROS::UBLOX_ROS() :
     // Connect ROS topics
     pvt_pub_ = nh_.advertise<ublox::PositionVelocityTime>("PosVelTime", 10);
     relpos_pub_ = nh_.advertise<ublox::RelPos>("RelPos", 10);
+    relposflag_pub_ = nh_.advertise<ublox::RelPosFlags>("RelPosFlags", 10);
     ecef_pub_ = nh_.advertise<ublox::PosVelEcef>("PosVelEcef", 10);
     survey_status_pub_ = nh_.advertise<ublox::SurveyStatus>("SurveyStatus", 10);
     eph_pub_ = nh_.advertise<ublox::Ephemeris>("Ephemeris", 10);
     geph_pub_ = nh_.advertise<ublox::GlonassEphemeris>("GlonassEphemeris", 10);
     obs_pub_ = nh_.advertise<ublox::ObsVec>("Obs", 10);
+    base_ecef_pub_ = nh_.advertise<ublox::PosVelEcef>("base/PosVelEcef", 10);
+    base_pvt_pub_ = nh_.advertise<ublox::PositionVelocityTime>("base/PosVelTime", 10);
     // nav_sat_fix_pub_ = nh_.advertise<sensor_msgs::NavSatFix>("NavSatFix");
     // nav_sat_status_pub_ = nh_.advertise<sensor_msgs::NavSatStatus>("NavSatStatus");
-
 
     // Connect ROS services
     cfg_val_get = nh_.advertiseService("CfgValGet", &UBLOX_ROS::cfgValGet, this);
@@ -74,6 +71,7 @@ UBLOX_ROS::UBLOX_ROS() :
     if (chain_level_ == ublox::UBLOX::BASE)
     {
         initBase();
+
     }
     // Rover(1 local_host 1 local_port 1 base_host 1 base_port)
     else if (rover_quantity_ == 0)
@@ -107,18 +105,17 @@ UBLOX_ROS::UBLOX_ROS() :
     }
 
     // connect callbacks
-    createCallback(ublox::CLASS_NAV, ublox::NAV_PVT, pvtCB, NAV_PVT);
-    createCallback(ublox::CLASS_NAV, ublox::NAV_RELPOSNED, relposCB, NAV_RELPOSNED);
-    createCallback(ublox::CLASS_NAV, ublox::NAV_POSECEF, posECEFCB, NAV_POSECEF);
-    createCallback(ublox::CLASS_NAV, ublox::NAV_VELECEF, velECEFCB, NAV_VELECEF);
-    createCallback(ublox::CLASS_NAV, ublox::NAV_SVIN, svinCB, NAV_SVIN);
-    createCallback(ublox::CLASS_RXM, ublox::RXM_RAWX, obsCB, RXM_RAWX);
+    createCallback(ublox::CLASS_NAV, ublox::NAV_RELPOSNED, &UBLOX_ROS::relposCB, this);
+    createCallback(ublox::CLASS_NAV, ublox::NAV_POSECEF, &UBLOX_ROS::posECEFCB, this);
+    createCallback(ublox::CLASS_NAV, ublox::NAV_VELECEF, &UBLOX_ROS::velECEFCB, this);
+    createCallback(ublox::CLASS_NAV, ublox::NAV_SVIN, &UBLOX_ROS::svinCB, this);
+    createCallback(ublox::CLASS_RXM, ublox::RXM_RAWX, &UBLOX_ROS::obsCB, this);
+    createCallback(ublox::CLASS_NAV, ublox::NAV_PVT, &UBLOX_ROS::pvtCB, this);
 
     if (!log_filename_.empty())
     {
         ublox_->initLogFile(log_filename_);
         //ublox_->readFile(log_filename);
-
     }
 }
 
@@ -127,7 +124,6 @@ UBLOX_ROS::~UBLOX_ROS()
     if (ublox_)
         delete ublox_;
 }
-
 }
 
 

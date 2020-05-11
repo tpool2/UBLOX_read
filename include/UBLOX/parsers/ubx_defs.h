@@ -755,6 +755,28 @@ typedef struct  {
         FLAGS_refObsMiss =          0b010000000,
         FLAGS_relPosHeadingValid =  0b100000000,
     };
+
+    typedef union {
+
+        uint32_t all_flags;
+
+        struct
+        {
+            bool gnssFixOk;
+            bool diffSoln;
+            bool relPosValid;
+            bool floatCarrSoln;
+            bool fixedCarrSoln;
+            bool isMoving;
+            bool refPosMiss;
+            bool refObsMiss;
+            bool relPosHeadingValid;
+            bool relPosNormalized;
+            bool reserved[22];
+        }__attribute__((packed));
+        
+    }__attribute__((packed)) RELPOSFLAGS_t;
+
     uint8_t version; //Message version (0x01 for this version)
     uint8_t reserved1; //Reserved
     uint16_t refStationId; //Reference Station ID. Must be in the range 0..4095
@@ -775,7 +797,7 @@ typedef struct  {
     uint32_t accLength; //Accuracy mm of Length of the relative position vector
     uint32_t accHeading; //Accuracy deg of heading of the relative position vector
     uint8_t reserved3[4]; //Reserved
-    uint32_t flags; //See graphic in Interface Description pg 158
+    RELPOSFLAGS_t flags; //See graphic in Interface Description pg 158
 
 }__attribute__((packed)) NAV_RELPOSNED_t;
 
