@@ -344,7 +344,7 @@ void UBLOX_ROS::relposCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
     out.accHeading = deg2rad(msg.accHeading*1e-5);
     out.flags = msg.flags.all_flags;
 
-
+    memset(&relpos_flag_msg_, 0, sizeof(ublox::RelPosFlags));
     relpos_flag_msg_.header.stamp = out.header.stamp;
     relpos_flag_msg_.gnssFixOk = msg.flags.gnssFixOk;
     relpos_flag_msg_.diffSoln = msg.flags.diffSoln;
