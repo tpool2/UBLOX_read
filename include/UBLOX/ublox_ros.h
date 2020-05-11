@@ -18,7 +18,6 @@
 #include "ublox/ObsVec.h"
 
 #include "ublox/CfgValGet.h"
-#include "ublox/CfgValGetAll.h"
 #include "ublox/CfgValDel.h"
 #include "ublox/CfgValSet.h"
 #include "ublox/CfgReset.h"
@@ -86,17 +85,10 @@ private:
     bool cfgValDel(ublox::CfgValDel::Request &req, ublox::CfgValDel::Response &res);
     bool cfgValSet(ublox::CfgValSet::Request &req, ublox::CfgValSet::Response &res);
     bool cfgReset(ublox::CfgReset::Request &req, ublox::CfgReset::Response &res);
-    bool cfgValGetAll(ublox::CfgValGetAll::Request &req, ublox::CfgValGetAll::Response &res);
-
     ros::ServiceServer cfg_val_get;
     ros::ServiceServer cfg_val_del_;
     ros::ServiceServer cfg_val_set_;
     ros::ServiceServer cfg_reset_;
-    ros::ServiceServer cfg_val_get_all_;
-
-    void initBase();
-    void initBrover();
-    void initRover();
 
     uint32_t ecef_pos_tow_;
     uint32_t ecef_vel_tow_;
@@ -112,16 +104,6 @@ private:
 
     uint32_t pvt_week_;
     // int message_rate;
-
-    int rover_quantity_;
-    int chain_level_;
-    int message_rate_;
-    std::string serial_port_;
-    std::string log_filename_;
-    int gps_;
-    int glonas_;
-    int beidou_;
-    int galileo_;
 
     double ned_1[3];
     double ned_2[3];
