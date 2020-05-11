@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-
 <launch>
   <arg name="base_serial_port" default="/dev/ttyACM0"/>
   <arg name="rover_serial_port" default="/dev/ttyACM1"/>
