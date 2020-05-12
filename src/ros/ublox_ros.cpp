@@ -660,6 +660,8 @@ bool UBLOX_ROS::cfgReset(ublox::CfgReset::Request &req, ublox::CfgReset::Respons
 
     return true;
 
+}
+
 bool UBLOX_ROS::evalF9PID(uint8_t f9pID)
 {
     switch(f9pID)
