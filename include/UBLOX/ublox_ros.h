@@ -85,7 +85,7 @@ private:
     bool cfgValDel(ublox::CfgValDel::Request &req, ublox::CfgValDel::Response &res);
     bool cfgValSet(ublox::CfgValSet::Request &req, ublox::CfgValSet::Response &res);
     bool cfgReset(ublox::CfgReset::Request &req, ublox::CfgReset::Response &res);
-    ros::ServiceServer cfg_val_get;
+    ros::ServiceServer cfg_val_get_;
     ros::ServiceServer cfg_val_del_;
     ros::ServiceServer cfg_val_set_;
     ros::ServiceServer cfg_reset_;
@@ -103,7 +103,17 @@ private:
     uint32_t *pvt_tow_ptr_;
 
     uint32_t pvt_week_;
-    // int message_rate;
+
+    std::string serial_port_;
+    std::string log_filename_;
+    int message_rate_;
+    int rover_quantity_;
+    int chain_level_;
+
+    int gps_;
+    int glonas_;
+    int beidou_;
+    int galileo_;
 
     double ned_1[3];
     double ned_2[3];
@@ -125,6 +135,10 @@ private:
 
     void cb_rov1(const ublox::RelPos &msg);
     void cb_rov2(const ublox::RelPos &msg);
+
+    void initBase();
+    void initRover();
+    void initBrover();
 
 
     /**
