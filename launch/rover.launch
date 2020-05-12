@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <launch>
-	<!-- be sure to check the rover serial port, it is often not ACM0-->
-  <arg name="rover_serial_port" default="/dev/ttyACM0"/>
-  <arg name="base_host" default="169.254.0.3"/>
-  <arg name="rover_host" default="169.254.0.4"/>
+	<!-- be sure to check the rover serial port.  The f4 uses one of the ports-->
+  <arg name="rover_serial_port" default="/dev/ttyACM1"/>
+  <arg name="base_host" default="192.168.1.121"/>
+  <arg name="rover_host" default="192.168.1.102"/>
 
 	<group ns = "rover">
 
@@ -18,11 +18,7 @@
 			<param name="rover_quantity" value="0"/>
 		</node>
 
-		<node pkg="rosbag" type="record" name="record" output="screen" args="-o ../data/rtk_tests/rover -- all"/>
-
-		<!-- <node name="dashboard" pkg="ublox" type="ublox_dashboard.py">
-			<param name="relpostopic" value="/rover/RelPos"/>
-		</node> -->
+		<node pkg="rosbag" type="record" name="record" output="screen" args="-o ../data/rtk_tests/rover -- all"/
 
 	</group>
 
