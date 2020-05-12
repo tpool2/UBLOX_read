@@ -83,7 +83,8 @@ if (${BUILD_ROS})
 		CfgValGet.srv
 		CfgValDel.srv
 		CfgValSet.srv
-		CfgReset.srv)
+		CfgReset.srv
+		initModule.srv)
 		
 	generate_messages(
   		DEPENDENCIES

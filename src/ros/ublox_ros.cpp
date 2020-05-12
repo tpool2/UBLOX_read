@@ -37,6 +37,7 @@ UBLOX_ROS::UBLOX_ROS() :
     cfg_val_del_ = nh_.advertiseService("CfgValDel", &UBLOX_ROS::cfgValDel, this);
     cfg_val_set_ = nh_.advertiseService("CfgValSet", &UBLOX_ROS::cfgValSet, this);
     cfg_reset_ = nh_.advertiseService("CfgReset", &UBLOX_ROS::cfgReset, this);
+    init_module_ = nh_.advertiseService("InitModule", &UBLOX_ROS::initModule, this);
 
     //Get the serial port
     serial_port_ = nh_private_.param<std::string>("serial_port", "/dev/ttyACM0");
@@ -63,7 +64,11 @@ UBLOX_ROS::UBLOX_ROS() :
 
     // set up RTK
     // Base (n local_host n local_port, n rover_host, n rover_port)
-    if (chain_level_ == ublox::UBLOX::BASE)
+    if(nh_private_.param<bool>("debug", false))
+    {
+        std::cerr<<"DEBUG MODE\n";
+    }
+    else if (chain_level_ == ublox::UBLOX::BASE)
     {
         initBase();
     }

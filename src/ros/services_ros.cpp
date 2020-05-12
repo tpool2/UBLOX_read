@@ -69,4 +69,25 @@ bool UBLOX_ROS::cfgReset(ublox::CfgReset::Request &req, ublox::CfgReset::Respons
 
 }
 
+bool UBLOX_ROS::initModule(ublox::initModule::Request &req, ublox::initModule::Response &res)
+{
+    switch(req.type)
+    {
+        case 0:
+            initBase();
+            break;
+        case 1:
+            initRover();
+            break;
+        case 2:
+            initBrover();
+            break;
+        default:
+            std::cerr<<"Error: initModule invalid type\n";
+            return false;
+            break;
+    }
+    return true;
+}
+
 }

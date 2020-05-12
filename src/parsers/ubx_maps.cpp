@@ -470,12 +470,14 @@ namespace ublox
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_ORB_SPI", 0x20910014));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_ORB_UART1", 0x20910011));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_ORB_UART2", 0x20910012));
-		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_POSLLH_SPI", 0x20910024));
+		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_ORB_USB", 0x20910013));
+		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_POSECEF_I2C", 0x20910024));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_POSECEF_SPI", 0x20910028));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_POSECEF_UART1", 0x20910025));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_POSECEF_UART2", 0x20910026));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_POSECEF_USB", 0x20910027));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_POSLLH_I2C", 0x20910029));
+		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_POSLLH_SPI", 0x2091002d));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_POSLLH_UART1", 0x2091002a));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_POSLLH_UART2", 0x2091002b));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_POSLLH_USB", 0x2091002c));
@@ -483,11 +485,12 @@ namespace ublox
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_PVT_SPI", 0x2091000a));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_PVT_UART1", 0x20910007));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_PVT_UART2", 0x20910008));
-		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_RELPOSNED_USB", 0x20910009));
+		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_PVT_USB", 0x20910009));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_RELPOSNED_I2C", 0x2091008d));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_RELPOSNED_SPI", 0x20910091));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_RELPOSNED_UART1", 0x2091008e));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_RELPOSNED_UART2", 0x2091008f));
+		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_RELPOSNED_USB", 0x20910090));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_SAT_I2C", 0x20910015));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_SAT_SPI", 0x20910019));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_SAT_UART1", 0x20910016));
@@ -506,6 +509,7 @@ namespace ublox
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_SVIN_I2C", 0x20910088));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_SVIN_SPI", 0x2091008c));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_SVIN_UART1", 0x20910089));
+		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_SVIN_UART2", 0x2091008a));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_TIMEBDS_SPI", 0x2091008b));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_TIMEBDS_I2C", 0x20910051));
 		UBX_cfg_map.insert(value_type("CFG-MSGOUT-UBX_NAV_TIMEBDS_UART1", 0x20910052));
