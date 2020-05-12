@@ -400,7 +400,7 @@ CFG_VALGET_TUPLE_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32
        memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
        out_message_.CFG_VALGET.version = version;
        out_message_.CFG_VALGET.layer = layer;
-       out_message_.CFG_VALGET.cfgDataKey = cfgDataKey;
+       out_message_.CFG_VALGET.cfgDataKey.keyID = cfgDataKey;
        send_message(CLASS_CFG, CFG_VALGET, out_message_, sizeof(CFG_VALGET_t));
     //    std::cerr<<"Got configuration of "<<cfgDataKey<<" to "<<cfgData<<std::endl;
 

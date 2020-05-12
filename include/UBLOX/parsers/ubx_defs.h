@@ -255,6 +255,27 @@ typedef struct {
     uint8_t reserved2[2];
 }__attribute__((packed)) CFG_PRT_t;
 
+typedef union {
+    enum {
+        SIZE_ONE_BIT = 0x01,
+        SIZE_ONE_BYTE = 0x02,
+        SIZE_TWO_BYTE = 0x03,
+        SIZE_FOUR_BYTE = 0x04,
+        SIZE_EIGHT_BYTE = 0x05
+    };
+
+    uint8_t buffer[4];
+    uint32_t keyID;
+    struct {
+        uint8_t msgID       : 8;
+        uint8_t reserved0   : 8;
+        uint8_t groupID     : 8;
+        uint8_t reserved1   : 4;
+        uint8_t size        : 3;
+        uint8_t reserved2   : 1;
+    };
+}__attribute__((packed)) CFG_KEY_ID_t;
+
 typedef struct {
     enum {
         RAM = 0,
@@ -362,7 +383,7 @@ typedef struct {
     uint8_t version; //0 poll request, 1 poll (receiver to return config data key and value pairs)
     uint8_t layer;
     uint16_t position;
-    uint32_t cfgDataKey;
+    CFG_KEY_ID_t cfgDataKey;
     uint64_t cfgData;
 }__attribute__((packed)) CFG_VALGET_t;
 

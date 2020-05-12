@@ -8,14 +8,14 @@ namespace ublox_ros
     request.version=0;
     request.layer=req.layer;
     request.position=req.position;
-    request.cfgDataKey=req.key;
+    request.cfgDataKey.keyID=req.key;
 
     ublox::CFG_VALGET_TUPLE_t response = ublox_->cfgValGet(request);
     
     res.version=std::get<1>(response).version;
     res.layer=std::get<1>(response).layer;
     res.position=std::get<1>(response).position;
-    res.key=std::get<1>(response).cfgDataKey;
+    res.key=std::get<1>(response).cfgDataKey.keyID;
     res.value=std::get<1>(response).cfgData;
     res.ack=std::get<0>(response).got_ack;
     res.nack=std::get<0>(response).got_nack;
