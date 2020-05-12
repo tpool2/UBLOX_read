@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "async_comm/comm.h"
+#include "rtcm_defs.h"
 
 class RTCM
 {
