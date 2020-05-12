@@ -148,6 +148,8 @@ private:
         } while (0);
     };
 
+    constexpr double deg2rad(double x) { return M_PI/180.0 * x; }
+
     /**
      * @brief Slices into an iterable
      * @param iterable
