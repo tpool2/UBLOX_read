@@ -7,11 +7,11 @@ set(Boost_DETAILED_FAILURE_MSG ON)
 
 find_package(Eigen3 REQUIRED)
 find_package(async_comm QUIET)
-#find_package(Boost)
+find_package(Boost)
 if (NOT ${async_comm_FOUND})
 	add_subdirectory(lib/async_comm)
 	set(async_comm_LIBRARIES async_comm)
-	set(async_comm_INCLUDE_DIRS lib/async_comm/include)
+	set(async_comm_INCLUDE_DIRS lib/async_comm/include ${Boost_INCLUDE_DIRS})
 endif()
 
 
