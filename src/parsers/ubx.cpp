@@ -381,7 +381,7 @@ CFG_VAL_DBG_t UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, u
     {
         out_message_.CFG_VALSET.cfgData.word = cfgData;
     }
-    out_message_.CFG_VALSET.cfgDataKey = cfgDataKey;
+    out_message_.CFG_VALSET.cfgDataKey.keyID = cfgDataKey;
     send_message(CLASS_CFG, CFG_VALSET, out_message_, sizeof(CFG_VALSET_t));
     // std::cerr<<"Configured "<< cfgDataKey<<" to "<<cfgData<<std::endl;
 
@@ -419,7 +419,7 @@ CFG_VAL_DBG_t UBX::del_configuration(uint8_t version, uint8_t layer, uint32_t cf
     memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
     out_message_.CFG_VALDEL.version = version;
     out_message_.CFG_VALDEL.layer = layer;
-    out_message_.CFG_VALDEL.cfgDataKey = cfgDataKey;
+    out_message_.CFG_VALDEL.cfgDataKey.keyID = cfgDataKey;
     send_message(CLASS_CFG, CFG_VALDEL, out_message_, sizeof(CFG_VALDEL_t));
     // std::cerr<<"Deleted configuration of "<<cfgDataKey<<std::endl;
 

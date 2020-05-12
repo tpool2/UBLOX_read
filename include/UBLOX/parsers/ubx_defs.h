@@ -507,7 +507,7 @@ typedef struct {
     uint8_t version;
     uint8_t layer;
     uint8_t reserved1[2];
-    uint32_t cfgDataKey;
+    CFG_KEY_ID_t cfgDataKey;
 
     union
     {
@@ -628,7 +628,7 @@ typedef struct
     uint8_t version;
     uint8_t layer;
     uint8_t reserved1[2];
-    uint32_t cfgDataKey;
+    CFG_KEY_ID_t cfgDataKey;
 
 }__attribute__((packed)) CFG_VALDEL_t;
 
