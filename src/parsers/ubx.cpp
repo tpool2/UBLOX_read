@@ -67,6 +67,7 @@ bool UBX::read_cb(uint8_t byte, uint8_t f9pID)
             ck_b_ = 0;
             start_message_ = true;
             end_message_ = false;
+            memset(&in_message_, 0, sizeof(in_message_));
         }
         break;
     case GOT_START_FRAME:
@@ -224,7 +225,7 @@ bool UBX::decode_message(uint8_t f9pID)
             for(int bufIndex = 4; bufIndex<length_; bufIndex++)
             {
                 DBG("bufIndex: %i, length: %i\n", bufIndex, length_);
-                CFG_VALGET_t cfgVal;
+                CFG_VALGET_t::response_t cfgVal;
                 cfgVal.version = version;
                 cfgVal.layer = layer;
                 cfgVal.position = position;
@@ -234,6 +235,7 @@ bool UBX::decode_message(uint8_t f9pID)
                 }
                 bufIndex = bufIndex+4;
                 DBG("Key: %i\n", cfgVal.cfgDataKey.keyID);
+                // cfgVal.keyName = "UBX Not implemented yet";
                 for(int dataIndex = bufIndex; dataIndex < bufIndex+cfgVal.cfgDataKey.size; dataIndex++)
                 {
                     cfgVal.cfgData.buffer[dataIndex-bufIndex] = in_message_.buffer[dataIndex];
@@ -428,10 +430,10 @@ CFG_VALGET_TUPLE_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32
        DBG("%s\n", (UBX_cfg_map.right.find(cfgDataKey)->second).c_str());
        memset(&out_message_, 0, sizeof(CFG_VALGET_t));
        memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
-       out_message_.CFG_VALGET.version = version;
-       out_message_.CFG_VALGET.layer = layer;
-       out_message_.CFG_VALGET.cfgDataKey.keyID = cfgDataKey;
-       send_message(CLASS_CFG, CFG_VALGET, out_message_, sizeof(CFG_VALGET_t));
+       out_message_.CFG_VALGET.request.version = version;
+       out_message_.CFG_VALGET.request.layer = layer;
+       out_message_.CFG_VALGET.request.cfgDataKey.keyID = cfgDataKey;
+       send_message(CLASS_CFG, CFG_VALGET, out_message_, sizeof(CFG_VALGET_t::request_t));
     //    std::cerr<<"Got configuration of "<<cfgDataKey<<" to "<<cfgData<<std::endl;
 
         clock_t start = clock();

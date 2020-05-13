@@ -281,7 +281,7 @@ typedef union {
     uint64_t data;
 }__attribute__((packed)) CFG_DATA_t;
 
-typedef struct {
+typedef union {
     enum {
         RAM = 0,
         BBR = 1,
@@ -384,12 +384,26 @@ typedef struct {
         TIME_REF_BUIDOU = 3,
         TIME_REF_GALILEO = 4
     };
+    public:
+        typedef struct {
+            uint8_t version; //0 poll request, 1 poll (receiver to return config data key and value pairs)
+            uint8_t layer;
+            uint16_t position;
+            CFG_KEY_ID_t cfgDataKey;
+        }__attribute__((packed)) request_t;
 
-    uint8_t version; //0 poll request, 1 poll (receiver to return config data key and value pairs)
-    uint8_t layer;
-    uint16_t position;
-    CFG_KEY_ID_t cfgDataKey;
-    CFG_DATA_t cfgData;
+        typedef struct {
+            uint8_t version; //0 poll request, 1 poll (receiver to return config data key and value pairs)
+            uint8_t layer;
+            uint16_t position;
+            CFG_KEY_ID_t cfgDataKey;
+            // std::string keyName;
+            CFG_DATA_t cfgData;
+        }__attribute__((packed)) response_t;
+
+        request_t request;
+        response_t response;
+
 }__attribute__((packed)) CFG_VALGET_t;
 
 typedef union {
@@ -402,7 +416,7 @@ typedef union {
     uint8_t flags;
 }__attribute__((packed)) CFG_VAL_DBG_t;
 
-typedef std::tuple<CFG_VAL_DBG_t, std::vector<CFG_VALGET_t> > CFG_VALGET_TUPLE_t;
+typedef std::tuple<CFG_VAL_DBG_t, std::vector<CFG_VALGET_t::response_t> > CFG_VALGET_TUPLE_t;
 
 typedef struct {
     enum {

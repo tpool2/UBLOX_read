@@ -4,14 +4,14 @@ namespace ublox_ros
 {
     bool UBLOX_ROS::cfgValGet(ublox::CfgValGet::Request &req, ublox::CfgValGet::Response &res)
 {
-    ublox::CFG_VALGET_t request;
+    ublox::CFG_VALGET_t::request_t request;
     request.version=0;
     request.layer=req.layer;
     request.position=req.position;
     request.cfgDataKey.keyID=req.key;
 
     ublox::CFG_VALGET_TUPLE_t response = ublox_->cfgValGet(request);
-    std::vector<ublox::CFG_VALGET_t> cfgVector_ublox = std::get<1>(response);
+    std::vector<ublox::CFG_VALGET_t::response_t> cfgVector_ublox = std::get<1>(response);
     for(int i=0; i<cfgVector_ublox.size(); i++)
     {
         ublox::CfgValGetType cfg_ros;
