@@ -397,14 +397,14 @@ typedef union {
             uint8_t layer;
             uint16_t position;
             CFG_KEY_ID_t cfgDataKey;
-            // std::string keyName;
+            std::string keyName;
             CFG_DATA_t cfgData;
-        }__attribute__((packed)) response_t;
+        } response_t;
 
         request_t request;
         response_t response;
 
-}__attribute__((packed)) CFG_VALGET_t;
+} CFG_VALGET_t;
 
 typedef union {
     struct {
@@ -996,7 +996,7 @@ typedef union {
     CFG_RST_t CFG_RST;
     CFG_NAV5_t CFG_NAV5;
     CFG_VALSET_t CFG_VALSET;
-    CFG_VALGET_t CFG_VALGET;
+    CFG_VALGET_t::request_t CFG_VALGET;
     CFG_VALDEL_t CFG_VALDEL;
     NAV_PVT_t NAV_PVT;
     NAV_POSECEF_t NAV_POSECEF;

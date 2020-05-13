@@ -87,6 +87,8 @@ public:
         return ((float)(clock()-start))/CLOCKS_PER_SEC;
     }
 
+    uint8_t cfgKeySize(const CFG_VALGET_t::response_t& cfgVal);
+
     // Parsing State Working Memory
     uint8_t prev_byte_;
     uint16_t buffer_head_ = 0;

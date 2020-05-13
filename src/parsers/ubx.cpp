@@ -222,7 +222,7 @@ bool UBX::decode_message(uint8_t f9pID)
 
             DBG("Length: %i\n", length_);
 
-            for(int bufIndex = 4; bufIndex<length_; bufIndex++)
+            for(int bufIndex = 4; bufIndex<length_; )
             {
                 DBG("bufIndex: %i, length: %i\n", bufIndex, length_);
                 CFG_VALGET_t::response_t cfgVal;
@@ -234,14 +234,16 @@ bool UBX::decode_message(uint8_t f9pID)
                     cfgVal.cfgDataKey.buffer[keyIndex-bufIndex] = in_message_.buffer[keyIndex];
                 }
                 bufIndex = bufIndex+4;
-                DBG("Key: %i\n", cfgVal.cfgDataKey.keyID);
-                // cfgVal.keyName = "UBX Not implemented yet";
-                for(int dataIndex = bufIndex; dataIndex < bufIndex+cfgVal.cfgDataKey.size; dataIndex++)
+                DBG("Key: %i, messageID: %i, groupID: %i, Size: %i\n", cfgVal.cfgDataKey.keyID, cfgVal.cfgDataKey.msgID, cfgVal.cfgDataKey.groupID, cfgKeySize(cfgVal));
+                // cfgVal.keyName = UBX_cfg_map.right.find(cfgVal.cfgDataKey.keyID)->second;
+                // DBG("Name: %s\n", cfgVal.keyName);
+                for(int dataIndex = bufIndex; dataIndex < bufIndex+cfgKeySize(cfgVal); dataIndex++)
                 {
                     cfgVal.cfgData.buffer[dataIndex-bufIndex] = in_message_.buffer[dataIndex];
                 }
                 DBG("Value: %i\n", cfgVal.cfgData.data);
                 cfg_val_get.push_back(cfgVal);
+                bufIndex = bufIndex+cfgKeySize(cfgVal);
             }
             
             cfgval_dbg_.got_cfg_val=true;
@@ -428,11 +430,11 @@ CFG_VAL_DBG_t UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, u
 CFG_VALGET_TUPLE_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
 {
        DBG("%s\n", (UBX_cfg_map.right.find(cfgDataKey)->second).c_str());
-       memset(&out_message_, 0, sizeof(CFG_VALGET_t));
+       memset(&out_message_, 0, sizeof(CFG_VALGET_t::request_t));
        memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
-       out_message_.CFG_VALGET.request.version = version;
-       out_message_.CFG_VALGET.request.layer = layer;
-       out_message_.CFG_VALGET.request.cfgDataKey.keyID = cfgDataKey;
+       out_message_.CFG_VALGET.version = version;
+       out_message_.CFG_VALGET.layer = layer;
+       out_message_.CFG_VALGET.cfgDataKey.keyID = cfgDataKey;
        send_message(CLASS_CFG, CFG_VALGET, out_message_, sizeof(CFG_VALGET_t::request_t));
     //    std::cerr<<"Got configuration of "<<cfgDataKey<<" to "<<cfgData<<std::endl;
 
@@ -471,7 +473,7 @@ void UBX::reset(navBbrMask_t navBbrMask, uint8_t resetMode)
     DBG("Reset Successful\n");
 }
 
-uint32_t translate(std::string key)
+uint32_t UBX::translate(std::string key)
 {
     std::string::size_type leftover;
 
@@ -479,5 +481,36 @@ uint32_t translate(std::string key)
 
     return numkey;
 }
+
+uint8_t UBX::cfgKeySize(const CFG_VALGET_t::response_t& cfgVal)
+    {
+        switch(cfgVal.cfgDataKey.size)
+        {
+            case CFG_KEY_ID_t::SIZE_ONE_BIT:
+                DBG("One bit\n");
+                return 1;
+                break;
+            case CFG_KEY_ID_t::SIZE_ONE_BYTE:
+                DBG("One byte\n");
+                return 1;
+                break;
+            case CFG_KEY_ID_t::SIZE_TWO_BYTE:
+                DBG("Two bytes\n");
+                return 2;
+                break;
+            case CFG_KEY_ID_t::SIZE_FOUR_BYTE:
+                DBG("Four bytes\n");
+                return 4;
+                break;
+            case CFG_KEY_ID_t::SIZE_EIGHT_BYTE:
+                DBG("Eight bytes\n");
+                return 8;
+                break;
+            default:
+                DBG("Unknown size: %i\n", cfgVal.cfgDataKey.size);
+                return 0;
+                break;
+        }
+    }
 
 }
