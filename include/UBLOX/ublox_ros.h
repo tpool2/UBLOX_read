@@ -16,6 +16,7 @@
 #include "ublox/GlonassEphemeris.h"
 #include "ublox/Observation.h"
 #include "ublox/ObsVec.h"
+#include "ublox/CfgValGetType.h"
 
 #include "ublox/CfgValGet.h"
 #include "ublox/CfgValDel.h"

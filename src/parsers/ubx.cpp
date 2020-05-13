@@ -209,17 +209,47 @@ bool UBX::decode_message(uint8_t f9pID)
        {
        case CFG_VALGET:
        {
-           DBG("VALGET: ");
-           DBG("Key: %i ", in_message_.CFG_VALGET.cfgDataKey);
-           DBG("Value: %i \n", in_message_.CFG_VALGET.cfgData);
-           cfg_val_get=in_message_.CFG_VALGET;
-           cfgval_dbg_.got_cfg_val=true;
-           break;
+            cfg_val_get.clear();
+            
+            DBG("VALGET: \n");
+            uint8_t version = in_message_.buffer[0];
+            DBG("Version: %i\n", version);
+            uint8_t layer = in_message_.buffer[1];
+            DBG("Layer: %i\n", layer);
+            uint16_t position = in_message_.buffer[2] | in_message_.buffer[3]<<8;
+            DBG("Position: %i\n", position);
+
+            DBG("Length: %i\n", length_);
+
+            for(int bufIndex = 4; bufIndex<length_; bufIndex++)
+            {
+                DBG("bufIndex: %i, length: %i\n", bufIndex, length_);
+                CFG_VALGET_t cfgVal;
+                cfgVal.version = version;
+                cfgVal.layer = layer;
+                cfgVal.position = position;
+                for(int keyIndex = bufIndex; keyIndex<bufIndex+4; keyIndex++)
+                {
+                    cfgVal.cfgDataKey.buffer[keyIndex-bufIndex] = in_message_.buffer[keyIndex];
+                }
+                bufIndex = bufIndex+4;
+                DBG("Key: %i\n", cfgVal.cfgDataKey.keyID);
+                for(int dataIndex = bufIndex; dataIndex < bufIndex+cfgVal.cfgDataKey.size; dataIndex++)
+                {
+                    cfgVal.cfgData.buffer[dataIndex-bufIndex] = in_message_.buffer[dataIndex];
+                }
+                DBG("Value: %i\n", cfgVal.cfgData.data);
+                cfg_val_get.push_back(cfgVal);
+            }
+            
+            cfgval_dbg_.got_cfg_val=true;
+            break;
        }
        case CFG_VALDEL:
-            DBG("VALDEL: ");
-            DBG("Key: %i ", in_message_.CFG_VALDEL.cfgDataKey);
+            DBG("VALDEL: \n");
+            DBG("Key: %i \n", in_message_.CFG_VALDEL.cfgDataKey);
             cfgval_dbg_.got_cfg_val=true;
+            break;
        default:
            DBG("unknown: %x\n", message_type_);
            break;

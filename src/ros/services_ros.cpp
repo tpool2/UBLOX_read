@@ -11,12 +11,19 @@ namespace ublox_ros
     request.cfgDataKey.keyID=req.key;
 
     ublox::CFG_VALGET_TUPLE_t response = ublox_->cfgValGet(request);
-    
-    res.version=std::get<1>(response).version;
-    res.layer=std::get<1>(response).layer;
-    res.position=std::get<1>(response).position;
-    res.key=std::get<1>(response).cfgDataKey.keyID;
-    res.value=std::get<1>(response).cfgData;
+    std::vector<ublox::CFG_VALGET_t> cfgVector_ublox = std::get<1>(response);
+    for(int i=0; i<cfgVector_ublox.size(); i++)
+    {
+        ublox::CfgValGetType cfg_ros;
+        cfg_ros.version = cfgVector_ublox[i].version;
+        cfg_ros.layer = cfgVector_ublox[i].layer;
+        cfg_ros.position = cfgVector_ublox[i].position;
+        cfg_ros.keyID = cfgVector_ublox[i].cfgDataKey.keyID;
+        cfg_ros.keyName = "Not implemented yet";
+        cfg_ros.data = cfgVector_ublox[i].cfgData.data;
+        
+        res.cfgData.push_back(cfg_ros);
+    }
     res.ack=std::get<0>(response).got_ack;
     res.nack=std::get<0>(response).got_nack;
     res.gotcfg=std::get<0>(response).got_cfg_val;

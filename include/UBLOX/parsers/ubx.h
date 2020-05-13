@@ -93,7 +93,7 @@ public:
     CFG_VAL_DBG_t cfgval_dbg_;
     bool start_message_ = false;
     bool end_message_ = false;
-    CFG_VALGET_t cfg_val_get;
+    std::vector<CFG_VALGET_t> cfg_val_get;
     parse_state_t parse_state_;
     uint8_t message_class_;
     uint8_t message_type_;

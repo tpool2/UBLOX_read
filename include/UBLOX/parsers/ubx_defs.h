@@ -276,6 +276,11 @@ typedef union {
     };
 }__attribute__((packed)) CFG_KEY_ID_t;
 
+typedef union {
+    uint8_t buffer[4];
+    uint64_t data;
+}__attribute__((packed)) CFG_DATA_t;
+
 typedef struct {
     enum {
         RAM = 0,
@@ -384,7 +389,7 @@ typedef struct {
     uint8_t layer;
     uint16_t position;
     CFG_KEY_ID_t cfgDataKey;
-    uint64_t cfgData;
+    CFG_DATA_t cfgData;
 }__attribute__((packed)) CFG_VALGET_t;
 
 typedef union {
@@ -397,7 +402,7 @@ typedef union {
     uint8_t flags;
 }__attribute__((packed)) CFG_VAL_DBG_t;
 
-typedef std::tuple<CFG_VAL_DBG_t, CFG_VALGET_t> CFG_VALGET_TUPLE_t;
+typedef std::tuple<CFG_VAL_DBG_t, std::vector<CFG_VALGET_t> > CFG_VALGET_TUPLE_t;
 
 typedef struct {
     enum {

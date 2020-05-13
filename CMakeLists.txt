@@ -75,7 +75,8 @@ if (${BUILD_ROS})
 		Ephemeris.msg
 		GlonassEphemeris.msg
 		Observation.msg
-		ObsVec.msg)
+		ObsVec.msg
+		CfgValGetType.msg)
 	
 	add_service_files(
 		DIRECTORY srv
