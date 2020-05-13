@@ -217,15 +217,17 @@ bool UBX::decode_message(uint8_t f9pID)
             DBG("Version: %i\n", version);
             uint8_t layer = in_message_.buffer[1];
             DBG("Layer: %i\n", layer);
-            uint16_t position = in_message_.buffer[2] | in_message_.buffer[3]<<8;
+            CFG_VALGET_t::position_t position;
+            position.buffer[0] = in_message_.buffer[2];
+            position.buffer[1] = in_message_.buffer[3];
             DBG("Position: %i\n", position);
 
             DBG("Length: %i\n", length_);
 
             for(int bufIndex = 4; bufIndex<length_; )
             {
-                DBG("bufIndex: %i, length: %i\n", bufIndex, length_);
                 CFG_VALGET_t::response_t cfgVal;
+                memset(&cfgVal, 0, sizeof(CFG_VALGET_t::response_t));
                 cfgVal.version = version;
                 cfgVal.layer = layer;
                 cfgVal.position = position;
@@ -235,13 +237,12 @@ bool UBX::decode_message(uint8_t f9pID)
                 }
                 bufIndex = bufIndex+4;
                 DBG("Key: %i, messageID: %i, groupID: %i, Size: %i\n", cfgVal.cfgDataKey.keyID, cfgVal.cfgDataKey.msgID, cfgVal.cfgDataKey.groupID, cfgKeySize(cfgVal));
-                // cfgVal.keyName = UBX_cfg_map.right.find(cfgVal.cfgDataKey.keyID)->second;
-                // DBG("Name: %s\n", cfgVal.keyName);
                 for(int dataIndex = bufIndex; dataIndex < bufIndex+cfgKeySize(cfgVal); dataIndex++)
                 {
                     cfgVal.cfgData.buffer[dataIndex-bufIndex] = in_message_.buffer[dataIndex];
                 }
                 DBG("Value: %i\n", cfgVal.cfgData.data);
+                // DBG("Cfg Map: %i\n", UBX_cfg_map.right.find(cfgVal.cfgDataKey.keyID)->first);
                 cfg_val_get.push_back(cfgVal);
                 bufIndex = bufIndex+cfgKeySize(cfgVal);
             }
@@ -427,22 +428,42 @@ CFG_VAL_DBG_t UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, u
 
 }
 
+CFG_VALGET_TUPLE_t UBX::get_configuration(uint8_t version, uint8_t layer, uint16_t position, uint32_t cfgDataKey)
+{
+    //DBG("%s\n", (UBX_cfg_map.right.find(cfgDataKey)->second).c_str());
+    memset(&out_message_, 0, sizeof(CFG_VALGET_t::request_t));
+    memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
+    out_message_.CFG_VALGET.version = version;
+    out_message_.CFG_VALGET.layer = layer;
+    out_message_.CFG_VALGET.position = position;
+    out_message_.CFG_VALGET.cfgDataKey.keyID = cfgDataKey;
+    send_message(CLASS_CFG, CFG_VALGET, out_message_, sizeof(CFG_VALGET_t::request_t));
+    //std::cerr<<"Got configuration of "<<cfgDataKey<<" to "<<cfgData<<std::endl;
+
+    clock_t start = clock();
+
+    while( (!(cfgval_dbg_.got_ack && cfgval_dbg_.got_cfg_val) && !cfgval_dbg_.got_nack) && time_elapsed(start) < 5);
+
+    return {cfgval_dbg_, cfg_val_get};
+
+}
+
 CFG_VALGET_TUPLE_t UBX::get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
 {
-       DBG("%s\n", (UBX_cfg_map.right.find(cfgDataKey)->second).c_str());
-       memset(&out_message_, 0, sizeof(CFG_VALGET_t::request_t));
-       memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
-       out_message_.CFG_VALGET.version = version;
-       out_message_.CFG_VALGET.layer = layer;
-       out_message_.CFG_VALGET.cfgDataKey.keyID = cfgDataKey;
-       send_message(CLASS_CFG, CFG_VALGET, out_message_, sizeof(CFG_VALGET_t::request_t));
-    //    std::cerr<<"Got configuration of "<<cfgDataKey<<" to "<<cfgData<<std::endl;
+    //DBG("%s\n", (UBX_cfg_map.right.find(cfgDataKey)->second).c_str());
+    memset(&out_message_, 0, sizeof(CFG_VALGET_t::request_t));
+    memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
+    out_message_.CFG_VALGET.version = version;
+    out_message_.CFG_VALGET.layer = layer;
+    out_message_.CFG_VALGET.cfgDataKey.keyID = cfgDataKey;
+    send_message(CLASS_CFG, CFG_VALGET, out_message_, sizeof(CFG_VALGET_t::request_t));
+    //std::cerr<<"Got configuration of "<<cfgDataKey<<" to "<<cfgData<<std::endl;
 
-        clock_t start = clock();
+    clock_t start = clock();
 
-        while( (!(cfgval_dbg_.got_ack && cfgval_dbg_.got_cfg_val) && !cfgval_dbg_.got_nack) && time_elapsed(start) < 5);
+    while( (!(cfgval_dbg_.got_ack && cfgval_dbg_.got_cfg_val) && !cfgval_dbg_.got_nack) && time_elapsed(start) < 5);
 
-        return {cfgval_dbg_, cfg_val_get};
+    return {cfgval_dbg_, cfg_val_get};
 
 }
 
@@ -487,27 +508,27 @@ uint8_t UBX::cfgKeySize(const CFG_VALGET_t::response_t& cfgVal)
         switch(cfgVal.cfgDataKey.size)
         {
             case CFG_KEY_ID_t::SIZE_ONE_BIT:
-                DBG("One bit\n");
+                // DBG("One bit\n");
                 return 1;
                 break;
             case CFG_KEY_ID_t::SIZE_ONE_BYTE:
-                DBG("One byte\n");
+                // DBG("One byte\n");
                 return 1;
                 break;
             case CFG_KEY_ID_t::SIZE_TWO_BYTE:
-                DBG("Two bytes\n");
+                // DBG("Two bytes\n");
                 return 2;
                 break;
             case CFG_KEY_ID_t::SIZE_FOUR_BYTE:
-                DBG("Four bytes\n");
+                // DBG("Four bytes\n");
                 return 4;
                 break;
             case CFG_KEY_ID_t::SIZE_EIGHT_BYTE:
-                DBG("Eight bytes\n");
+                // DBG("Eight bytes\n");
                 return 8;
                 break;
             default:
-                DBG("Unknown size: %i\n", cfgVal.cfgDataKey.size);
+                DBG("Error: Unknown size: %i\n", cfgVal.cfgDataKey.size);
                 return 0;
                 break;
         }

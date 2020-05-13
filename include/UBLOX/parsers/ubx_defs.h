@@ -385,6 +385,11 @@ typedef union {
         TIME_REF_GALILEO = 4
     };
     public:
+        typedef union {
+            uint8_t buffer[2];
+            uint16_t position;
+        }__attribute__((packed)) position_t;
+
         typedef struct {
             uint8_t version; //0 poll request, 1 poll (receiver to return config data key and value pairs)
             uint8_t layer;
@@ -395,7 +400,7 @@ typedef union {
         typedef struct {
             uint8_t version; //0 poll request, 1 poll (receiver to return config data key and value pairs)
             uint8_t layer;
-            uint16_t position;
+            position_t position;
             CFG_KEY_ID_t cfgDataKey;
             std::string keyName;
             CFG_DATA_t cfgData;
