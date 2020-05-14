@@ -438,23 +438,61 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
 
   } // End function vector_math
 
+    CFG_VALGET_TUPLE_t UBLOX::cfgValGet(uint32_t cfgDataKey, uint8_t layer, uint16_t position, std::string filepath)
+    {
+        std::ofstream ofs;
+        if(filepath!="")
+            ofs.open(filepath, std::ios_base::trunc);
+        std::vector<CFG_VALGET_t::response_t> cfgvec;
+        std::vector<CFG_VALGET_t::response_t> allvalues;
+        CFG_VAL_DBG_t debugging;
+        do
+        {
+            CFG_VALGET_TUPLE_t results = ubx_.get_configuration(0, layer, position, cfgDataKey);
+            debugging = std::get<0>(results);
+            cfgvec = std::get<1>(results);
+            for(uint8_t i=0; i<cfgvec.size(); i++)
+            {
+                allvalues.push_back(cfgvec[i]);
+                if(filepath!="")
+                {
+                    if(i!=0)
+                    {
+                        ofs<<"\n";
+                    }
+                    ofs<<"Key: "<<cfgvec[i].cfgDataKey.keyID<<"\t";
+                    ofs<<"Name: "<<cfgvec[i].keyName<<"\t";
+                    ofs<<"Value: "<<cfgvec[i].cfgData.data<<"\t";
+                    ofs<<"Layer: "<<int(cfgvec[i].layer)<<"\t";
+                }
+            }
+            position = position+64;
+        } while (cfgvec.size()>=64);
 
-  CFG_VALGET_TUPLE_t UBLOX::cfgValGet(const CFG_VALGET_t::request_t &request)
-  {
-      return ubx_.get_configuration(request.version, request.layer, request.position, request.cfgDataKey.keyID);
-  }
+        if(filepath!="")
+        {
+            ofs.close();
+        }
 
-  CFG_VAL_DBG_t UBLOX::cfgValDel(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
-  {
+        return {debugging, allvalues};
+    }
 
-      return ubx_.del_configuration(version, layer, cfgDataKey);
-  }
+    CFG_VALGET_TUPLE_t UBLOX::cfgValGet(const CFG_VALGET_t::request_t &request)
+    {
+        return ubx_.get_configuration(request.version, request.layer, request.position, request.cfgDataKey.keyID);
+    }
 
-  CFG_VAL_DBG_t UBLOX::cfgValSet(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size)
-  {
+    CFG_VAL_DBG_t UBLOX::cfgValDel(uint8_t version, uint8_t layer, uint32_t cfgDataKey)
+    {
 
-      return ubx_.configure(version, layer, cfgData, cfgDataKey, size);
-  }
+        return ubx_.del_configuration(version, layer, cfgDataKey);
+    }
+
+    CFG_VAL_DBG_t UBLOX::cfgValSet(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size)
+    {
+
+        return ubx_.configure(version, layer, cfgData, cfgDataKey, size);
+    }
 
     navBbrMask_t UBLOX::reset(uint16_t navBbrMask, uint8_t resetMode)
     {

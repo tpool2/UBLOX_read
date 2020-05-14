@@ -4,13 +4,7 @@ namespace ublox_ros
 {
     bool UBLOX_ROS::cfgValGet(ublox::CfgValGet::Request &req, ublox::CfgValGet::Response &res)
 {
-    ublox::CFG_VALGET_t::request_t request;
-    request.version=0;
-    request.layer=req.layer;
-    request.position=req.position;
-    request.cfgDataKey.keyID=req.key;
-
-    ublox::CFG_VALGET_TUPLE_t response = ublox_->cfgValGet(request);
+    ublox::CFG_VALGET_TUPLE_t response = ublox_->cfgValGet(req.key, req.layer, req.position, req.filepath);
     std::vector<ublox::CFG_VALGET_t::response_t> cfgVector_ublox = std::get<1>(response);
     for(int i=0; i<cfgVector_ublox.size(); i++)
     {
@@ -31,6 +25,30 @@ namespace ublox_ros
 
     return true;
 }
+
+    bool UBLOX_ROS::cfgValGetAll(ublox::CfgValGetAll::Request &req, ublox::CfgValGetAll::Response &res)
+    {
+        ublox::CFG_VALGET_TUPLE_t response = ublox_->cfgValGet(0x0fff0000, req.layer, req.position, req.filepath);
+        std::vector<ublox::CFG_VALGET_t::response_t> cfgVector_ublox = std::get<1>(response);
+        for(int i=0; i<cfgVector_ublox.size(); i++)
+        {
+            ublox::CfgValGetType cfg_ros;
+            cfg_ros.version = cfgVector_ublox[i].version;
+            cfg_ros.layer = cfgVector_ublox[i].layer;
+            cfg_ros.position = cfgVector_ublox[i].position.position;
+            cfg_ros.keyID = cfgVector_ublox[i].cfgDataKey.keyID;
+            cfg_ros.keyName = std::string(cfgVector_ublox[i].keyName);
+            cfg_ros.data = cfgVector_ublox[i].cfgData.data;
+            
+            res.cfgData.push_back(cfg_ros);
+        }
+        res.ack=std::get<0>(response).got_ack;
+        res.nack=std::get<0>(response).got_nack;
+        res.gotcfg=std::get<0>(response).got_cfg_val;
+        res.flags=std::get<0>(response).flags;
+
+        return true;
+    }
 
 bool UBLOX_ROS::cfgValDel(ublox::CfgValDel::Request &req, ublox::CfgValDel::Response &res)
 {

@@ -18,7 +18,7 @@
 			<param name="rover_quantity" value="0"/>
 		</node>
 
-		<node pkg="rosbag" type="record" name="record" output="screen" args="-o ../data/rtk_tests/rover -- all"/>
+		<node pkg="rosbag" type="record" name="record" output="screen" args="-o ../data/rtk_tests/rover --all"/>
 
 		<!-- <node name="dashboard" pkg="ublox" type="ublox_dashboard.py">
 			<param name="relpostopic" value="/rover/RelPos"/>

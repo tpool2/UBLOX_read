@@ -779,16 +779,16 @@ typedef struct  {
 
         struct
         {
-            bool gnssFixOk;
-            bool diffSoln;
-            bool relPosValid;
-            bool floatCarrSoln;
-            bool fixedCarrSoln;
-            bool isMoving;
-            bool refPosMiss;
-            bool refObsMiss;
-            bool relPosHeadingValid;
-            bool relPosNormalized;
+            bool gnssFixOk          :1;
+            bool diffSoln           :1;
+            bool relPosValid        :1;
+            bool floatCarrSoln      :1;
+            bool fixedCarrSoln      :1;
+            bool isMoving           :1;
+            bool refPosMiss         :1;
+            bool refObsMiss         :1;
+            bool relPosHeadingValid :1;
+            bool relPosNormalized   :1;
             bool reserved[22];
         }__attribute__((packed));
         

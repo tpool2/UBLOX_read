@@ -34,6 +34,7 @@ UBLOX_ROS::UBLOX_ROS() :
 
     // Connect ROS services
     cfg_val_get_ = nh_.advertiseService("CfgValGet", &UBLOX_ROS::cfgValGet, this);
+    cfg_val_get_all_ = nh_.advertiseService("CfgValGetAll", &UBLOX_ROS::cfgValGetAll, this);
     cfg_val_del_ = nh_.advertiseService("CfgValDel", &UBLOX_ROS::cfgValDel, this);
     cfg_val_set_ = nh_.advertiseService("CfgValSet", &UBLOX_ROS::cfgValSet, this);
     cfg_reset_ = nh_.advertiseService("CfgReset", &UBLOX_ROS::cfgReset, this);

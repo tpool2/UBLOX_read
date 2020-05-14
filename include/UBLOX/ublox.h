@@ -169,6 +169,7 @@ public:
     void vector_math(double ned_1[], double ned_2[], double answer[]);
 
     CFG_VALGET_TUPLE_t cfgValGet(const CFG_VALGET_t::request_t &request);
+    CFG_VALGET_TUPLE_t cfgValGet(uint32_t cfgDataKey, uint8_t layer=0, uint16_t position=0, std::string filepath="");
     CFG_VAL_DBG_t cfgValDel(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
     CFG_VAL_DBG_t cfgValSet(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size);
 

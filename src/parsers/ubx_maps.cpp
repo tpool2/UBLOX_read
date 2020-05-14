@@ -783,6 +783,5 @@ namespace ublox
 		UBX_cfg_map.insert(value_type("CFG-USBOUTPROT-NMEA", 0x10780002));
 		UBX_cfg_map.insert(value_type("CFG-USBOUTPROT-RTCM3X", 0x10780004));
 		UBX_cfg_map.insert(value_type("ALL", 0x0fff0000));
-		std::cerr<<"Filled Config Map\n";
 	}
 }

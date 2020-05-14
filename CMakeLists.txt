@@ -85,6 +85,7 @@ if (${BUILD_ROS})
 		CfgValDel.srv
 		CfgValSet.srv
 		CfgReset.srv
+		CfgValGetAll.srv
 		initModule.srv)
 		
 	generate_messages(

@@ -248,7 +248,7 @@ bool UBX::decode_message(uint8_t f9pID)
                 }
                 else
                 {
-                    // cfgVal.keyName = "No keyName found";
+                    cfgVal.keyName = "No keyName found";
                 }
                 // DBG("Cfg Map: %s\n", cfgVal.keyName.c_str());
                 cfg_val_get.push_back(cfgVal);
