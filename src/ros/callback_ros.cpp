@@ -2,6 +2,22 @@
 
 namespace ublox_ros
 {
+    void UBLOX_ROS::advertiseTopics()
+    {
+        pvt_pub_ = nh_.advertise<ublox::PositionVelocityTime>("PosVelTime", 10);
+        relpos_pub_ = nh_.advertise<ublox::RelPos>("RelPos", 10);
+        relposflag_pub_ = nh_.advertise<ublox::RelPosFlags>("RelPosFlags", 10);
+        ecef_pub_ = nh_.advertise<ublox::PosVelEcef>("PosVelEcef", 10);
+        survey_status_pub_ = nh_.advertise<ublox::SurveyStatus>("SurveyStatus", 10);
+        eph_pub_ = nh_.advertise<ublox::Ephemeris>("Ephemeris", 10);
+        geph_pub_ = nh_.advertise<ublox::GlonassEphemeris>("GlonassEphemeris", 10);
+        obs_pub_ = nh_.advertise<ublox::ObsVec>("Obs", 10);
+        base_ecef_pub_ = nh_.advertise<ublox::PosVelEcef>("base/PosVelEcef", 10);
+        base_pvt_pub_ = nh_.advertise<ublox::PositionVelocityTime>("base/PosVelTime", 10);
+        // nav_sat_fix_pub_ = nh_.advertise<sensor_msgs::NavSatFix>("NavSatFix");
+        // nav_sat_status_pub_ = nh_.advertise<sensor_msgs::NavSatStatus>("NavSatStatus");
+    }
+    
     // Callback function for subscriber to RelPos for a given RelPos message.
 // NOTE: This message is not the same as ublox::NAV_RELPOSNED_t, since that one
 // deals with messages from the f9p

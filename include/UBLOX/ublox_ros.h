@@ -146,6 +146,8 @@ private:
     void initBase();
     void initRover();
     void initBrover();
+    void advertiseTopics();
+    void advertiseServices();
 
 
     /**

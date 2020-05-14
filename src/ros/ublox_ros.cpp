@@ -19,26 +19,10 @@ UBLOX_ROS::UBLOX_ROS() :
 {
 
     // Connect ROS topics
-    pvt_pub_ = nh_.advertise<ublox::PositionVelocityTime>("PosVelTime", 10);
-    relpos_pub_ = nh_.advertise<ublox::RelPos>("RelPos", 10);
-    relposflag_pub_ = nh_.advertise<ublox::RelPosFlags>("RelPosFlags", 10);
-    ecef_pub_ = nh_.advertise<ublox::PosVelEcef>("PosVelEcef", 10);
-    survey_status_pub_ = nh_.advertise<ublox::SurveyStatus>("SurveyStatus", 10);
-    eph_pub_ = nh_.advertise<ublox::Ephemeris>("Ephemeris", 10);
-    geph_pub_ = nh_.advertise<ublox::GlonassEphemeris>("GlonassEphemeris", 10);
-    obs_pub_ = nh_.advertise<ublox::ObsVec>("Obs", 10);
-    base_ecef_pub_ = nh_.advertise<ublox::PosVelEcef>("base/PosVelEcef", 10);
-    base_pvt_pub_ = nh_.advertise<ublox::PositionVelocityTime>("base/PosVelTime", 10);
-    // nav_sat_fix_pub_ = nh_.advertise<sensor_msgs::NavSatFix>("NavSatFix");
-    // nav_sat_status_pub_ = nh_.advertise<sensor_msgs::NavSatStatus>("NavSatStatus");
+    advertiseTopics();
 
     // Connect ROS services
-    cfg_val_get_ = nh_.advertiseService("CfgValGet", &UBLOX_ROS::cfgValGet, this);
-    cfg_val_get_all_ = nh_.advertiseService("CfgValGetAll", &UBLOX_ROS::cfgValGetAll, this);
-    cfg_val_del_ = nh_.advertiseService("CfgValDel", &UBLOX_ROS::cfgValDel, this);
-    cfg_val_set_ = nh_.advertiseService("CfgValSet", &UBLOX_ROS::cfgValSet, this);
-    cfg_reset_ = nh_.advertiseService("CfgReset", &UBLOX_ROS::cfgReset, this);
-    init_module_ = nh_.advertiseService("InitModule", &UBLOX_ROS::initModule, this);
+    advertiseServices();
 
     //Get the serial port
     serial_port_ = nh_private_.param<std::string>("serial_port", "/dev/ttyACM0");
