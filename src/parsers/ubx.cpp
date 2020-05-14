@@ -202,7 +202,7 @@ bool UBX::decode_message(uint8_t f9pID)
             DBG("%d\n", message_type_);
             break;
         }
-        DBG((UBX_map[in_message_.ACK_ACK.clsID][in_message_.ACK_ACK.msgID]+"\n").c_str());
+        DBG("%s\n", UBX_map[in_message_.ACK_ACK.clsID][in_message_.ACK_ACK.msgID].c_str());
         break;
    case CLASS_CFG: //only needed for getting data
        DBG("CFG_");
@@ -214,15 +214,15 @@ bool UBX::decode_message(uint8_t f9pID)
             
             DBG("VALGET: \n");
             uint8_t version = in_message_.buffer[0];
-            DBG("Version: %i\n", version);
+            // DBG("Version: %i\n", version);
             uint8_t layer = in_message_.buffer[1];
-            DBG("Layer: %i\n", layer);
+            // DBG("Layer: %i\n", layer);
             CFG_VALGET_t::position_t position;
             position.buffer[0] = in_message_.buffer[2];
             position.buffer[1] = in_message_.buffer[3];
-            DBG("Position: %i\n", position);
+            // DBG("Position: %i\n", position);
 
-            DBG("Length: %i\n", length_);
+            // DBG("Length: %i\n", length_);
 
             for(int bufIndex = 4; bufIndex<length_; )
             {
@@ -236,13 +236,21 @@ bool UBX::decode_message(uint8_t f9pID)
                     cfgVal.cfgDataKey.buffer[keyIndex-bufIndex] = in_message_.buffer[keyIndex];
                 }
                 bufIndex = bufIndex+4;
-                DBG("Key: %i, messageID: %i, groupID: %i, Size: %i\n", cfgVal.cfgDataKey.keyID, cfgVal.cfgDataKey.msgID, cfgVal.cfgDataKey.groupID, cfgKeySize(cfgVal));
+                // DBG("Key: %i, messageID: %i, groupID: %i, Size: %i\n", cfgVal.cfgDataKey.keyID, cfgVal.cfgDataKey.msgID, cfgVal.cfgDataKey.groupID, cfgKeySize(cfgVal));
                 for(int dataIndex = bufIndex; dataIndex < bufIndex+cfgKeySize(cfgVal); dataIndex++)
                 {
                     cfgVal.cfgData.buffer[dataIndex-bufIndex] = in_message_.buffer[dataIndex];
                 }
-                DBG("Value: %i\n", cfgVal.cfgData.data);
-                // DBG("Cfg Map: %i\n", UBX_cfg_map.right.find(cfgVal.cfgDataKey.keyID)->first);
+                // DBG("Value: %i\n", cfgVal.cfgData.data);
+                if(UBX_cfg_map.right.count(cfgVal.cfgDataKey.keyID)!=0)
+                {
+                    cfgVal.keyName = UBX_cfg_map.right.at(cfgVal.cfgDataKey.keyID);
+                }
+                else
+                {
+                    // cfgVal.keyName = "No keyName found";
+                }
+                // DBG("Cfg Map: %s\n", cfgVal.keyName.c_str());
                 cfg_val_get.push_back(cfgVal);
                 bufIndex = bufIndex+cfgKeySize(cfgVal);
             }
@@ -252,7 +260,7 @@ bool UBX::decode_message(uint8_t f9pID)
        }
        case CFG_VALDEL:
             DBG("VALDEL: \n");
-            DBG("Key: %i \n", in_message_.CFG_VALDEL.cfgDataKey);
+            DBG("Key: %i \n", in_message_.CFG_VALDEL.cfgDataKey.keyID);
             cfgval_dbg_.got_cfg_val=true;
             break;
        default:
@@ -318,30 +326,6 @@ void UBX::calculate_checksum(const uint8_t msg_cls, const uint8_t msg_id, const 
         ck_a += payload.buffer[i];
         ck_b += ck_a;
     }
-}
-
-uint8_t* UBX::create_message(uint8_t msg_class, uint8_t msg_id, const UBX_message_t& message, uint16_t len)
-{
-    uint8_t buffer[ublox::BUFFER_SIZE];
-
-    memset(&buffer, 0, sizeof(buffer));
-    buffer[0] = START_BYTE_1;
-    buffer[1] = START_BYTE_2;
-    buffer[2] = msg_class;
-    buffer[3] =  msg_id;
-    buffer[4] = len & 0xFF;
-    buffer[5] = (len >> 8) & 0xFF;
-    for(int i=0; i<len; i++)
-    {
-        buffer[i+6] = message.buffer[i];
-    }
-
-    uint8_t ck_a, ck_b;
-    calculate_checksum(msg_class, msg_id, len, message, ck_a, ck_b);
-    buffer[6+sizeof(NAV_POSECEF_t)] = ck_a;
-    buffer[7+sizeof(NAV_POSECEF_t)] = ck_b;
-
-    return buffer;
 }
 
 void UBX::create_message(uint8_t* buffer, uint8_t msg_class, uint8_t msg_id, const UBX_message_t& message, uint16_t len)
