@@ -131,6 +131,9 @@ public:
 
     void config_f9p();
     void config_rover();
+    void config_ubx_msgs(int relpos);
+    void config_rtcm_msgs(int hasRover, int stationary, int surveryacc, int surveytime);
+
     /**
      * @brief Configures the base setup by calling the correct base configuration function
      * @param base_type string moving or stationary

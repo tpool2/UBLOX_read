@@ -510,6 +510,12 @@ typedef struct {
         SIGNAL_BDS = 0x10310022, //BeiDou Enable
         SIGNAL_BDS_B1 = 0x1031000d, //BeiDou B1I
         SIGNAL_BDS_B2 = 0x1031000e, //BeiDou B2I
+        SIGNAL_GLO = 0x10310025,
+        SIGNAL_GLO_L1 = 0x10310018,
+        SIGNAL_GLO_L2 = 0x1031001a,
+        SIGNAL_QZSS = 0x10310024,
+        SIGNAL_QZSS_L1CA =  0x10310012,
+        SIGNAL_QZSS_L2C =  0x10310015
 
     };
 

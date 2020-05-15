@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <launch>
   <arg name="base_serial_port" default="/dev/ttyACM0"/>
-  <arg name="base_host" default="169.254.0.3"/>
-  <arg name="rover_host" default="169.254.0.4"/>
+  <arg name="base_host" default="localhost"/>
+  <arg name="rover_host" default="localhost"/>
 	
 	<group ns="base">
 
@@ -12,10 +12,13 @@
 			<param name="local_port" value="16140"/>
 			<param name="rover_host" value="$(arg rover_host)"/>
 			<param name="rover_port" value="16145"/>
+			<param name="chain_level" value="0"/>
+			<param name="rover_quantity" value="1"/>
+			<param name="base_type" value="moving"/>
 			<rosparam command="load" file="$(find ublox)/params/ublox.yaml"/>
 		</node> 
 
-		<node pkg="rosbag" type="record" name="record" output="screen" args="-o ../data/rtk_tests/base --all"/>
+		<!--node pkg="rosbag" type="record" name="record" output="screen" args="-o ../data/rtk_tests/base -a"/-->
 
 	</group>
 	
