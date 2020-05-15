@@ -36,6 +36,7 @@ UBLOX_ROS::UBLOX_ROS() :
     glonas_ = nh_private_.param<int>("GLONAS", 0); //GLONAS
     beidou_ = nh_private_.param<int>("BEIDOU", 0); //BEIDOU
     galileo_ = nh_private_.param<int>("GALILEO", 1); //GALILEO
+    dynamic_model_ = nh_private_.param<int>("dynamic_model", 0);
     std::cerr << "message_rate = " << message_rate_ << "\n";
     std::cerr << "rover_quantity = " << rover_quantity_ << "\n";
     std::cerr << "chain_level = " << chain_level_ << "\n";

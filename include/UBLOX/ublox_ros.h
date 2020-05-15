@@ -121,6 +121,7 @@ private:
     int glonas_;
     int beidou_;
     int galileo_;
+    uint8_t dynamic_model_;
 
     double ned_1[3];
     double ned_2[3];

@@ -54,10 +54,10 @@ void UBLOX::config_gnss(bool gps, bool glonas, bool beidou, bool galileo)
 }
 
 
-void UBLOX::config_f9p() //See ubx_defs.h for more information
+void UBLOX::config_f9p(uint8_t dynamic_model) //See ubx_defs.h for more information
 {
     DBG("config_f9p\n");
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, CFG_VALSET_t::DYNMODE_AIRBORNE_1G, CFG_VALSET_t::DYNMODEL, byte); //Dynamic platform model
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, dynamic_model, CFG_VALSET_t::DYNMODEL, byte); //Dynamic platform model
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_INPROT_NMEA, byte); //Flag to indicate if NMEA should be an input protocol on USB
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_OUTPROT_NMEA, byte); //Flag to indicate if NMEA should be an output protocol on USB
 
@@ -186,7 +186,7 @@ void UBLOX::initLogFile(const std::string& filename)
 
 
 void UBLOX::initRover(std::string local_host, uint16_t local_port,
-                      std::string remote_host, uint16_t remote_port)
+                      std::string remote_host, uint16_t remote_port, uint8_t dynamic_model)
 {
     std::cerr << "initRover \n";
     type_ = ROVER;
@@ -213,7 +213,7 @@ void UBLOX::initRover(std::string local_host, uint16_t local_port,
     config_ubx_msgs(1);
     config_rtcm_msgs(0, 0, 0, 0);
     // config_rover();
-    config_f9p();
+    config_f9p(dynamic_model);
     std::cerr<<"Initialized Rover\n";
 }
 
@@ -221,7 +221,7 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
                 std::string remote_host[], uint16_t remote_port[],
                 std::string base_type, int rover_quantity, int gps,
                 int glonas, int beidou, int galileo, int surveytime,
-                int surveyacc)
+                int surveyacc, uint8_t dynamic_model)
 {
     std::cerr << "initBase \n";
     type_ = BASE;
@@ -280,14 +280,14 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
     config_gnss(gps, glonas, beidou, galileo);
     config_ubx_msgs(0);
     // config_base(base_type, gps, glonas, beidou, galileo, surveytime, surveyacc);
-    config_f9p();
+    config_f9p(dynamic_model);
 }
 
 void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
                 std::string base_host[], uint16_t base_port[],
                 std::string rover_host[], uint16_t rover_port[],
                 std::string base_type, int rover_quantity, int gps,
-                int glonas, int beidou, int galileo) {
+                int glonas, int beidou, int galileo, uint8_t dynamic_model) {
                 
                 config_gnss(gps, glonas, beidou, galileo);
                 config_ubx_msgs(1);
@@ -345,7 +345,7 @@ void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
                 //   config_base(base_type, gps, glonas, beidou, galileo, 0, 0);
 
                     // configure the f9p
-                  config_f9p();
+                  config_f9p(dynamic_model);
                   std::cerr<<"Initialized Brover\n";
 }
 
@@ -550,7 +550,7 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover, CFG_VALSET_t::RTCM_1097USB, byte);
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover, CFG_VALSET_t::RTCM_1127USB, byte);
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover, CFG_VALSET_t::RTCM_1230USB, byte);
-        
+
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*stationary, CFG_VALSET_t::RTCM_1005USB, byte);
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*stationary, CFG_VALSET_t::MSGOUT_SVIN, byte);
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*stationary, CFG_VALSET_t::TMODE_MODE, byte);

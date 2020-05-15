@@ -47,7 +47,7 @@ public:
                     std::string remote_host[], uint16_t remote_port[],
                     std::string base_type, int rover_quantity, int gps,
                     int glonas, int beidou, int galileo, int surveytime,
-                    int surveyacc);
+                    int surveyacc, uint8_t dynamic_model=CFG_VALSET_t::DYNMODE_AIRBORNE_1G);
 
     void initRover(std::string local_host, uint16_t local_port,
                    std::string remote_host, uint16_t remote_port,
@@ -63,7 +63,7 @@ public:
  * Base(remote)-------------->Rover(local)
  */
      void initRover(std::string local_host, uint16_t local_port,
-                    std::string remote_host, uint16_t remote_port);
+                    std::string remote_host, uint16_t remote_port, uint8_t dynamic_model=CFG_VALSET_t::DYNMODE_AIRBORNE_1G);
 
 
     /**
@@ -87,7 +87,7 @@ public:
                     std::string base_host[], uint16_t base_port[],
                     std::string rover_host[], uint16_t rover_port[],
                     std::string base_type, int rover_quantity, int gps,
-                    int glonas, int beidou, int galileo);
+                    int glonas, int beidou, int galileo, uint8_t dynamic_model=CFG_VALSET_t::DYNMODE_AIRBORNE_1G);
 
     void initLogFile(const std::string& filename);
     void readFile(const std::string& filename);
@@ -129,7 +129,7 @@ public:
 
     void config_gnss(bool gps, bool glonas, bool beidou, bool galileo);
 
-    void config_f9p();
+    void config_f9p(uint8_t dynamic_model=CFG_VALSET_t::DYNMODE_AIRBORNE_1G);
     void config_rover();
     void config_ubx_msgs(int relpos);
     void config_rtcm_msgs(int hasRover, int stationary, int surveryacc, int surveytime);

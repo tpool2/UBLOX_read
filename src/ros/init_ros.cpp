@@ -47,7 +47,7 @@ namespace ublox_ros
 
         ublox_->initBase(local_host, local_port, rover_host, rover_port,
           base_type, rover_quantity_, gps_, glonas_, beidou_, galileo_, surveytime,
-          surveyacc);
+          surveyacc, dynamic_model_);
     }
 
     void UBLOX_ROS::initRover()
@@ -76,7 +76,7 @@ namespace ublox_ros
           base_port[0] = nh_private_.param<int>("base_port1", 16145);
         }
 
-        ublox_->initRover(local_host[0], local_port[0], base_host[0], base_port[0]);
+        ublox_->initRover(local_host[0], local_port[0], base_host[0], base_port[0], dynamic_model_);
     }
 
     void UBLOX_ROS::initBrover()
@@ -129,6 +129,6 @@ namespace ublox_ros
         // Initiate the Brover
         ublox_->initBrover(local_host, local_port, base_host, base_port,
            rover_host, rover_port, base_type, rover_quantity_, gps_,
-            glonas_, beidou_, galileo_);
+            glonas_, beidou_, galileo_, dynamic_model_);
     }
 }
