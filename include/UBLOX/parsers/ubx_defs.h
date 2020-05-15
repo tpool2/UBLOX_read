@@ -128,7 +128,8 @@ enum {
 
 enum {
    RXM_RAWX = 0x15,         // Multi-GNSS Raw Measurement Data
-   RXM_SFRBX = 0x13         // Broadcast Navigation Data Subframe (ephemeris)
+   RXM_SFRBX = 0x13,         // Broadcast Navigation Data Subframe (ephemeris)
+    RXM_RTCM = 0x32
 };
 
 typedef enum {

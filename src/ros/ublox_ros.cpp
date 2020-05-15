@@ -96,6 +96,7 @@ UBLOX_ROS::UBLOX_ROS() :
     createCallback(ublox::CLASS_NAV, ublox::NAV_SVIN, &UBLOX_ROS::svinCB, this);
     createCallback(ublox::CLASS_RXM, ublox::RXM_RAWX, &UBLOX_ROS::obsCB, this);
     createCallback(ublox::CLASS_NAV, ublox::NAV_PVT, &UBLOX_ROS::pvtCB, this);
+    createCallback(ublox::CLASS_RXM, ublox::RXM_RTCM, &UBLOX_ROS::rtcmInputCB, this);
 
     if (!log_filename_.empty())
     {
