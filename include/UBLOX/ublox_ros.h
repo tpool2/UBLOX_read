@@ -11,6 +11,7 @@
 #include "ublox/PositionVelocityTime.h"
 #include "ublox/RelPos.h"
 #include "ublox/RelPosFlags.h"
+#include "ublox/RTCMInput.h"
 #include "ublox/SurveyStatus.h"
 #include "ublox/Ephemeris.h"
 #include "ublox/GlonassEphemeris.h"
@@ -50,6 +51,7 @@ private:
     ros::Publisher eph_pub_;
     ros::Publisher geph_pub_;
     ros::Publisher obs_pub_;
+    ros::Publisher rtcm_input_pub_;
 
     ros::Publisher base_ecef_pub_;
     ros::Publisher base_pvt_pub_;
@@ -80,6 +82,10 @@ private:
      * @brief Callback for filling a Observation ROS message from a UBX callback
      */
     void obsCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
+    /**
+     * @brief Callback for filling a RXM-RTCM ROS message from a UBX callback
+     */
+    void rtcmInputCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
 
     void ephCB(const Ephemeris& eph);
     void gephCB(const GlonassEphemeris& eph);

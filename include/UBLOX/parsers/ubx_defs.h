@@ -923,6 +923,25 @@ typedef struct
     };
 }__attribute__((packed)) RXM_RAWX_t;
 
+typedef struct
+{
+    enum
+    {
+        VERSION=0x02
+    };
+    
+    
+    uint8_t version;
+    union {
+        uint8_t flags;
+        bool crcFailed;
+    };
+    uint16_t subType;
+    uint16_t refStation;
+    uint16_t msgType;
+    
+}__attribute__((packed)) RXM_RTCM_t;
+
 enum
 {
     GnssID_GPS = 0,
@@ -1014,6 +1033,7 @@ typedef union {
     NAV_VELECEF_t NAV_VELECEF;
     NAV_RELPOSNED_t NAV_RELPOSNED;
     RXM_RAWX_t RXM_RAWX;
+    RXM_RTCM_t RXM_RTCM;
     RXM_SFRBX_t RXM_SFRBX;
     NAV_SVIN_t NAV_SVIN;
 } UBX_message_t;

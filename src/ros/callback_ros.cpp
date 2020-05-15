@@ -14,6 +14,7 @@ namespace ublox_ros
         obs_pub_ = nh_.advertise<ublox::ObsVec>("Obs", 10);
         base_ecef_pub_ = nh_.advertise<ublox::PosVelEcef>("base/PosVelEcef", 10);
         base_pvt_pub_ = nh_.advertise<ublox::PositionVelocityTime>("base/PosVelTime", 10);
+        rtcm_input_pub_ = nh_.advertise<ublox::RTCMInput>("RTCMInput", 10);
         // nav_sat_fix_pub_ = nh_.advertise<sensor_msgs::NavSatFix>("NavSatFix");
         // nav_sat_status_pub_ = nh_.advertise<sensor_msgs::NavSatStatus>("NavSatStatus");
     }
@@ -370,5 +371,21 @@ void UBLOX_ROS::gephCB(const GlonassEphemeris &eph)
     out.dtaun = eph.dtaun;
 
     geph_pub_.publish(out);
+}
+
+void UBLOX_ROS::rtcmInputCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
+{
+    ublox::RXM_RTCM_t msg = ubx_msg.RXM_RTCM;
+    
+    ublox::RTCMInput out;
+    out.header.stamp = ros::Time::now();
+    out.version = msg.version;
+    out.flags = msg.flags;
+    out.crcFailed = msg.crcFailed;
+    out.subType = msg.subType;
+    out.refStation = msg.refStation;
+    out.msgType = msg.msgType;
+
+    rtcm_input_pub_.publish(out);
 }
 }
