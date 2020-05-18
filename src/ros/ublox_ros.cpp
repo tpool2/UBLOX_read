@@ -27,7 +27,7 @@ UBLOX_ROS::UBLOX_ROS() :
     //Get the serial port
     serial_port_ = nh_private_.param<std::string>("serial_port", "/dev/ttyACM0");
     log_filename_ = nh_private_.param<std::string>("log_filename", "");
-    message_rate_ = nh_private_.param<int>("message_rate", 10); //rate at which GNSS measurements are takens in hz
+    message_rate_ = nh_private_.param<int>("message_rate", 10); //rate at which GNSS measurements are taken in hz
     rover_quantity_ = nh_private_.param<int>("rover_quantity", 0);
     chain_level_ = nh_private_.param<int>("chain_level", 0x00);    //Get chain_level. 0 is stationary base. 1 to n-1 is
     
