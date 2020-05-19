@@ -24,6 +24,7 @@ UBLOX::UBLOX(const std::string& port, int message_rate) :
     ubx_.set_nav_rate(message_rate);
     //configuring SVIN messages is done in config_base_stationary()
 
+    checkSoftware();
 
     auto eph_cb = [this](uint8_t cls, uint8_t type, const ublox::UBX_message_t& in_msg, uint8_t f9pID=0)
     {
@@ -33,9 +34,39 @@ UBLOX::UBLOX(const std::string& port, int message_rate) :
 
 }
 
+bool UBLOX::checkSoftware()
+{
+    MON_VER_DBG_t mon_ver = ubx_.getVersion();
+    if(mon_ver.got_mon)
+    {
+        MON_VER_t version = mon_ver.mon_ver;
+    
+        std::string swVersion;
+        for(uint8_t i=0; i<30 && version.swVersion[i]!='\0'; i++)
+        {
+            swVersion.push_back(version.swVersion[i]);
+        }
+
+        DBG("Software: %s\n", swVersion.c_str());
+        if(swVersion!="EXT CORE 1.00 (61b2dd)")
+        {
+            DBG("NEEDS FIRMWARE UPDATE\n");
+            return false;  
+        }
+        else
+        {
+            return true;
+        }
+    }
+    else
+    {
+        return false;
+    }
+}
+
 void UBLOX::config_gnss(GNSS_CONSTELLATION_t constellation)
 {
-    DBG("config_gnss\n");
+    // DBG("config_gnss\n");
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, constellation.gps_enable, CFG_VALSET_t::SIGNAL_GPS, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GPS_L1, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GPS_L2, byte);
@@ -56,7 +87,7 @@ void UBLOX::config_gnss(GNSS_CONSTELLATION_t constellation)
 
 void UBLOX::config_f9p(uint8_t dynamic_model) //See ubx_defs.h for more information
 {
-    DBG("config_f9p\n");
+    // DBG("config_f9p\n");
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, dynamic_model, CFG_VALSET_t::DYNMODEL, byte); //Dynamic platform model
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_INPROT_NMEA, byte); //Flag to indicate if NMEA should be an input protocol on USB
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_OUTPROT_NMEA, byte); //Flag to indicate if NMEA should be an output protocol on USB
@@ -71,21 +102,21 @@ void UBLOX::config_f9p(uint8_t dynamic_model) //See ubx_defs.h for more informat
 void UBLOX::config_base(std::string base_type, int gps, int glonas, int beidou,
                   int galileo, int surveytime, int surveyacc)
 {
-    DBG("config_base\n");
-    std::cerr<<"Configuring Base\n";
+    // DBG("config_base\n");
+    // std::cerr<<"Configuring Base\n";
     //Choose to configure as moving/mobile base or stationary
     //bool mobile = false;
     if(base_type == "moving")   //Moving base
     {
         config_base_moving(1, gps, glonas, beidou, galileo);
         config_base_stationary(0, gps, glonas, beidou, galileo, surveytime, surveyacc);
-        std::cerr<<"Moving Base\n";
+        // std::cerr<<"Moving Base\n";
     }
     else if(base_type == "stationary")  //Stationary base
     {
         config_base_moving(0, gps, glonas, beidou, galileo);
         config_base_stationary(1, gps, glonas, beidou, galileo, surveytime, surveyacc);
-        std::cerr<<"Stationary Base\n";
+        // std::cerr<<"Stationary Base\n";
     }
     else    //Error thrown when type of base is unrecognized
     {
@@ -96,7 +127,7 @@ void UBLOX::config_base(std::string base_type, int gps, int glonas, int beidou,
 void UBLOX::config_base_stationary(int on_off, int gps, int glonas, int beidou,
                   int galileo, int surveytime, int surveyacc)
 {
-    DBG("config_base_stationary\n");
+    // DBG("config_base_stationary\n");
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::RTCM_1005USB, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::MSGOUT_SVIN, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::TMODE_MODE, byte);
@@ -111,7 +142,7 @@ void UBLOX::config_base_stationary(int on_off, int gps, int glonas, int beidou,
 void UBLOX::config_base_moving(int on_off, int gps, int glonas, int beidou,
                   int galileo)
 {
-    DBG("config_base_moving\n");
+    // DBG("config_base_moving\n");
     // These values control whether RTK corrections are calculated for the
     // following constellations
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RTCM_4072_0USB, byte);
@@ -128,7 +159,7 @@ void UBLOX::config_base_moving(int on_off, int gps, int glonas, int beidou,
  */
 void UBLOX::config_rover()
 {
-    DBG("config_rover\n");
+    // DBG("config_rover\n");
     // configure the parsers/Enable Messages
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_PVT, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_RELPOSNED, byte);
@@ -144,7 +175,7 @@ void UBLOX::config_rover()
  */
 void UBLOX::poll_value() //See ubx_defs.h for more information
 {
-    DBG("poll_value\n");
+    // DBG("poll_value\n");
     ubx_.get_configuration(CFG_VALGET_t::REQUEST, CFG_VALGET_t::RAM, CFG_VALGET_t::RTCM_1005USB); //CFG-MSGOUT-RTCM_3X_TYPE1005_USB -- Stationary RTK Reference Station ARP
     ubx_.get_configuration(CFG_VALGET_t::REQUEST, CFG_VALGET_t::RAM, CFG_VALGET_t::RTCM_1230USB); //CFG-MSGOUT-RTCM_3X_TYPE1230_USB -- Glonass L1 and L2 Code-Phase Biases
     ubx_.get_configuration(CFG_VALGET_t::REQUEST, CFG_VALGET_t::RAM, CFG_VALGET_t::RTCM_1097USB); //CFG-MSGOUT-RTCM_3X_TYPE1097_USB __ Galileo MSM 7 (high precision)
@@ -200,7 +231,7 @@ void UBLOX::initRover(std::string local_host, uint16_t local_port,
 void UBLOX::initRover(std::string local_host, uint16_t local_port,
                       std::string remote_host, uint16_t remote_port, GNSS_CONSTELLATION_t constellation, uint8_t dynamic_model)
 {
-    std::cerr << "initRover \n";
+    // std::cerr << "initRover \n";
     type_ = ROVER;
 
     assert(udp_ == nullptr);
@@ -235,7 +266,7 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
                 GNSS_CONSTELLATION_t constellation, int surveytime,
                 int surveyacc, uint8_t dynamic_model)
 {
-    std::cerr << "initBase \n";
+    // std::cerr << "initBase \n";
     type_ = BASE;
 
     //Instantiate an array of UDP objects
@@ -331,24 +362,42 @@ void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
                   udparray_ = new async_comm::UDP*[rover_quantity];
                   std::cerr<<"Rover Quantity: "<<rover_quantity<<"\n";
 
-                  //Fill rover udp objects into the array.
-                  for(int i = 0; i < rover_quantity; i++) {
-                      std::cerr<<"Initializing Brover at "<< local_host[i+1]<<", "<<local_port[i+1]
-                      <<" to Rover "<<std::to_string(i+1)<<" at "<< rover_host[i]<<", "<<rover_port[i]<<" UDP\n";
+                    //Fill rover udp objects into the array.
+                    for(int i = 0; i < rover_quantity; i++) {
+                        std::cerr<<"Initializing Brover at "<< local_host[i+1]<<", "<<local_port[i+1]
+                        <<" to Rover "<<std::to_string(i+1)<<" at "<< rover_host[i]<<", "<<rover_port[i]<<" UDP\n";
 
-                      //Create pointer to UDP object within an array
-                      udparray_[i] = new async_comm::UDP(local_host[i+1], local_port[i+1], rover_host[i], rover_port[i]);
+                        //Create pointer to UDP object within an array
+                        udparray_[i] = new async_comm::UDP(local_host[i+1], local_port[i+1], rover_host[i], rover_port[i]);
 
-                      if (!udparray_[i]->init())
-                      {
-                          throw std::runtime_error("Failed to initialize Brover to Rover "+ std::to_string(i+1) +"  UDP\n");
-                      }
+                        if (!udparray_[i]->init())
+                        {
+                            throw std::runtime_error("Failed to initialize Brover to Rover "+ std::to_string(i+1) +"  UDP\n");
+                        }
 
-                        // hook up UDP to send data to the rovers
-                      rtcm_.registerCallback([ this , i](uint8_t* buf, size_t size)
-                      {
-                          this->udparray_[i]->send_bytes(buf, size);
-                      });
+                            // hook up UDP to send data to the rovers
+                        rtcm_.registerCallback([ this , i](uint8_t* buf, size_t size)
+                        {
+                            this->udparray_[i]->send_bytes(buf, size);
+                        });
+
+                        ubx_.registerCallback(CLASS_NAV, NAV_POSECEF, [this, i](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg, uint8_t f9pID=0)
+                        {
+                            ubx_.create_message(buffer, CLASS_NAV, NAV_POSECEF, msg, sizeof(NAV_POSECEF_t));
+                            this->udparray_[i]->send_bytes(buffer, 8+sizeof(NAV_POSECEF_t));
+                        });
+
+                        ubx_.registerCallback(CLASS_NAV, NAV_PVT, [this, i](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg, uint8_t f9pID=0)
+                        {
+                            ubx_.create_message(buffer, CLASS_NAV, NAV_PVT, msg, sizeof(NAV_PVT_t));
+                            this->udparray_[i]->send_bytes(buffer, 8+sizeof(NAV_PVT_t));
+                        });
+
+                        ubx_.registerCallback(CLASS_NAV, NAV_VELECEF, [this, i](uint8_t _class, uint8_t _type, const ublox::UBX_message_t& msg, uint8_t f9pID=0)
+                        {
+                            ubx_.create_message(buffer, CLASS_NAV, NAV_VELECEF, msg, sizeof(NAV_VELECEF_t));
+                            this->udparray_[i]->send_bytes(buffer, 8+sizeof(NAV_VELECEF_t));
+                        });
 
                       std::cerr<<"Initialized Brover to Rover "+ std::to_string(i+1) +" UDP\n";
                   }
@@ -574,6 +623,11 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, surveyacc*stationary, CFG_VALSET_t::TMODE_SVIN_ACC_LIMIT, word);
         // Survey in time limit
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, surveytime*stationary, CFG_VALSET_t::TMODE_SVIN_MIN_DUR, word);
+    }
+
+    MON_VER_t UBLOX::getVersion()
+    {
+        return ubx_.getVersion().mon_ver;
     }
 
 }

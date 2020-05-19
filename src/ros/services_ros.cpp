@@ -10,6 +10,34 @@ namespace ublox_ros
         cfg_val_set_ = nh_.advertiseService("CfgValSet", &UBLOX_ROS::cfgValSet, this);
         cfg_reset_ = nh_.advertiseService("CfgReset", &UBLOX_ROS::cfgReset, this);
         init_module_ = nh_.advertiseService("InitModule", &UBLOX_ROS::initModule, this);
+        get_version_ = nh_.advertiseService("GetVersion", &UBLOX_ROS::getVersion, this);
+    }
+
+    bool UBLOX_ROS::getVersion(ublox::GetVersion::Request &req, ublox::GetVersion::Response &res)
+    {
+        ublox::MON_VER_t mon_ver = ublox_->getVersion();
+
+        for(uint8_t i=0; i<30 && mon_ver.swVersion[i]!='\0'; i++)
+        {
+            res.softwareVersion.push_back(mon_ver.swVersion[i]);
+        }
+
+        for(int i=0; i<30 && mon_ver.hwVersion[i]!='\0'; i++)
+        {
+            res.hardwareVersion.push_back(mon_ver.hwVersion[i]);
+        }
+
+        for(uint8_t i=0; i<10 && mon_ver.extension[i][0]!='\0'; i++)
+        {
+            std::string extend;
+            for(uint8_t j=0; j<30 && mon_ver.extension[i][j]!='\0'; j++)
+            {
+                std::cerr<<mon_ver.extension[i][j];
+                extend.push_back(mon_ver.extension[i][j]);
+            }
+            res.extension.push_back(extend);
+        }
+        return true;
     }
     
     bool UBLOX_ROS::cfgValGet(ublox::CfgValGet::Request &req, ublox::CfgValGet::Response &res)

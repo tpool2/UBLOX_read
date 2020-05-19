@@ -177,6 +177,18 @@ public:
     CFG_VAL_DBG_t cfgValDel(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
     CFG_VAL_DBG_t cfgValSet(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size);
 
+    /**
+     * @brief checks version of F9P
+     */
+    MON_VER_t getVersion();
+
+    /**
+     * @brief Runs at the start of every ublox object initialization and checks
+     * the firmware status on the F9P
+     * @return true if software is up-to-date. false if update is needed
+     */
+    bool checkSoftware();
+
     uint8_t byte = 1;
     uint8_t word = 2;
     int on_off;

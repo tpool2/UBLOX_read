@@ -127,6 +127,22 @@ enum {
 };
 
 enum {
+    MON_COMMS = 0x36,
+    MON_GNSS = 0x28,
+    MON_HW2 = 0x0B,
+    MON_HW3 = 0x37,
+    MON_HW = 0x09,
+    MON_IO = 0x02,
+    MON_MSGPP = 0x06,
+    MON_PATCH = 0x27,
+    MON_RF = 0x38,
+    MON_RXBUF = 0x07,
+    MON_RXR = 0x21,
+    MON_TXBUF = 0x08,
+    MON_VER = 0x04
+};
+
+enum {
     RXM_RAWX = 0x15,         // Multi-GNSS Raw Measurement Data
     RXM_SFRBX = 0x13,         // Broadcast Navigation Data Subframe (ephemeris)
     RXM_RTCM = 0x32,        // RTCM Data acknowledgment after proper parsing
@@ -883,6 +899,19 @@ typedef struct
     uint32_t sAcc; // cm Speed Accuracy Estimate
 }__attribute__((packed)) NAV_VELECEF_t;
 
+typedef struct
+{
+    char swVersion[30];
+    char hwVersion[30];
+    char extension[10][30];
+}__attribute__((packed)) MON_VER_t;
+
+typedef struct
+{
+    MON_VER_t mon_ver;
+    bool got_mon;
+} MON_VER_DBG_t;
+
 typedef float R4;
 typedef double R8;
 typedef int8_t I1;
@@ -1094,6 +1123,7 @@ typedef union {
     RXM_MEASX_t RXM_MEASX;
     RXM_SFRBX_t RXM_SFRBX;
     NAV_SVIN_t NAV_SVIN;
+    MON_VER_t MON_VER;
 } UBX_message_t;
 
 }

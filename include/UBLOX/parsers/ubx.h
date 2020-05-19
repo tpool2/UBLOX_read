@@ -24,7 +24,7 @@ public:
     CFG_VALGET_TUPLE_t get_configuration(uint8_t version, uint8_t layer, uint16_t position, uint32_t cfgDataKey);
     CFG_VALGET_TUPLE_t get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
     CFG_VAL_DBG_t del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
-
+    MON_VER_DBG_t getVersion(uint8_t attempt = 0);
     /**
      * @brief Resets the Configurations on the F9P
      * @param navBbrMask bitfield (size 2 bytes) containing areas to reset. See ubx_defs for more information
@@ -65,6 +65,8 @@ public:
     bool send_message(uint8_t msg_class, uint8_t msg_id,
                       UBX_message_t& message, uint16_t len);
 
+    void pollValue(uint8_t msg_class, uint8_t msg_id);
+
     // Main buffers for communication
     UBX_message_t out_message_;
     UBX_message_t in_message_;
@@ -91,6 +93,7 @@ public:
     uint8_t prev_byte_;
     uint16_t buffer_head_ = 0;
     CFG_VAL_DBG_t cfgval_dbg_;
+    MON_VER_DBG_t mon_ver_;
     bool start_message_ = false;
     bool end_message_ = false;
     std::vector<CFG_VALGET_t::response_t> cfg_val_get;

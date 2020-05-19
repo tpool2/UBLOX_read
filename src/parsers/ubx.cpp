@@ -267,6 +267,14 @@ bool UBX::decode_message(uint8_t f9pID)
            DBG("unknown: %x\n", message_type_);
            break;
        }
+    case CLASS_MON:
+        switch(message_type_)
+        {
+            case MON_VER:
+                // DBG("MON_VER of length: %i\n", length_);
+                mon_ver_.got_mon = true;
+                mon_ver_.mon_ver = in_message_.MON_VER;
+        }
     default:
         // DBG((UBX_map[message_class_][message_type_]+"\n").c_str());
         break;
@@ -371,6 +379,11 @@ bool UBX::send_message(uint8_t msg_class, uint8_t msg_id, UBX_message_t& message
     return true;
 }
 
+void UBX::pollValue(uint8_t msg_class, uint8_t msg_id)
+{
+    send_message(msg_class, msg_id, out_message_, 0);
+}
+
 void UBX::set_nav_rate(uint16_t message_rate)
 {
     fprintf(stderr, "Setting message rate to %d hz\n", message_rate);
@@ -469,6 +482,32 @@ CFG_VAL_DBG_t UBX::del_configuration(uint8_t version, uint8_t layer, uint32_t cf
     while( !cfgval_dbg_.got_ack && !cfgval_dbg_.got_nack && time_elapsed(start) < 5);
 
     return cfgval_dbg_;
+}
+
+MON_VER_DBG_t UBX::getVersion(uint8_t attempt)
+{
+    mon_ver_.got_mon = false;
+    
+    pollValue(CLASS_MON, MON_VER);
+    pollValue(CLASS_MON, MON_VER);
+
+    clock_t start = clock();
+
+    while(!mon_ver_.got_mon && time_elapsed(start) < 2);
+    if(mon_ver_.got_mon)
+    {
+        return mon_ver_;
+    }
+    else if(attempt<2) //Try again
+    {
+        return getVersion(attempt+1);
+    }
+    else    //Time out
+    {
+        DBG("GET SOFTWARE TIMED OUT\n");
+        return mon_ver_;
+    }
+    
 }
 
 void UBX::reset(navBbrMask_t navBbrMask, uint8_t resetMode)

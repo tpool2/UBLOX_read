@@ -26,6 +26,7 @@
 #include "ublox/CfgValDel.h"
 #include "ublox/CfgValSet.h"
 #include "ublox/CfgReset.h"
+#include "ublox/GetVersion.h"
 #include "ublox/initModule.h"
 
 namespace ublox_ros
@@ -103,12 +104,14 @@ private:
     bool cfgValSet(ublox::CfgValSet::Request &req, ublox::CfgValSet::Response &res);
     bool cfgReset(ublox::CfgReset::Request &req, ublox::CfgReset::Response &res);
     bool initModule(ublox::initModule::Request &req, ublox::initModule::Response &res);
+    bool getVersion(ublox::GetVersion::Request &req, ublox::GetVersion::Response &res);
     ros::ServiceServer cfg_val_get_;
     ros::ServiceServer cfg_val_get_all_;
     ros::ServiceServer cfg_val_del_;
     ros::ServiceServer cfg_val_set_;
     ros::ServiceServer cfg_reset_;
     ros::ServiceServer init_module_;
+    ros::ServiceServer get_version_;
 
     uint32_t ecef_pos_tow_;
     uint32_t ecef_vel_tow_;
