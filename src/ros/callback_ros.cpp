@@ -15,6 +15,7 @@ namespace ublox_ros
         base_ecef_pub_ = nh_.advertise<ublox::PosVelEcef>("base/PosVelEcef", 10);
         base_pvt_pub_ = nh_.advertise<ublox::PositionVelocityTime>("base/PosVelTime", 10);
         rtcm_input_pub_ = nh_.advertise<ublox::RTCMInput>("RTCMInput", 10);
+        sat_status_pub_ = nh_.advertise<ublox::SatelliteStatus>("SatelliteStatus", 10);
         // nav_sat_fix_pub_ = nh_.advertise<sensor_msgs::NavSatFix>("NavSatFix");
         // nav_sat_status_pub_ = nh_.advertise<sensor_msgs::NavSatStatus>("NavSatStatus");
     }
@@ -387,5 +388,43 @@ void UBLOX_ROS::rtcmInputCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
     out.msgType = msg.msgType;
 
     rtcm_input_pub_.publish(out);
+}
+
+void UBLOX_ROS::rxmMeasxCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
+{
+    ublox::RXM_MEASX_t msg = ubx_msg.RXM_MEASX;
+
+    ublox::SatelliteStatus out;
+    out.version = msg.version;
+    out.gpsTOW = msg.gpsTOW;
+    out.gloTOW = msg.gloTOW;
+    out.bdsTOW = msg.bdsTOW;
+    out.qzssTOW = msg.qzssTOW;
+    out.gpsTOWacc = msg.gpsTOWacc;
+    out.gloTOWacc = msg.gloTOWacc;
+    out.bdsTOWacc = msg.bdsTOWacc;
+    out.qzssTOWacc = msg.qzssTOWacc;
+    out.numSV = msg.numSV;
+    out.flags = msg.flags;
+
+    for(uint8_t svIndex=0; svIndex<msg.numSV; svIndex++)
+    {
+        ublox::Satellite sat;
+        ublox::RXM_MEASX_t::SV_INFO_t msgsat = msg.sv[svIndex];
+        sat.gnssID = msgsat.gnssID;
+        sat.svID = msgsat.svID;
+        sat.carrierNoiseRatio = msgsat.cNo;
+        sat.multipathIndex = msgsat.mpathIndic;
+        sat.dopplerMeas = msgsat.dopplerMS;
+        sat.dopperHz = msgsat.dopplerHZ;
+        sat.wholeChips = msgsat.wholeChips;
+        sat.fracChips = msgsat.fracChips;
+        sat.codePhase = msgsat.codePhase;
+        sat.intCodePhase = msgsat.intCodePhase;
+        sat.pseuRangeRMSError = msgsat.pseuRangeRMSErr;
+        out.satellites.push_back(sat);
+    }
+
+    sat_status_pub_.publish(out);
 }
 }

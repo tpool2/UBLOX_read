@@ -18,6 +18,8 @@
 #include "ublox/Observation.h"
 #include "ublox/ObsVec.h"
 #include "ublox/CfgValGetType.h"
+#include "ublox/Satellite.h"
+#include "ublox/SatelliteStatus.h"
 
 #include "ublox/CfgValGet.h"
 #include "ublox/CfgValGetAll.h"
@@ -52,6 +54,7 @@ private:
     ros::Publisher geph_pub_;
     ros::Publisher obs_pub_;
     ros::Publisher rtcm_input_pub_;
+    ros::Publisher sat_status_pub_;
 
     ros::Publisher base_ecef_pub_;
     ros::Publisher base_pvt_pub_;
@@ -86,6 +89,10 @@ private:
      * @brief Callback for filling a RXM-RTCM ROS message from a UBX callback
      */
     void rtcmInputCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
+    /**
+     * @brief Callback for filling a RXM-MEASX ROS message from a UBX callback
+     */
+    void rxmMeasxCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
 
     void ephCB(const Ephemeris& eph);
     void gephCB(const GlonassEphemeris& eph);

@@ -72,6 +72,8 @@ if (${BUILD_ROS})
 		RelPos.msg
 		RelPosFlags.msg
 		RTCMInput.msg
+		Satellite.msg
+		SatelliteStatus.msg
 		SurveyStatus.msg
 		Ephemeris.msg
 		GlonassEphemeris.msg

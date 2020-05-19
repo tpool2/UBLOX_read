@@ -267,7 +267,6 @@ bool UBX::decode_message(uint8_t f9pID)
            DBG("unknown: %x\n", message_type_);
            break;
        }
-
     default:
         // DBG((UBX_map[message_class_][message_type_]+"\n").c_str());
         break;

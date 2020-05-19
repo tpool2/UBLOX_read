@@ -127,9 +127,10 @@ enum {
 };
 
 enum {
-   RXM_RAWX = 0x15,         // Multi-GNSS Raw Measurement Data
-   RXM_SFRBX = 0x13,         // Broadcast Navigation Data Subframe (ephemeris)
-    RXM_RTCM = 0x32
+    RXM_RAWX = 0x15,         // Multi-GNSS Raw Measurement Data
+    RXM_SFRBX = 0x13,         // Broadcast Navigation Data Subframe (ephemeris)
+    RXM_RTCM = 0x32,        // RTCM Data acknowledgment after proper parsing
+    RXM_MEASX = 0x14        // Satellite Measurements for RRLP (Radio Resource Location Services Protocol)
 };
 
 typedef enum {
@@ -963,21 +964,21 @@ typedef struct
 }__attribute__((packed)) RXM_RTCM_t;
 
 typedef struct {
-    
-    typedef struct {
-        U1 gnssID;
-        U1 svID;
-        U1 cNo;
-        U1 mpathIndic;
-        I4 dopplerMS;
-        I4 dopplerHZ;
-        U2 wholeChips;
-        U2 fracChips;
-        U4 codePhase;
-        U1 intCodePhase;
-        U1 pseuRangeRMSErr;
-        U1 reserved5[2]; 
-    }__attribute__((packed)) SV_INFO_t;
+    public:
+        typedef struct {
+            U1 gnssID;
+            U1 svID;
+            U1 cNo;
+            U1 mpathIndic;
+            I4 dopplerMS;
+            I4 dopplerHZ;
+            U2 wholeChips;
+            U2 fracChips;
+            U4 codePhase;
+            U1 intCodePhase;
+            U1 pseuRangeRMSErr;
+            U1 reserved5[2]; 
+        }__attribute__((packed)) SV_INFO_t;
     
     U1 version;
     U1 reserved1[3];
