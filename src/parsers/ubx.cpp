@@ -380,8 +380,8 @@ void UBX::set_nav_rate(uint16_t message_rate)
 
     DBG("period_ms: %d\n", period_ms);
 
-    configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, period_ms, CFG_VALSET_t::RATE_MEAS, byte);
-    configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RATE_NAV, byte);
+    configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, period_ms, CFG_VALSET_t::RATE_MEAS, word);
+    configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RATE_NAV, word);
     DBG("nav_rate: %d\n", 1);
     configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, CFG_VALSET_t::TIME_REF_UTC, CFG_VALSET_t::RATE_TIMEREF, byte);
 }

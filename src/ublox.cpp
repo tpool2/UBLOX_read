@@ -60,6 +60,7 @@ void UBLOX::config_f9p(uint8_t dynamic_model) //See ubx_defs.h for more informat
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, dynamic_model, CFG_VALSET_t::DYNMODEL, byte); //Dynamic platform model
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_INPROT_NMEA, byte); //Flag to indicate if NMEA should be an input protocol on USB
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_OUTPROT_NMEA, byte); //Flag to indicate if NMEA should be an output protocol on USB
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_RXM_RTCM, byte);
 
     bool poll = true;
     if(poll == true)

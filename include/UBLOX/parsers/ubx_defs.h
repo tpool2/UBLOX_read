@@ -449,6 +449,7 @@ typedef struct {
         MSGOUT_VELECEF = 0x20910040, //Output rate of the UBX-NAV-VELECEF message on port USB
         MSGOUT_RAWX = 0x209102a7, //Output rate of the UBX-RXM-RAWX message on port USB
         MSGOUT_SFRBX = 0x20910234, //Output rate of the UBX-RXM-SFRBX message on port USB
+        MSGOUT_RXM_RTCM = 0x2091026b
     };
 
     enum { //outgoing message rates for RTCM 3x on usb type U1
