@@ -487,6 +487,10 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
                 }
             }
             position = position+64;
+            if(cfgvec.size()>=64)
+            {
+                ofs<<"\n";
+            }
         } while (cfgvec.size()>=64);
 
         if(filepath!="")
