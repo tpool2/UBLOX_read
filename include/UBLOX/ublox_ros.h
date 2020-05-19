@@ -127,6 +127,7 @@ private:
     int glonas_;
     int beidou_;
     int galileo_;
+    ublox::GNSS_CONSTELLATION_t constellation_;
     uint8_t dynamic_model_;
 
     double ned_1[3];

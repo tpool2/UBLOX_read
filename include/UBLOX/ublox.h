@@ -45,8 +45,7 @@ public:
      */
     void initBase(std::string local_host[], uint16_t local_port[],
                     std::string remote_host[], uint16_t remote_port[],
-                    std::string base_type, int rover_quantity, int gps,
-                    int glonas, int beidou, int galileo, int surveytime,
+                    std::string base_type, int rover_quantity, GNSS_CONSTELLATION_t constellation, int surveytime,
                     int surveyacc, uint8_t dynamic_model=CFG_VALSET_t::DYNMODE_AIRBORNE_1G);
 
     void initRover(std::string local_host, uint16_t local_port,
@@ -65,6 +64,8 @@ public:
      void initRover(std::string local_host, uint16_t local_port,
                     std::string remote_host, uint16_t remote_port, uint8_t dynamic_model=CFG_VALSET_t::DYNMODE_AIRBORNE_1G);
 
+    void initRover(std::string local_host, uint16_t local_port,
+                    std::string remote_host, uint16_t remote_port, GNSS_CONSTELLATION_t constellation, uint8_t dynamic_model=CFG_VALSET_t::DYNMODE_AIRBORNE_1G);
 
     /**
      * @brief Used to initialize a moving base that receives RTK corrections from another base.
@@ -86,8 +87,8 @@ public:
     void initBrover(std::string local_host[], uint16_t local_port[],
                     std::string base_host[], uint16_t base_port[],
                     std::string rover_host[], uint16_t rover_port[],
-                    std::string base_type, int rover_quantity, int gps,
-                    int glonas, int beidou, int galileo, uint8_t dynamic_model=CFG_VALSET_t::DYNMODE_AIRBORNE_1G);
+                    std::string base_type, int rover_quantity, 
+                    GNSS_CONSTELLATION_t constellation, uint8_t dynamic_model=CFG_VALSET_t::DYNMODE_AIRBORNE_1G);
 
     void initLogFile(const std::string& filename);
     void readFile(const std::string& filename);
@@ -128,11 +129,11 @@ public:
     void rtcm_complete_cb(const uint8_t* buf, size_t size);
 
     void config_gnss(bool gps, bool glonas, bool beidou, bool galileo);
-
+    void config_gnss(GNSS_CONSTELLATION_t constellation);
     void config_f9p(uint8_t dynamic_model=CFG_VALSET_t::DYNMODE_AIRBORNE_1G);
     void config_rover();
     void config_ubx_msgs(int relpos);
-    void config_rtcm_msgs(int hasRover, int stationary, int surveryacc, int surveytime);
+    void config_rtcm_msgs(int hasRover, int stationary, int surveryacc, int surveytime, GNSS_CONSTELLATION_t constellation);
 
     /**
      * @brief Configures the base setup by calling the correct base configuration function

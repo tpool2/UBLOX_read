@@ -15,7 +15,6 @@
 			<param name="chain_level" value="0"/>
 			<param name="rover_quantity" value="1"/>
 			<param name="base_type" value="moving"/>
-			<param name="dynamic_model" value="0"/>
 			<rosparam command="load" file="$(find ublox)/params/ublox.yaml"/>
 		</node> 
 

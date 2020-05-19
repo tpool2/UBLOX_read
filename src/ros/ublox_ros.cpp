@@ -44,6 +44,10 @@ UBLOX_ROS::UBLOX_ROS() :
     std::cerr << "glonas = " << glonas_ << "\n";
     std::cerr << "beidou = " << beidou_ << "\n";
     std::cerr << "galileo = " << galileo_ << "\n";
+    constellation_.gps_enable = gps_;
+    constellation_.glonas_enable = glonas_;
+    constellation_.beidou_enable = beidou_;
+    constellation_.galileo_enable = galileo_;
 
     // create the parser
     ublox_ = new ublox::UBLOX(serial_port_, message_rate_);

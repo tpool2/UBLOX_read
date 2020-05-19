@@ -33,19 +33,19 @@ UBLOX::UBLOX(const std::string& port, int message_rate) :
 
 }
 
-void UBLOX::config_gnss(bool gps, bool glonas, bool beidou, bool galileo)
+void UBLOX::config_gnss(GNSS_CONSTELLATION_t constellation)
 {
     DBG("config_gnss\n");
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GPS, byte);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, constellation.gps_enable, CFG_VALSET_t::SIGNAL_GPS, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GPS_L1, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GPS_L2, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GAL, byte);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, constellation.galileo_enable, CFG_VALSET_t::SIGNAL_GAL, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GAL_E1, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GAL_E5B, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_BDS, byte);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, constellation.beidou_enable, CFG_VALSET_t::SIGNAL_BDS, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_BDS_B1, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_BDS_B2, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GLO, byte);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, constellation.glonas_enable, CFG_VALSET_t::SIGNAL_GLO, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GLO_L1, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GLO_L2, byte);
     ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_QZSS, byte);
@@ -185,9 +185,20 @@ void UBLOX::initLogFile(const std::string& filename)
     log_file_.open(filename);
 }
 
-
 void UBLOX::initRover(std::string local_host, uint16_t local_port,
                       std::string remote_host, uint16_t remote_port, uint8_t dynamic_model)
+{
+    GNSS_CONSTELLATION_t constellation;
+    constellation.gps_enable=1;
+    constellation.glonas_enable=1;
+    constellation.beidou_enable=1;
+    constellation.galileo_enable=1;
+    initRover(local_host, local_port, remote_host, remote_port, constellation, dynamic_model);
+}
+
+
+void UBLOX::initRover(std::string local_host, uint16_t local_port,
+                      std::string remote_host, uint16_t remote_port, GNSS_CONSTELLATION_t constellation, uint8_t dynamic_model)
 {
     std::cerr << "initRover \n";
     type_ = ROVER;
@@ -210,9 +221,9 @@ void UBLOX::initRover(std::string local_host, uint16_t local_port,
     if (!udp_->init())
         throw std::runtime_error("Failed to initialize Rover receive UDP");
 
-    config_gnss(true, true, true, true);
+    config_gnss(constellation);
     config_ubx_msgs(1);
-    config_rtcm_msgs(0, 0, 0, 0);
+    config_rtcm_msgs(0, 0, 0, 0, constellation);
     // config_rover();
     config_f9p(dynamic_model);
     std::cerr<<"Initialized Rover\n";
@@ -220,8 +231,8 @@ void UBLOX::initRover(std::string local_host, uint16_t local_port,
 
 void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
                 std::string remote_host[], uint16_t remote_port[],
-                std::string base_type, int rover_quantity, int gps,
-                int glonas, int beidou, int galileo, int surveytime,
+                std::string base_type, int rover_quantity, 
+                GNSS_CONSTELLATION_t constellation, int surveytime,
                 int surveyacc, uint8_t dynamic_model)
 {
     std::cerr << "initBase \n";
@@ -272,13 +283,13 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
 
     if(base_type=="stationary")
     {
-        config_rtcm_msgs(1, 1, surveyacc, surveytime);
+        config_rtcm_msgs(1, 1, surveyacc, surveytime, constellation);
     }
     else
     {
-        config_rtcm_msgs(1, 0, 0, 0);
+        config_rtcm_msgs(1, 0, 0, 0, constellation);
     }
-    config_gnss(gps, glonas, beidou, galileo);
+    config_gnss(constellation);
     config_ubx_msgs(0);
     // config_base(base_type, gps, glonas, beidou, galileo, surveytime, surveyacc);
     config_f9p(dynamic_model);
@@ -287,12 +298,12 @@ void UBLOX::initBase(std::string local_host[], uint16_t local_port[],
 void UBLOX::initBrover(std::string local_host[], uint16_t local_port[],
                 std::string base_host[], uint16_t base_port[],
                 std::string rover_host[], uint16_t rover_port[],
-                std::string base_type, int rover_quantity, int gps,
-                int glonas, int beidou, int galileo, uint8_t dynamic_model) {
+                std::string base_type, int rover_quantity, 
+                GNSS_CONSTELLATION_t constellation, uint8_t dynamic_model) {
                 
-                config_gnss(gps, glonas, beidou, galileo);
+                config_gnss(constellation);
                 config_ubx_msgs(1);
-                config_rtcm_msgs(1, 0, 0, 0);
+                config_rtcm_msgs(1, 0, 0, 0, constellation);
 
                 // Declare type as Brover. This is used by rtcm_complete_cb()
                   type_ = BROVER;
@@ -541,7 +552,7 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, relpos, CFG_VALSET_t::MSGOUT_RELPOSNED, byte);
     }
 
-    void UBLOX::config_rtcm_msgs(int hasRover, int stationary, int surveyacc, int surveytime)
+    void UBLOX::config_rtcm_msgs(int hasRover, int stationary, int surveyacc, int surveytime, GNSS_CONSTELLATION_t constellation)
     {
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::RTCM_1074USB, byte);
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::RTCM_1084USB, byte);
@@ -550,11 +561,11 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
         
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover, CFG_VALSET_t::RTCM_4072_0USB, byte);
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover, CFG_VALSET_t::RTCM_4072_1USB, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover, CFG_VALSET_t::RTCM_1077USB, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover, CFG_VALSET_t::RTCM_1087USB, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover, CFG_VALSET_t::RTCM_1097USB, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover, CFG_VALSET_t::RTCM_1127USB, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover, CFG_VALSET_t::RTCM_1230USB, byte);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover*constellation.gps_enable, CFG_VALSET_t::RTCM_1077USB, byte);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover*constellation.glonas_enable, CFG_VALSET_t::RTCM_1087USB, byte);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover*constellation.galileo_enable, CFG_VALSET_t::RTCM_1097USB, byte);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover*constellation.beidou_enable, CFG_VALSET_t::RTCM_1127USB, byte);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover*constellation.glonas_enable, CFG_VALSET_t::RTCM_1230USB, byte);
 
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*stationary, CFG_VALSET_t::RTCM_1005USB, byte);
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*stationary, CFG_VALSET_t::MSGOUT_SVIN, byte);

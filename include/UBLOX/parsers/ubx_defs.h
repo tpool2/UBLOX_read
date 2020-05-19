@@ -367,8 +367,7 @@ typedef union {
         SIGNAL_GAL_E5B = 0x1031000a, //Galileo E5b (only on u-blox F9 platform products)
         SIGNAL_BDS = 0x10310022, //BeiDou Enable
         SIGNAL_BDS_B1 = 0x1031000d, //BeiDou B1I
-        SIGNAL_BDS_B2 = 0x1031000e, //BeiDou B2I
-
+        SIGNAL_BDS_B2 = 0x1031000e, //BeiDou B2
     };
 
     enum {
@@ -676,6 +675,22 @@ typedef struct {
     uint16_t navRate; // (cycles) The ratio between the number of measurements and the number of navigation solutions, e.g. 5 means five measurements for every navigation solution
     uint16_t timeRef; // Time system to which measurements are aligned
 }__attribute__((packed)) CFG_RATE_t;
+
+typedef struct {
+        uint8_t gps_enable;
+        uint8_t gps_l1;
+        uint8_t gps_l2;
+        uint8_t glonas_enable;
+        uint8_t glonas_l1;
+        uint8_t glonas_l2;
+        uint8_t beidou_enable;
+        uint8_t beidou_b1;
+        uint8_t beidou_b2;
+        uint8_t galileo_enable;
+        uint8_t galileo_e1;
+        uint8_t galileo_e5b;
+
+} GNSS_CONSTELLATION_t;
 
 typedef struct {
     uint8_t eph     : 1,

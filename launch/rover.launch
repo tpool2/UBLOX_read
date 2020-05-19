@@ -15,7 +15,7 @@
 			<param name="base_port" value="16140"/>
 			<param name="chain_level" value="1"/>
 			<param name="rover_quantity" value="0"/>
-			<param name="dynamic_model" value="0"/>
+			<rosparam command="load" file="$(find ublox)/params/ublox.yaml"/>
 		</node>
 
 		<!-- <node name="dashboard" pkg="ublox" type="ublox_dashboard.py">
