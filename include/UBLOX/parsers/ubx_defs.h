@@ -885,6 +885,9 @@ typedef struct
 typedef float R4;
 typedef double R8;
 typedef int8_t I1;
+typedef int16_t I2;
+typedef int32_t I4;
+typedef int64_t I8;
 typedef uint8_t U1;
 typedef uint16_t U2;
 typedef uint32_t U4;
@@ -958,6 +961,42 @@ typedef struct
     uint16_t msgType;
     
 }__attribute__((packed)) RXM_RTCM_t;
+
+typedef struct {
+    
+    typedef struct {
+        U1 gnssID;
+        U1 svID;
+        U1 cNo;
+        U1 mpathIndic;
+        I4 dopplerMS;
+        I4 dopplerHZ;
+        U2 wholeChips;
+        U2 fracChips;
+        U4 codePhase;
+        U1 intCodePhase;
+        U1 pseuRangeRMSErr;
+        U1 reserved5[2]; 
+    }__attribute__((packed)) SV_INFO_t;
+    
+    U1 version;
+    U1 reserved1[3];
+    U4 gpsTOW;
+    U4 gloTOW;
+    U4 bdsTOW;
+    U1 reserved2[4];
+    U4 qzssTOW;
+    U2 gpsTOWacc;
+    U2 gloTOWacc;
+    U2 bdsTOWacc;
+    U1 reserved3[2];
+    U2 qzssTOWacc;
+    U1 numSV;
+    U1 flags;
+    U1 reserved4[8];
+    SV_INFO_t sv[30];
+
+}__attribute__((packed)) RXM_MEASX_t;
 
 enum
 {
@@ -1051,6 +1090,7 @@ typedef union {
     NAV_RELPOSNED_t NAV_RELPOSNED;
     RXM_RAWX_t RXM_RAWX;
     RXM_RTCM_t RXM_RTCM;
+    RXM_MEASX_t RXM_MEASX;
     RXM_SFRBX_t RXM_SFRBX;
     NAV_SVIN_t NAV_SVIN;
 } UBX_message_t;
