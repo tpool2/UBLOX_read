@@ -50,7 +50,7 @@ Other possible parameters include
 
 ## Chaining
 
-![](assets/Chaining.jpg)
+
 
 ## Communication Protocols
 
