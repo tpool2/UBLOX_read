@@ -185,34 +185,31 @@ bool UBX::decode_message(uint8_t f9pID)
     switch (message_class_)
     {
     case CLASS_ACK:
-        DBG("ACK_");
         switch (message_type_)
         {
         case ACK_ACK:
             if(in_message_.ACK_ACK.clsID==CLASS_CFG)
                 cfgval_dbg_.got_ack = true;
-            DBG("ACK: ");
+            DBG("ACK_ACK: %s\n", UBX_map[in_message_.ACK_ACK.clsID][in_message_.ACK_ACK.msgID].c_str());
             break;
         case ACK_NACK:
             if(in_message_.ACK_NACK.clsID==CLASS_CFG)
                 cfgval_dbg_.got_nack = true;
-            DBG("NACK: ");
+            DBG("ACK_NACK: %s\n", UBX_map[in_message_.ACK_ACK.clsID][in_message_.ACK_ACK.msgID].c_str());
             break;
         default:
             DBG("%d\n", message_type_);
             break;
         }
-        DBG("%s\n", UBX_map[in_message_.ACK_ACK.clsID][in_message_.ACK_ACK.msgID].c_str());
         break;
    case CLASS_CFG: //only needed for getting data
-       DBG("CFG_");
        switch (message_type_)
        {
        case CFG_VALGET:
        {
             cfg_val_get.clear();
             
-            DBG("VALGET: \n");
+            DBG("CFG_VALGET\n");
             uint8_t version = in_message_.buffer[0];
             // DBG("Version: %i\n", version);
             uint8_t layer = in_message_.buffer[1];
@@ -259,7 +256,7 @@ bool UBX::decode_message(uint8_t f9pID)
             break;
        }
        case CFG_VALDEL:
-            DBG("VALDEL: \n");
+            DBG("CFG_VALDEL: \n");
             DBG("Key: %i \n", in_message_.CFG_VALDEL.cfgDataKey.keyID);
             cfgval_dbg_.got_cfg_val=true;
             break;
@@ -361,25 +358,7 @@ void UBX::create_message(uint8_t* buffer, uint8_t msg_class, uint8_t msg_id, con
 // These messages are either CFG_VALSET, CFG_VALGET, or CFG_VALDEL
 // Returns true if successfully send the message to the f9p module
 bool UBX::send_message(uint8_t msg_class, uint8_t msg_id, UBX_message_t& message, uint16_t len)
-{
-    for(int i=0; i<len; i++)
-    {
-        DBG("%i\n", message.buffer[i]);
-    }
-
-    if(msg_id==CFG_VALGET && UBX_cfg_map.right.count(message.CFG_VALGET.cfgDataKey.keyID)!=0)
-    {
-        DBG("CFG_VALGET: %s\n", UBX_cfg_map.right.at(message.CFG_VALGET.cfgDataKey.keyID).c_str());
-    }
-    else if(msg_id==CFG_VALSET && UBX_cfg_map.right.count(message.CFG_VALSET.cfgDataKey.keyID)!=0)
-    {
-        DBG("CFG_VALSET: %s\n", UBX_cfg_map.right.at(message.CFG_VALSET.cfgDataKey.keyID).c_str());
-    }
-    else
-    {
-        DBG("No keyName found\n");
-    }
-    
+{    
     // First, calculate the checksum
     uint8_t ck_a, ck_b;
     calculate_checksum(msg_class, msg_id, len, message, ck_a, ck_b);
@@ -416,38 +395,8 @@ void UBX::set_nav_rate(uint16_t message_rate)
     configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, CFG_VALSET_t::TIME_REF_UTC, CFG_VALSET_t::RATE_TIMEREF);
 }
 
-/*
-Configures settings for the f9p module
-*/
-CFG_VAL_DBG_t UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size)
-{
-    memset(&out_message_, 0, sizeof(CFG_VALSET_t));
-    memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
-    out_message_.CFG_VALSET.version = version;
-    out_message_.CFG_VALSET.layer = layer;
-    if(size == byte)
-    {
-        out_message_.CFG_VALSET.cfgData.bytes[0] = cfgData;
-    }
-    if(size == word)
-    {
-        out_message_.CFG_VALSET.cfgData.word[0] = cfgData;
-    }
-    out_message_.CFG_VALSET.cfgDataKey.keyID = cfgDataKey;
-    send_message(CLASS_CFG, CFG_VALSET, out_message_, sizeof(CFG_VALSET_t));
-    // std::cerr<<"Configured "<< cfgDataKey<<" to "<<cfgData<<std::endl;
-
-    clock_t start = clock();
-
-    while( !cfgval_dbg_.got_ack && !cfgval_dbg_.got_nack && time_elapsed(start) < 5);
-
-    return cfgval_dbg_;
-
-}
-
 CFG_VAL_DBG_t UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint64_t cfgDataKey)
 {
-    DBG("Test Configure\n");
     memset(&out_message_, 0, sizeof(CFG_VALSET_t));
     memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
     out_message_.CFG_VALSET.version = version;
@@ -457,38 +406,31 @@ CFG_VAL_DBG_t UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, u
     uint8_t cfgmsgSize = sizeof(CFG_VALSET_t::version)+sizeof(CFG_VALSET_t::reserved1)+sizeof(CFG_VALSET_t::layer)+sizeof(CFG_VALSET_t::cfgDataKey);
     switch (cfgSize)
     {
-        case 0x01:
-            DBG("0x01\n");
+        case CFG_KEY_ID_t::SIZE_ONE_BIT:
             out_message_.CFG_VALSET.cfgData.bytes[0] = cfgData;
             cfgmsgSize = cfgmsgSize+1;
             break;
-        case 0x02:
-            DBG("0x02\n");
+        case CFG_KEY_ID_t::SIZE_ONE_BYTE:
             out_message_.CFG_VALSET.cfgData.bytes[0] = cfgData;
             cfgmsgSize = cfgmsgSize+1;
             break;
-        case 0x03:
-            DBG("0x03\n");
+        case CFG_KEY_ID_t::SIZE_TWO_BYTE:
             out_message_.CFG_VALSET.cfgData.half_word[0] = cfgData;
             cfgmsgSize = cfgmsgSize+2;
             break;
-        case 0x04:
-            DBG("0x04\n");
+        case CFG_KEY_ID_t::SIZE_FOUR_BYTE:
             out_message_.CFG_VALSET.cfgData.word[0] = cfgData;
             cfgmsgSize = cfgmsgSize+4;
             break;
-        case 0x05:
-            DBG("0x05\n");
+        case CFG_KEY_ID_t::SIZE_EIGHT_BYTE:
             out_message_.CFG_VALSET.cfgData.two_word = cfgData;
             cfgmsgSize = cfgmsgSize+8;
             break;
         default:
-            DBG("Unknown: %i. Configuration not sent\n", cfgSize);
+            DBG("Unknown Size: %i. Configuration will not sent\n", cfgSize);
             cfgmsgSize = 0;
         break;
     }
-
-    DBG("cfgmsgSize: %i\n", cfgmsgSize);
     send_message(CLASS_CFG, CFG_VALSET, out_message_, cfgmsgSize);
     // std::cerr<<"Configured "<< cfgDataKey<<" to "<<cfgData<<std::endl;
 
@@ -497,7 +439,6 @@ CFG_VAL_DBG_t UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, u
     while( !cfgval_dbg_.got_ack && !cfgval_dbg_.got_nack && time_elapsed(start) < 5);
 
     return cfgval_dbg_;
-
 }
 
 CFG_VALGET_TUPLE_t UBX::get_configuration(uint8_t version, uint8_t layer, uint16_t position, uint32_t cfgDataKey)

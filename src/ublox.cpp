@@ -572,12 +572,6 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
         return ubx_.del_configuration(version, layer, cfgDataKey);
     }
 
-    CFG_VAL_DBG_t UBLOX::cfgValSet(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size)
-    {
-
-        return ubx_.configure(version, layer, cfgData, cfgDataKey, size);
-    }
-
     CFG_VAL_DBG_t UBLOX::cfgValSet(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey)
     {
 
@@ -626,9 +620,9 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*stationary, CFG_VALSET_t::MSGOUT_SVIN);
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*stationary, CFG_VALSET_t::TMODE_MODE);
         // Survey in accuracy limit
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, surveyacc*stationary, CFG_VALSET_t::TMODE_SVIN_ACC_LIMIT, word);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, surveyacc*stationary, CFG_VALSET_t::TMODE_SVIN_ACC_LIMIT);
         // Survey in time limit
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, surveytime*stationary, CFG_VALSET_t::TMODE_SVIN_MIN_DUR, word);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, surveytime*stationary, CFG_VALSET_t::TMODE_SVIN_MIN_DUR);
     }
 
     MON_VER_t UBLOX::getVersion()

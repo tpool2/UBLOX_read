@@ -55,7 +55,7 @@ namespace ublox
         {0x1B, "CFG_USB"},
         {0x8C, "CFG_VALDEL"},
         {0x8B, "CFG_VALGET"},
-        {0x8A, "CFG_VALSET"}
+        {0x8A, "CFG_VALSET"},
     };
     std::map<uint8_t, std::string> UBX::INF_msg_map = 
     {
