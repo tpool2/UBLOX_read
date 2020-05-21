@@ -67,31 +67,31 @@ bool UBLOX::checkSoftware()
 void UBLOX::config_gnss(GNSS_CONSTELLATION_t constellation)
 {
     // DBG("config_gnss\n");
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, constellation.gps_enable, CFG_VALSET_t::SIGNAL_GPS, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GPS_L1, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GPS_L2, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, constellation.galileo_enable, CFG_VALSET_t::SIGNAL_GAL, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GAL_E1, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GAL_E5B, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, constellation.beidou_enable, CFG_VALSET_t::SIGNAL_BDS, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_BDS_B1, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_BDS_B2, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, constellation.glonas_enable, CFG_VALSET_t::SIGNAL_GLO, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GLO_L1, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GLO_L2, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_QZSS, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_QZSS_L1CA, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_QZSS_L2C, byte);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, constellation.gps_enable, CFG_VALSET_t::SIGNAL_GPS);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GPS_L1);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GPS_L2);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, constellation.galileo_enable, CFG_VALSET_t::SIGNAL_GAL);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GAL_E1);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GAL_E5B);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, constellation.beidou_enable, CFG_VALSET_t::SIGNAL_BDS);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_BDS_B1);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_BDS_B2);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, constellation.glonas_enable, CFG_VALSET_t::SIGNAL_GLO);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GLO_L1);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_GLO_L2);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_QZSS);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_QZSS_L1CA);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::SIGNAL_QZSS_L2C);
 }
 
 
 void UBLOX::config_f9p(uint8_t dynamic_model) //See ubx_defs.h for more information
 {
     // DBG("config_f9p\n");
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, dynamic_model, CFG_VALSET_t::DYNMODEL, byte); //Dynamic platform model
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_INPROT_NMEA, byte); //Flag to indicate if NMEA should be an input protocol on USB
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_OUTPROT_NMEA, byte); //Flag to indicate if NMEA should be an output protocol on USB
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_RXM_RTCM, byte);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, dynamic_model, CFG_VALSET_t::DYNMODEL); //Dynamic platform model
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_INPROT_NMEA); //Flag to indicate if NMEA should be an input protocol on USB
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::USB_OUTPROT_NMEA); //Flag to indicate if NMEA should be an output protocol on USB
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_RXM_RTCM);
 
     bool poll = true;
     if(poll == true)
@@ -128,13 +128,13 @@ void UBLOX::config_base_stationary(int on_off, int gps, int glonas, int beidou,
                   int galileo, int surveytime, int surveyacc)
 {
     // DBG("config_base_stationary\n");
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::RTCM_1005USB, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::MSGOUT_SVIN, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::TMODE_MODE, byte);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::RTCM_1005USB);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::MSGOUT_SVIN);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*on_off, CFG_VALSET_t::TMODE_MODE);
     // Survey in accuracy limit
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, surveyacc*on_off, CFG_VALSET_t::TMODE_SVIN_ACC_LIMIT, word);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, surveyacc*on_off, CFG_VALSET_t::TMODE_SVIN_ACC_LIMIT);
     // Survey in time limit
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, surveytime*on_off, CFG_VALSET_t::TMODE_SVIN_MIN_DUR, word);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, surveytime*on_off, CFG_VALSET_t::TMODE_SVIN_MIN_DUR);
 
 }
 
@@ -145,13 +145,13 @@ void UBLOX::config_base_moving(int on_off, int gps, int glonas, int beidou,
     // DBG("config_base_moving\n");
     // These values control whether RTK corrections are calculated for the
     // following constellations
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RTCM_4072_0USB, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RTCM_4072_1USB, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RTCM_1077USB, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RTCM_1087USB, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RTCM_1097USB, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RTCM_1127USB, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RTCM_1230USB, byte);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RTCM_4072_0USB);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RTCM_4072_1USB);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RTCM_1077USB);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RTCM_1087USB);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RTCM_1097USB);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RTCM_1127USB);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::RTCM_1230USB);
 }
 
 /**
@@ -161,12 +161,12 @@ void UBLOX::config_rover()
 {
     // DBG("config_rover\n");
     // configure the parsers/Enable Messages
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_PVT, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_RELPOSNED, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_POSECEF, byte);
-    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_VELECEF, byte);
-    // ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::MSGOUT_RAWX, byte);
-    // ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::MSGOUT_SFRBX, byte);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_PVT);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_RELPOSNED);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_POSECEF);
+    ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_VELECEF);
+    // ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::MSGOUT_RAWX);
+    // ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::MSGOUT_SFRBX);
     //configuring SVIN messages is done in config_base_stationary()
 }
 
@@ -601,30 +601,30 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
 
     void UBLOX::config_ubx_msgs(int relpos)
     {
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_PVT, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_POSECEF, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_VELECEF, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, relpos, CFG_VALSET_t::MSGOUT_RELPOSNED, byte);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_PVT);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_POSECEF);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1, CFG_VALSET_t::MSGOUT_VELECEF);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, relpos, CFG_VALSET_t::MSGOUT_RELPOSNED);
     }
 
     void UBLOX::config_rtcm_msgs(int hasRover, int stationary, int surveyacc, int surveytime, GNSS_CONSTELLATION_t constellation)
     {
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::RTCM_1074USB, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::RTCM_1084USB, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::RTCM_1094USB, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::RTCM_1124USB, byte);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::RTCM_1074USB);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::RTCM_1084USB);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::RTCM_1094USB);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 0, CFG_VALSET_t::RTCM_1124USB);
         
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover, CFG_VALSET_t::RTCM_4072_0USB, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover, CFG_VALSET_t::RTCM_4072_1USB, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover*constellation.gps_enable, CFG_VALSET_t::RTCM_1077USB, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover*constellation.glonas_enable, CFG_VALSET_t::RTCM_1087USB, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover*constellation.galileo_enable, CFG_VALSET_t::RTCM_1097USB, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover*constellation.beidou_enable, CFG_VALSET_t::RTCM_1127USB, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover*constellation.glonas_enable, CFG_VALSET_t::RTCM_1230USB, byte);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover, CFG_VALSET_t::RTCM_4072_0USB);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover, CFG_VALSET_t::RTCM_4072_1USB);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover*constellation.gps_enable, CFG_VALSET_t::RTCM_1077USB);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover*constellation.glonas_enable, CFG_VALSET_t::RTCM_1087USB);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover*constellation.galileo_enable, CFG_VALSET_t::RTCM_1097USB);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover*constellation.beidou_enable, CFG_VALSET_t::RTCM_1127USB);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*hasRover*constellation.glonas_enable, CFG_VALSET_t::RTCM_1230USB);
 
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*stationary, CFG_VALSET_t::RTCM_1005USB, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*stationary, CFG_VALSET_t::MSGOUT_SVIN, byte);
-        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*stationary, CFG_VALSET_t::TMODE_MODE, byte);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*stationary, CFG_VALSET_t::RTCM_1005USB);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*stationary, CFG_VALSET_t::MSGOUT_SVIN);
+        ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, 1*stationary, CFG_VALSET_t::TMODE_MODE);
         // Survey in accuracy limit
         ubx_.configure(CFG_VALSET_t::VERSION_0, CFG_VALSET_t::RAM, surveyacc*stationary, CFG_VALSET_t::TMODE_SVIN_ACC_LIMIT, word);
         // Survey in time limit
