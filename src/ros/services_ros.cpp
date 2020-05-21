@@ -103,7 +103,7 @@ namespace ublox_ros
 
     bool UBLOX_ROS::cfgValSet(ublox::CfgValSet::Request &req, ublox::CfgValSet::Response &res)
     {
-        ublox::CFG_VAL_DBG_t response = ublox_->cfgValSet(0, req.layer, req.cfgData, req.key, req.size);
+        ublox::CFG_VAL_DBG_t response = ublox_->cfgValSet(0, req.layer, req.cfgData, req.key);
 
         res.got_Ack = response.got_ack;
         res.got_Nack = response.got_nack;

@@ -578,6 +578,12 @@ void UBLOX::rtcm_complete_cb(const uint8_t *buf, size_t size)
         return ubx_.configure(version, layer, cfgData, cfgDataKey, size);
     }
 
+    CFG_VAL_DBG_t UBLOX::cfgValSet(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey)
+    {
+
+        return ubx_.configure(version, layer, cfgData, cfgDataKey);
+    }
+
     navBbrMask_t UBLOX::reset(uint16_t navBbrMask, uint8_t resetMode)
     {
         union {

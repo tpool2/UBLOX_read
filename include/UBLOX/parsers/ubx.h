@@ -21,6 +21,7 @@ public:
     void fill_cfg_map();
 
     CFG_VAL_DBG_t configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint32_t cfgDataKey, uint8_t size);
+    CFG_VAL_DBG_t configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint64_t cfgDataKey);
     CFG_VALGET_TUPLE_t get_configuration(uint8_t version, uint8_t layer, uint16_t position, uint32_t cfgDataKey);
     CFG_VALGET_TUPLE_t get_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);
     CFG_VAL_DBG_t del_configuration(uint8_t version, uint8_t layer, uint32_t cfgDataKey);

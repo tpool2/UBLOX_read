@@ -362,6 +362,24 @@ void UBX::create_message(uint8_t* buffer, uint8_t msg_class, uint8_t msg_id, con
 // Returns true if successfully send the message to the f9p module
 bool UBX::send_message(uint8_t msg_class, uint8_t msg_id, UBX_message_t& message, uint16_t len)
 {
+    for(int i=0; i<len; i++)
+    {
+        DBG("%i\n", message.buffer[i]);
+    }
+
+    if(msg_id==CFG_VALGET && UBX_cfg_map.right.count(message.CFG_VALGET.cfgDataKey.keyID)!=0)
+    {
+        DBG("CFG_VALGET: %s\n", UBX_cfg_map.right.at(message.CFG_VALGET.cfgDataKey.keyID).c_str());
+    }
+    else if(msg_id==CFG_VALSET && UBX_cfg_map.right.count(message.CFG_VALSET.cfgDataKey.keyID)!=0)
+    {
+        DBG("CFG_VALSET: %s\n", UBX_cfg_map.right.at(message.CFG_VALSET.cfgDataKey.keyID).c_str());
+    }
+    else
+    {
+        DBG("No keyName found\n");
+    }
+    
     // First, calculate the checksum
     uint8_t ck_a, ck_b;
     calculate_checksum(msg_class, msg_id, len, message, ck_a, ck_b);
@@ -413,10 +431,65 @@ CFG_VAL_DBG_t UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, u
     }
     if(size == word)
     {
-        out_message_.CFG_VALSET.cfgData.word = cfgData;
+        out_message_.CFG_VALSET.cfgData.word[0] = cfgData;
     }
     out_message_.CFG_VALSET.cfgDataKey.keyID = cfgDataKey;
     send_message(CLASS_CFG, CFG_VALSET, out_message_, sizeof(CFG_VALSET_t));
+    // std::cerr<<"Configured "<< cfgDataKey<<" to "<<cfgData<<std::endl;
+
+    clock_t start = clock();
+
+    while( !cfgval_dbg_.got_ack && !cfgval_dbg_.got_nack && time_elapsed(start) < 5);
+
+    return cfgval_dbg_;
+
+}
+
+CFG_VAL_DBG_t UBX::configure(uint8_t version, uint8_t layer, uint64_t cfgData, uint64_t cfgDataKey)
+{
+    DBG("Test Configure\n");
+    memset(&out_message_, 0, sizeof(CFG_VALSET_t));
+    memset(&cfgval_dbg_, 0, sizeof(CFG_VAL_DBG_t));
+    out_message_.CFG_VALSET.version = version;
+    out_message_.CFG_VALSET.layer = layer;
+    out_message_.CFG_VALSET.cfgDataKey.keyID = cfgDataKey;
+    uint8_t cfgSize = out_message_.CFG_VALSET.cfgDataKey.size;
+    uint8_t cfgmsgSize = sizeof(CFG_VALSET_t::version)+sizeof(CFG_VALSET_t::reserved1)+sizeof(CFG_VALSET_t::layer)+sizeof(CFG_VALSET_t::cfgDataKey);
+    switch (cfgSize)
+    {
+        case 0x01:
+            DBG("0x01\n");
+            out_message_.CFG_VALSET.cfgData.bytes[0] = cfgData;
+            cfgmsgSize = cfgmsgSize+1;
+            break;
+        case 0x02:
+            DBG("0x02\n");
+            out_message_.CFG_VALSET.cfgData.bytes[0] = cfgData;
+            cfgmsgSize = cfgmsgSize+1;
+            break;
+        case 0x03:
+            DBG("0x03\n");
+            out_message_.CFG_VALSET.cfgData.half_word[0] = cfgData;
+            cfgmsgSize = cfgmsgSize+2;
+            break;
+        case 0x04:
+            DBG("0x04\n");
+            out_message_.CFG_VALSET.cfgData.word[0] = cfgData;
+            cfgmsgSize = cfgmsgSize+4;
+            break;
+        case 0x05:
+            DBG("0x05\n");
+            out_message_.CFG_VALSET.cfgData.two_word = cfgData;
+            cfgmsgSize = cfgmsgSize+8;
+            break;
+        default:
+            DBG("Unknown: %i. Configuration not sent\n", cfgSize);
+            cfgmsgSize = 0;
+        break;
+    }
+
+    DBG("cfgmsgSize: %i\n", cfgmsgSize);
+    send_message(CLASS_CFG, CFG_VALSET, out_message_, cfgmsgSize);
     // std::cerr<<"Configured "<< cfgDataKey<<" to "<<cfgData<<std::endl;
 
     clock_t start = clock();

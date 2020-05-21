@@ -559,9 +559,10 @@ typedef struct {
 
     union
     {
-        uint8_t bytes[4];
-        uint16_t half_word[2];
-        uint32_t word;
+        uint8_t bytes[8];
+        uint16_t half_word[4];
+        uint32_t word[2];
+        uint64_t two_word;
     } cfgData;
 
 
