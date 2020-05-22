@@ -69,6 +69,7 @@ if (${BUILD_ROS})
 		FILES
 		PosVelEcef.msg
 		PositionVelocityTime.msg
+        PositionVelocityTimeFlags.msg
 		RelPos.msg
 		RelPosFlags.msg
 		RTCMInput.msg

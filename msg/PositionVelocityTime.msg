@@ -13,6 +13,7 @@ uint8 valid  		# - Validity flags (see below )
 uint8 fixType 	# - GNSSfix Type:
 uint8 flags  		# - Fix status flags (see  graphic below )
 uint8 flags2  	# - Additional flags (see  graphic below )
+uint8 flags3
 uint8 numSV  		# - Number of satellites used in Nav Solution
 float64[3] lla 		# lat, lon, altitude (deg, deg, m)
 float64 hMSL  		# Height above mean sea level (m)

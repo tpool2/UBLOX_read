@@ -5,6 +5,7 @@ namespace ublox_ros
     void UBLOX_ROS::advertiseTopics()
     {
         pvt_pub_ = nh_.advertise<ublox::PositionVelocityTime>("PosVelTime", 10);
+        pvtflags_pub_ = nh_.advertise<ublox::PositionVelocityTimeFlags>("PosVelTimeFlags", 10);
         relpos_pub_ = nh_.advertise<ublox::RelPos>("RelPos", 10);
         relposflag_pub_ = nh_.advertise<ublox::RelPosFlags>("RelPosFlags", 10);
         ecef_pub_ = nh_.advertise<ublox::PosVelEcef>("PosVelEcef", 10);
@@ -14,6 +15,7 @@ namespace ublox_ros
         obs_pub_ = nh_.advertise<ublox::ObsVec>("Obs", 10);
         base_ecef_pub_ = nh_.advertise<ublox::PosVelEcef>("base/PosVelEcef", 10);
         base_pvt_pub_ = nh_.advertise<ublox::PositionVelocityTime>("base/PosVelTime", 10);
+        base_pvtflags_pub_ = nh_.advertise<ublox::PositionVelocityTimeFlags>("base/PosVelTimeFlags", 10);
         rtcm_input_pub_ = nh_.advertise<ublox::RTCMInput>("RTCMInput", 10);
         sat_status_pub_ = nh_.advertise<ublox::SatelliteStatus>("SatelliteStatus", 10);
         // nav_sat_fix_pub_ = nh_.advertise<sensor_msgs::NavSatFix>("NavSatFix");
@@ -59,6 +61,7 @@ void UBLOX_ROS::pvtCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
     pvt_ptr_->fixType = msg.fixType;
     pvt_ptr_->flags = msg.flags;
     pvt_ptr_->flags2 = msg.flags2;
+    pvt_ptr_->flags3 = msg.flags3;
     pvt_ptr_->numSV = msg.numSV;
     pvt_ptr_->lla[0] = msg.lat*1e-7;
     pvt_ptr_->lla[1] = msg.lon*1e-7;
@@ -77,6 +80,20 @@ void UBLOX_ROS::pvtCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
     pvt_ptr_->headVeh = msg.headVeh*1e-5;
 
     pvt_pub_ptr_->publish(*pvt_ptr_);
+
+    pvtflags_ptr_->header = pvt_ptr_->header;
+    pvtflags_ptr_->gnssFixOk = msg.gnssFixOk;
+    pvtflags_ptr_->diffSoln = msg.diffSoln;
+    pvtflags_ptr_->psmState = msg.psmState;
+    pvtflags_ptr_->headVehValid = msg.headVehValid;
+    pvtflags_ptr_->floatCarrSoln = msg.floatCarrSoln;
+    pvtflags_ptr_->fixedCarrSoln = msg.fixedCarrSoln;
+    pvtflags_ptr_->confirmedAvai = msg.confirmedAvai;
+    pvtflags_ptr_->confirmedDate = msg.confirmedDate;
+    pvtflags_ptr_->confirmedTime = msg.confirmedTime;
+    pvtflags_ptr_->invalidLlh = msg.invalidLlh;
+
+    pvtflags_pub_ptr_->publish(*pvtflags_ptr_);
 
     ecef_ptr_->header.stamp = ros::Time::now();
     ecef_ptr_->fix = pvt_ptr_->fixType;

@@ -9,6 +9,7 @@
 
 #include "ublox/PosVelEcef.h"
 #include "ublox/PositionVelocityTime.h"
+#include "ublox/PositionVelocityTimeFlags.h"
 #include "ublox/RelPos.h"
 #include "ublox/RelPosFlags.h"
 #include "ublox/RTCMInput.h"
@@ -45,6 +46,7 @@ private:
     ros::NodeHandle nh_private_;
 
     ros::Publisher pvt_pub_;
+    ros::Publisher pvtflags_pub_;
     ros::Publisher survey_status_pub_;
     ros::Publisher relpos_pub_;
     ros::Publisher relposflag_pub_;
@@ -59,8 +61,11 @@ private:
 
     ros::Publisher base_ecef_pub_;
     ros::Publisher base_pvt_pub_;
+    ros::Publisher base_pvtflags_pub_;
+    
     ros::Publisher *ecef_pub_ptr_;
     ros::Publisher *pvt_pub_ptr_;
+    ros::Publisher *pvtflags_pub_ptr_;
 
     /**
      * @brief Callback for filling a PosVelTime ROS message from a UBX callback
@@ -155,6 +160,10 @@ private:
     ublox::PositionVelocityTime pvt_msg_;
     ublox::PositionVelocityTime base_pvt_msg_;
     ublox::PositionVelocityTime *pvt_ptr_;
+
+    ublox::PositionVelocityTimeFlags pvtflags_msg_;
+    ublox::PositionVelocityTimeFlags base_pvtflags_msg_;
+    ublox::PositionVelocityTimeFlags *pvtflags_ptr_;
 
     ublox::RelPosFlags relpos_flag_msg_;
 

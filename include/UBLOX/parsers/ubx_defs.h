@@ -774,8 +774,29 @@ typedef struct  {
     uint32_t tAcc; // ns Time accuracy estimate (UTC)
     int32_t nano; // ns Fraction of second, range -1e9 .. 1e9 (UTC)
     uint8_t fixType; // - GNSSfix Type:
-    uint8_t flags; // - Fix status flags (see  graphic below )
-    uint8_t flags2; // - Additional flags (see  graphic below )
+
+    union {
+        uint8_t flags; // - Fix status flags (see  graphic below )
+        struct {
+            bool gnssFixOk      :1;
+            bool diffSoln       :1;
+            uint8_t psmState    :3;
+            bool headVehValid   :1;
+            bool floatCarrSoln  :1;
+            bool fixedCarrSoln  :1;
+        }__attribute__((packed));
+    }__attribute__((packed));
+
+    union {
+        uint8_t flags2; // - Additional flags (see  graphic below )
+        struct {
+            uint8_t flags2_reserved     :5;
+            bool confirmedAvai          :1;
+            bool confirmedDate          :1;
+            bool confirmedTime          :1;
+        }__attribute__((packed));
+    }__attribute__((packed));
+
     uint8_t numSV; // - Number of satellites used in Nav Solution
     int32_t lon; // 1e-7 deg Longitude
     int32_t lat; // 1e-7 deg Latitude
@@ -791,7 +812,16 @@ typedef struct  {
     uint32_t sAcc; // mm/s Speed accuracy estimate
     uint32_t headAcc; // 1e-5 deg Heading accuracy estimate (both motion and vehicle)
     uint16_t pDOP; // 0.01  - Position DOP
-    uint8_t reserved1[6]; // - Reserved
+
+    union {
+        uint8_t flags3;
+        struct {
+            bool invalidLlh             :1;
+            uint8_t flags3_reserved     :7;
+        }__attribute__((packed));
+    }__attribute__((packed));
+
+    uint8_t reserved1[5]; // - Reserved
     int32_t headVeh; // 1e-5 deg Heading of vehicle (2-D)
     int16_t magDec; // 1e-2 deg Magnetic declination
     uint16_t magAcc; // 1e-2 deg Magnetic declination accuracy
