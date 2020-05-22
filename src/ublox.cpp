@@ -55,6 +55,7 @@ bool UBLOX::checkSoftware()
         }
         else
         {
+            DBG("FIRMWARE IS CURRENT\n");
             return true;
         }
     }

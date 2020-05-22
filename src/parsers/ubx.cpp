@@ -139,7 +139,7 @@ bool UBX::read_cb(uint8_t byte, uint8_t f9pID)
         else
         {
             // indicate error if it didn't work
-            DBG("\n failed to parse message, f9pID: %i, ParseState: %i, MSG_ID: %i\n", f9pID, parse_state_, message_type_);
+            DBG("\nFailed to parse message, f9pID: %i, ParseState: %i, CLASS_ID: %i, MSG_ID: %i\n", f9pID, parse_state_, message_class_, message_type_);
             num_errors_++;
             parse_state_ = START;
             start_message_ = false;
