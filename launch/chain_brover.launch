@@ -4,7 +4,7 @@
     
     <arg name="base_host"           default="192.168.0.3"/>
     <arg name="base_port"           default="16140"/>
-    <arg name="brover_host"        default ="192.168.1.3"/>
+    <arg name="brover_host"         default="192.168.1.3"/>
     <arg name="brover_port1"        default="16140"/>
 
     <arg name="brover_port2"        default="16145"/>
