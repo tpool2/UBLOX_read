@@ -14,7 +14,6 @@
     <group ns="brover">
         <node name="f9p" pkg="ublox" type="ublox_ros">
             <param name="serial_port"       value="$(arg brover_serial_port)"/>
-            <param name="chain_level"       value="1"/>
             <param name="rover_quantity"    value="1"/>
 
             <param name="local_host"        value="$(arg brover_host)"/>

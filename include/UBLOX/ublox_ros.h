@@ -131,7 +131,6 @@ private:
     std::string log_filename_;
     int message_rate_;
     int rover_quantity_;
-    int chain_level_;
 
     int gps_;
     int glonas_;

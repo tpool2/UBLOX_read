@@ -10,7 +10,6 @@
     <group ns="rover1">
         <node name="f9p" pkg="ublox" type="ublox_ros">
             <param name="serial_port"       value="$(arg rover1_serial_port)"/>
-            <param name="chain_level"       value="1"/>
             <param name="rover_quantity"    value="0"/>
 
             <param name="local_host"        value="$(arg rover1_host)"/>

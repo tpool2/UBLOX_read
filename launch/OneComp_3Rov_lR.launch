@@ -6,7 +6,6 @@
 			<param name="base_type" value = "stationary"/>  <!--moving or stationary-->
 			<param name="rover_quantity" value = "2"/>     <!--number of rovers-->
 			<param name="serial_port" value="/dev/ttyACM0"/>
-			<param name="chain_level" value="0"/>
 			<param name="local_host" value="localhost"/>
 			<param name="local_port" value="16140"/>
 			<param name="rover_host" value="localhost"/>
@@ -23,7 +22,6 @@
 	<group ns="rover">
 		<node name="f9p" pkg="ublox" type="ublox_ros">
 			<param name="serial_port" value="/dev/ttyACM1"/>
-			<param name="chain_level" value="1"/>
 			<param name="local_host" value="localhost"/>
 			<param name="local_port" value="16145"/>
 			<param name="base_host" value="localhost"/>
@@ -37,7 +35,6 @@
 	<group ns="rover2">
 		<node name="f9p" pkg="ublox" type="ublox_ros">
 			<param name="serial_port" value="/dev/ttyACM2"/>
-			<param name="chain_level" value="1"/>
 			<param name="local_host" value="localhost"/>
 			<param name="local_port" value="16155"/>
 			<param name="base_host" value="localhost"/>

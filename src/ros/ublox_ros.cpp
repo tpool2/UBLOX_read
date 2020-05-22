@@ -29,7 +29,6 @@ UBLOX_ROS::UBLOX_ROS() :
     log_filename_ = nh_private_.param<std::string>("log_filename", "");
     message_rate_ = nh_private_.param<int>("message_rate", 10); //rate at which GNSS measurements are taken in hz
     rover_quantity_ = nh_private_.param<int>("rover_quantity", 0);
-    chain_level_ = nh_private_.param<int>("chain_level", 0x00);    //Get chain_level. 0 is stationary base. 1 to n-1 is
     
     // Get Constallation settings
     gps_ = nh_private_.param<int>("GPS", 1); //GPS
@@ -39,7 +38,6 @@ UBLOX_ROS::UBLOX_ROS() :
     dynamic_model_ = nh_private_.param<int>("dynamic_model", 0);
     std::cerr << "message_rate = " << message_rate_ << "\n";
     std::cerr << "rover_quantity = " << rover_quantity_ << "\n";
-    std::cerr << "chain_level = " << chain_level_ << "\n";
     std::cerr << "gps = " << gps_ << "\n";
     std::cerr << "glonas = " << glonas_ << "\n";
     std::cerr << "beidou = " << beidou_ << "\n";
@@ -58,20 +56,25 @@ UBLOX_ROS::UBLOX_ROS() :
     {
         std::cerr<<"DEBUG MODE\n";
     }
-    else if (chain_level_ == ublox::UBLOX::BASE)
+    else if (!nh_private_.hasParam("base_host"))
     {
         initBase();
     }
     // Rover(1 local_host 1 local_port 1 base_host 1 base_port)
-    else if (rover_quantity_ == 0)
+    else if (!nh_private_.hasParam("rover_host"))
     {
         initRover();
     }
     // Brover(1 base_host 1 base_port n local_host n local_port n rover_host n rover_port)
-    else if (rover_quantity_>=0) 
+    else if (nh_private_.hasParam("base_host") && nh_private_.hasParam("rover_host")) 
     {
         initBrover();
     }
+    else
+    {
+        std::cerr<<"Could not deduce base, rover, or brover\n";
+    }
+    
 
     // Check if there is a arrow
     if (nh_private_.hasParam("arrowbase") && nh_private_.hasParam("arrowtip")) {

@@ -15,7 +15,6 @@
 	<group ns="base">
 		<node name="f9p" pkg="ublox" type="ublox_ros">
 			<param name="serial_port"       value="$(arg base_serial_port)"/>
-			<param name="chain_level"       value="0"/>
 			<param name="base_type"         value="stationary"/>
 			<param name="rover_quantity"    value="2"/>
 

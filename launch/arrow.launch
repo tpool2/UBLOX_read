@@ -27,7 +27,6 @@
   <group ns="rover">
 
     <rosparam command="load" file="$(find ublox)/params/ublox.yaml"/>
-		<param name="chain_level" value="1"/>
 		<param name="rover_quantity" value="0"/>
 
     <node name="f9p" pkg="ublox" type="ublox_ros">
