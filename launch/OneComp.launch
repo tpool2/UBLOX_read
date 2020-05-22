@@ -14,7 +14,7 @@
 			<param name="serial_port"       value="$(arg base_serial_port)"/>
  			<param name="chain_level"       value="0"/>
 			<param name="rover_quantity"    value="1"/>
-            <param name="base_type"         value="stationary"/>
+            <param name="base_type"         value="moving"/>
             
             <param name="local_host"        value="$(arg base_host)"/>
 			<param name="local_port"        value="$(arg base_port)"/>
