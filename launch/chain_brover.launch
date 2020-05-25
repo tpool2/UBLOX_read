@@ -19,7 +19,7 @@
             <param name="local_host"        value="$(arg brover_host)"/>
             <param name="local_port"        value="$(arg brover_port1)"/>
             <param name="base_host"         value="$(arg base_host)"/>
-            <param name="base_port"         value="$arg base_port)"/>
+            <param name="base_port"         value="$(arg base_port)"/>
 
             <param name="local_host2"       value="$(arg brover_host)"/>
             <param name="local_port2"       value="$(arg brover_port2)"/>
