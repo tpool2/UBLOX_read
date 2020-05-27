@@ -25,6 +25,7 @@ add_library(UBLOX
     src/parsers/rtcm.cpp
     src/parsers/nav.cpp
     src/utctime.cpp
+    src/log/ublox_log.cpp
 )
 
 message("UBLOX Boost include dirs: ${Boost_INCLUDE_DIRS}")
@@ -45,14 +46,14 @@ endif()
 
 option(BUILD_EXAMPLES "Build Examples" ON)
 if (${BUILD_EXAMPLES})
-	add_executable(base src/examples/base.cpp)
-	target_link_libraries(base UBLOX)
+	add_executable(base_example src/examples/base.cpp)
+	target_link_libraries(base_example UBLOX)
 
-	add_executable(rover src/examples/rover.cpp)
-	target_link_libraries(rover UBLOX)
+	add_executable(rover_example src/examples/rover.cpp)
+	target_link_libraries(rover_example UBLOX)
 
-	add_executable(read src/examples/read.cpp)
-	target_link_libraries(read UBLOX)
+	add_executable(read_example src/examples/read.cpp)
+	target_link_libraries(read_example UBLOX)
 endif()
 
 option(BUILD_PLAIN "Building Plain Executables" ON)

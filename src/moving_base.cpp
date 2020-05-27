@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <UBLOX/ublox.h>
+#include <UBLOX/ublox_log.h>
 
 int main(int argc, char* argv[])
 {
@@ -27,7 +28,13 @@ int main(int argc, char* argv[])
 	uint8_t dynamic_model = 0;
 	std::string base_type = "moving";
 
-	ublox_->initBase(local_host, local_port, remote_host, remote_port, base_type, rover_quantity, constellation, surveytime, surveyacc, dynamic_model);
+	ublox::UBLOX_LOG *logger = new ublox::UBLOX_LOG(ublox_, "/home/pi");
 
+	ublox_->initBase(local_host, local_port, remote_host, remote_port, base_type, rover_quantity, constellation, surveytime, surveyacc, dynamic_model);
+	
+	char temp;
+
+	std::cin >> temp; 
+	
 	return 0;
 }
