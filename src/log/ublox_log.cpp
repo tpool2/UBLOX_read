@@ -82,7 +82,7 @@ namespace ublox
 		{
 			ofs_pvt_.close();
 		}
-		ofs_pvt_.open(log_dir+"/pvt.csv", std::ofstream::trunc);
+		ofs_pvt_.open(log_dir+"pvt.csv", std::ofstream::trunc);
 		ofs_pvt_<<"iTOW,year,month,day,hour,min,sec,valid,tAcc,nano,fixType,flags,flags2,numSV,lon,lat,height,hMSL,hAcc,vAcc,velN,velE,velD,gSpeed,headMot,sAcc,headAcc,pDOP,headVeh,magDec,magAcc";
 		
 
@@ -90,7 +90,7 @@ namespace ublox
 		{
 			ofs_rp_.close();
 		}
-		ofs_rp_.open(log_dir+"/relpos.csv", std::ofstream::trunc);
+		ofs_rp_.open(log_dir+"relpos.csv", std::ofstream::trunc);
 		ofs_rp_<<"refStationID,iTOW,relPosN,relPosE,relPosD,relPosLength,relPosHeading,accN,accE,accD,accLength,accHeading,gnssFixOk,diffSoln,relPosValid,floatCarrSoln,fixedCarrSoln,isMoving,refPosMiss,refObsMiss,relPosHeadingValid,relPosNormalized";
 	}
 	
