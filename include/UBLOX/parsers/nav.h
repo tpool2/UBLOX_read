@@ -49,6 +49,8 @@ public:
             return "Qzss";
         case ublox::GnssID_Beidou:
             return "Beidou";
+        default:
+            return "Could not determine GNSS Constallation";
         }
     }
 };

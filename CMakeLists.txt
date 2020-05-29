@@ -7,7 +7,7 @@ set(Boost_DETAILED_FAILURE_MSG ON)
 
 find_package(Eigen3 REQUIRED)
 find_package(async_comm QUIET)
-find_package(Boost)
+find_package(Boost REQUIRED COMPONENTS system)
 if (NOT ${async_comm_FOUND})
 	message("Async_comm library not found!")
 	add_subdirectory(/home/pi/async_comm/build)

@@ -57,6 +57,8 @@ bool NavParser::convertUBX(const ublox::RXM_SFRBX_t &msg)
             return decodeGalileo((uint8_t *)msg.dwrd, eph);
         case GnssID_Beidou:
             return decodeBeidou((uint8_t*)msg.dwrd, eph);
+        default:
+            return false;
         }
     }
 }
@@ -512,8 +514,10 @@ bool NavParser::decodeGlonass(const ublox::RXM_SFRBX_t &msg, GlonassEphemeris &g
 bool NavParser::decodeBeidou(const uint8_t *const buf, Ephemeris *eph)
 {
     // TODO
+    return false;
 }
 bool NavParser::decodeGalileo(const uint8_t *const buf, Ephemeris *eph)
 {
     // TODO
+    return false;
 }

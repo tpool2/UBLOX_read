@@ -15,7 +15,12 @@ namespace ublox
 				connectCallbacks();
 			};
 			
-			~UBLOX_LOG();
+			~UBLOX_LOG()
+			{
+				ofs_pvt_.close();
+				ofs_rp_.close();
+				ublox_ = nullptr;
+			};
 
 		private:
 			ublox::UBLOX* ublox_ = nullptr;
@@ -23,9 +28,13 @@ namespace ublox
 
 			std::ofstream ofs_pvt_;
 			std::ofstream ofs_rp_;
+			std::ofstream ofs_base_pvt_;
+
+			ublox::NAV_PVT_t pvt_;
+			ublox::NAV_RELPOSNED_t relPos_;
 
 			void pvtCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9PID=0);
-			
+			void writePVT(const ublox::UBX_message_t &ubx_msg, std::ofstream &ofs);
 			void relposCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9PID=0);
 			
 			void setlog_dir(const std::string &log_dir);
@@ -44,5 +53,7 @@ namespace ublox
 					this->ublox_->registerUBXCallback(cls, type, trampoline);
 				} while(0);
 			};
+
+			void evalF9PID(uint8_t f9PID);
 	};	
 }
