@@ -8,7 +8,8 @@ namespace ublox
 UBLOX::UBLOX(const std::string& port, int message_rate) :
     serial_(port, 460800),
     //115200
-    ubx_(serial_)
+    ubx_(serial_),
+    nmea_(serial_)
 {
     type_ = NONE;
 

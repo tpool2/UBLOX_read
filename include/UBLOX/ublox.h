@@ -12,6 +12,7 @@
 #include "UBLOX/parsers/ubx.h"
 #include "UBLOX/parsers/rtcm.h"
 #include "UBLOX/parsers/nav.h"
+#include "UBLOX/parsers/nmea.h"
 
 namespace ublox
 {
@@ -103,6 +104,7 @@ public:
     UBX ubx_;
     RTCM rtcm_;
     NavParser nav_;
+    NMEA nmea_;
 
     uint8_t buffer[BUFFER_SIZE];
 
