@@ -5,6 +5,11 @@ namespace ublox
 	void UBLOX_LOG::pvtCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9PID)
 	{
 		std::cerr<<"PVT Callback, F9PID: "<<uint16_t(f9PID)<<std::endl;
+		
+		if(f9PID!=0)
+		{
+			return;
+		}
 
 		ublox::NAV_PVT_t msg = ubx_msg.NAV_PVT;
 		

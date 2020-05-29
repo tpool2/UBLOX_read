@@ -6,16 +6,20 @@
 
 int main(int argc, char* argv[])
 {
-	std::cout<<"Hello World!"<<std::endl;
-	std::string serial_port = "/dev/ttyACM0";
+	std::string serial_port = argv[1];
 	int message_rate = 10;
 	ublox::UBLOX *ublox_ = new ublox::UBLOX(serial_port, message_rate);
 	
-	std::string *local_host = new std::string[0];
-	uint16_t *local_port = new uint16_t[0];
-	std::string *remote_host = new std::string[0];
-	uint16_t *remote_port = new uint16_t[0];
-	int rover_quantity = 0;
+	std::string *local_host = new std::string[1];
+	uint16_t *local_port = new uint16_t[1];
+	std::string *remote_host = new std::string[1];
+	uint16_t *remote_port = new uint16_t[1];
+	int rover_quantity = 1;
+
+	local_host[0]="169.254.248.104";
+	local_port[0]=16140;
+	remote_host[0]="169.254.248.104";
+	remote_port[0]=16145;
 
 	ublox::GNSS_CONSTELLATION_t constellation;
 	constellation.gps_enable = 1;
