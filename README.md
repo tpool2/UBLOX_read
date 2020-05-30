@@ -6,21 +6,5 @@ This library provides rather basic functionality and is designed to work under a
 
 The UBX parsing functionality is abstracted into a library for easy integration in other projects.  Example usage is given in the `main.cpp` file.
 
-Documentation found [here](https://magiccvs.byu.edu/wiki/#!index.md)
-
-# TL;DR 
-
-## Option 1: One GNSS Module
-`roslaunch ublox standard.launch`
-
-## Option 2: One Base, One Rover, One Computer
-`roslaunch ublox OneComp.launch`
-
-## Option 3: One Base, One Rover, Two Computers
-Modify IP addresses of `base_host` and `rover_host` in `base.launch` and `rover.launch`
-On Computer #1: `roslaunch ublox base.launch`
-On Computer #2: `roslaunch ublox rover.launch`
-
-`rostopic echo /base/PosVelTime`: Access base GNSS Data
-`rostopic echo /rover/RelPos`: Access RelPos data
-
+Hardware documentation found [here](https://magiccvs.byu.edu/wiki/#!hw_guides/ublox_f9p.md)
+Software documentation found [here](https://magiccvs.byu.edu/wiki/#!sw_guides/ublox_read.md)
