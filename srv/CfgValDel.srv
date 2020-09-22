@@ -1,5 +1,0 @@
-uint8 layer
-uint32 key
----
-bool got_Ack
-bool got_Nack
