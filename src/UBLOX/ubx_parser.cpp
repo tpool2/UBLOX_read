@@ -1,7 +1,24 @@
 #include "UBLOX/ubx_defs.h"
 #include "UBLOX/ubx_parser.h"
 
-int ublox::ubx::Parser::get_parser_state() const
+using std::uint8_t;
+
+namespace ublox::ubx
 {
-    return parser_state;
+
+    int Parser::get_parser_state() const
+    {
+        return parser_state;
+    }
+
+    void Parser::read_byte(const uint8_t& byte)
+    {
+        switch(parser_state)
+        {
+            case kReset:
+                if(byte == kStartByte_1)
+                    ++parser_state;
+        }
+    }
+
 }

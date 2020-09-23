@@ -4,8 +4,8 @@ namespace ublox::ubx
 {
     enum
     {
-        start_byte_1 = 0xb5,
-        start_byte_2 = 0x62
+        kStartByte_1 = 0xb5,
+        kStartByte_2 = 0x62
     };
 }
 #endif
