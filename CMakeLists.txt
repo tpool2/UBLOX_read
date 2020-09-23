@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(UBLOX_read)
+project(ublox_read)
 
 add_library(UBX src/UBLOX/ubx_parser.cpp)
 target_include_directories(UBX PUBLIC include)
 
 option(BUILD_TESTS "Build Tests" ON)
 if(BUILD_TESTS)
+    if(NOT TARGET gtest_main)
     # Download and unpack googletest at configure time
     configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
     execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
@@ -38,8 +39,22 @@ if(BUILD_TESTS)
     if (CMAKE_VERSION VERSION_LESS 2.8.11)
         include_directories("${gtest_SOURCE_DIR}/include")
     endif(CMAKE_VERSION VERSION_LESS 2.8.11)
+    endif(NOT TARGET gtest_main)
 
     add_executable(ublox_test test/test_ubx_parser.cpp)
     target_link_libraries(ublox_test PUBLIC gtest gtest_main UBX)
     
 endif(BUILD_TESTS)
+
+option(BUILD_ROS "Build ROS Nodes, Messages, Services" ON)
+if (${BUILD_ROS})
+    message(STATUS "BUILDING UBLOX ROS PACKAGE")
+    find_package(
+        catkin REQUIRED COMPONENTS roscpp message_generation
+    )
+    catkin_package(
+        LIBRARIES UBX
+        INCLUDE_DIRS include
+        CATKIN_DEPENDS std_msgs message_runtime
+    )
+endif(${BUILD_ROS})
