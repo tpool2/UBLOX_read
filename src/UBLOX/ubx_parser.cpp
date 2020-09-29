@@ -30,11 +30,23 @@ namespace ublox::ubx
                 break;
 
             case kGotStartByte_2:
+                message_class = byte;
                 ++parser_state;
                 break;
 
             case kGotMessageClass:
-                ++parser_state;
+                message_id = byte;
+                if(database->has(message_class, message_id))
+                {
+                    ++parser_state;
+                }
+                else
+                {
+                    parser_state = kReset;
+                    message_class = 0x00;
+                    message_id = 0x00;
+                }
+                
                 break;
 
             case kGotMessageID:
