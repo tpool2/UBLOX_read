@@ -29,6 +29,9 @@ namespace ublox::ubx
             {
                 kReset,
                 kGotStartByte_1,
+                kGotStartByte_2,
+                kGotMessageClass,
+                kGotMessageID,
             };
     };
 }
