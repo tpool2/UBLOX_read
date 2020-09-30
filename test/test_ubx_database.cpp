@@ -35,3 +35,8 @@ TEST_F(TestDatabase, HasMGA_GPS)
 {
     ASSERT_TRUE(database.has(kCLASS_MGA, kMGA_GPS));
 }
+
+TEST_F(TestDatabase, GetACK_ACKLength)
+{
+    ASSERT_EQ(database.get_length(kCLASS_ACK, kACK_ACK), 0x0002);
+}

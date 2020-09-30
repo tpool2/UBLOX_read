@@ -16,7 +16,7 @@ namespace ublox::ubx
 
         public:
             virtual bool has(uint8_t message_class, uint8_t message_id);
-
+            virtual uint16_t get_length(uint8_t message_class, uint8_t message_id);
     };
 
     class Database: public DatabaseInterface
@@ -59,6 +59,7 @@ namespace ublox::ubx
 
             };
             bool has(uint8_t message_class, uint8_t message_id) override;
+            uint16_t get_length(uint8_t message_class, uint8_t message_id) override;
     };
 }
 #endif
