@@ -4,17 +4,6 @@
 
 using namespace ublox::ubx;
 
-class TestDatabaseInterface: public ::testing::Test
-{
-    protected:
-        ublox::ubx::DatabaseInterface interface;
-};
-
-TEST_F(TestDatabaseInterface, ReturnsFalse)
-{
-    ASSERT_FALSE(interface.has(0,1));
-}
-
 class TestDatabase: public ::testing::Test
 {
     protected:
@@ -36,7 +25,15 @@ TEST_F(TestDatabase, HasMGA_GPS)
     ASSERT_TRUE(database.has(kCLASS_MGA, kMGA_GPS));
 }
 
-TEST_F(TestDatabase, GetACK_ACKLength)
+TEST_F(TestDatabase, MatchLengthACK_ACK)
 {
-    ASSERT_EQ(database.get_length(kCLASS_ACK, kACK_ACK), 0x0002);
+    auto node = database.get_node(kCLASS_ACK,kACK_ACK);
+    ASSERT_TRUE(node->length_matches(2));
+    ASSERT_FALSE(node->length_matches(4));
+}
+
+TEST_F(TestDatabase, MatchLengthNAV_ORB)
+{
+    auto node = database.get_node(kCLASS_NAV, kNAV_ORB);
+    ASSERT_TRUE(node->length_matches(8));
 }

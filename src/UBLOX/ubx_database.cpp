@@ -1,27 +1,28 @@
 #include "UBLOX/ubx_database.h"
 
-bool ublox::ubx::DatabaseInterface::has(uint8_t message_class, uint8_t message_id)
+namespace ublox::ubx
 {
-    return false;
-}
+    bool Database::DatabaseNode::length_matches(int payload_length) const
+    {
+        int remainder = payload_length - length;
+        if(linear_length != 0)
+        {
+            return remainder%linear_length == 0;
+        }
+        else
+        {
+            return remainder == 0;
+        }
+    }
 
-uint16_t ublox::ubx::DatabaseInterface::get_length(uint8_t message_class, uint8_t message_id)
-{
-    return 0;
-}
+    bool Database::has(uint8_t message_class, uint8_t message_id)
+    {
+        return UBX_CLASS_Map.count(message_class) == 1
+            && UBX_CLASS_Map[message_class].count(message_id) == 1;
+    }
 
-uint16_t ublox::ubx::Database::DatabaseNode::get_length() const
-{
-    return length;
-}
-
-bool ublox::ubx::Database::has(uint8_t message_class, uint8_t message_id)
-{
-    return UBX_CLASS_Map.count(message_class) == 1
-        && UBX_CLASS_Map[message_class].count(message_id) == 1;
-}
-
-uint16_t ublox::ubx::Database::get_length(uint8_t message_class, uint8_t message_id)
-{
-    return UBX_CLASS_Map[message_class][message_id].get_length();
+    std::shared_ptr<DatabaseNodeInterface> Database::get_node(uint8_t message_class, uint8_t message_id)
+    {
+        return UBX_CLASS_Map[message_class][message_id];
+    }
 }

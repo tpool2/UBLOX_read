@@ -19,7 +19,7 @@ namespace ublox::ubx
     void Parser::get_length_2()
     {
         message_length += (current_byte << kByteSize);
-        advance_or_reset(message_length == database->get_length(message_class, message_id));
+        advance_or_reset(database->get_node(message_class, message_id)->length_matches(message_length));
     }
     
     void Parser::check_message_class_id()
