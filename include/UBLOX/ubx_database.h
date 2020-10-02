@@ -24,7 +24,7 @@ namespace ublox::ubx
     {
         private:
             std::shared_ptr<DatabaseNodeInterface> null_node;
-            
+
             class DatabaseNode: public DatabaseNodeInterface
             {
                 private:
@@ -57,11 +57,18 @@ namespace ublox::ubx
                 {kMGA_GPS, std::make_shared<DatabaseNode>(68)},
             };
 
+            std::map<uint8_t, DatabaseNodePtr> RXM_ID_Map
+            {
+                {kRXM_RAWX, std::make_shared<DatabaseNode>(16,32)},
+                {kRXM_SFRBX, std::make_shared<DatabaseNode>(8,4)},  
+            };
+
             std::map<uint8_t, std::map<uint8_t, DatabaseNodePtr>> UBX_CLASS_Map
             {
                 {kCLASS_ACK, ACK_ID_Map},
                 {kCLASS_MGA, MGA_ID_Map},
                 {kCLASS_NAV, NAV_ID_Map},
+                {kCLASS_RXM, RXM_ID_Map},
             };
 
         public:

@@ -54,6 +54,7 @@ namespace ublox::ubx
         kCLASS_RXM = 0x02,
         kRXM_MEASX = 0x14,
         kRXM_RAWX = 0x15,
+        kRXM_SFRBX = 0x13,
     };
 }
 #endif
