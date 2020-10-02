@@ -173,9 +173,18 @@ class ParserGotMessageClassIDNAV_ORB: public ::testing::Test
             parser.read_byte(ublox::ubx::kNAV_ORB);
         }
 };
+
 TEST_F(ParserGotMessageClassIDNAV_ORB, SendCorrectMessageLength_ParserStateGotLength_2)
 {
     parser.read_byte(14);
     parser.read_byte(0);
     ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotLength_2);
 }
+
+TEST_F(ParserGotMessageClassIDNAV_ORB, SendWrongMessageLength_ParserStateReset)
+{
+    parser.read_byte(2);
+    parser.read_byte(0);
+    ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kReset);
+}
+

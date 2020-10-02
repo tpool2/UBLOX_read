@@ -88,6 +88,7 @@ namespace ublox::ubx
             case kGotLength_1:
                 get_length_2();
                 break;
+
         }
     }
 }

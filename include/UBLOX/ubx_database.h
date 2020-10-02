@@ -24,6 +24,7 @@ namespace ublox::ubx
     {
         private:
             std::shared_ptr<DatabaseNodeInterface> null_node;
+            
             class DatabaseNode: public DatabaseNodeInterface
             {
                 private:
@@ -38,24 +39,25 @@ namespace ublox::ubx
                     }
                     bool length_matches(int payload_length) const;
             };
+            typedef std::shared_ptr<DatabaseNode> DatabaseNodePtr;
 
-            std::map<uint8_t, std::shared_ptr<DatabaseNode>> NAV_ID_Map
+            std::map<uint8_t, DatabaseNodePtr> NAV_ID_Map
             {
                 {kNAV_ORB, std::make_shared<DatabaseNode>(8,6)},
             };
 
-            std::map<uint8_t, std::shared_ptr<DatabaseNode>> ACK_ID_Map
+            std::map<uint8_t, DatabaseNodePtr> ACK_ID_Map
             {
                 {kACK_ACK, std::make_shared<DatabaseNode>(2)},
                 {kACK_NACK, std::make_shared<DatabaseNode>(2)},
             };
 
-            std::map<uint8_t, std::shared_ptr<DatabaseNode>> MGA_ID_Map
+            std::map<uint8_t, DatabaseNodePtr> MGA_ID_Map
             {
                 {kMGA_GPS, std::make_shared<DatabaseNode>(68)},
             };
 
-            std::map<uint8_t, std::map<uint8_t, std::shared_ptr<DatabaseNode>>> UBX_CLASS_Map
+            std::map<uint8_t, std::map<uint8_t, DatabaseNodePtr>> UBX_CLASS_Map
             {
                 {kCLASS_ACK, ACK_ID_Map},
                 {kCLASS_MGA, MGA_ID_Map},
