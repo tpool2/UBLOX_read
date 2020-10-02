@@ -23,6 +23,7 @@ namespace ublox::ubx
     class Database: public DatabaseInterface
     {
         private:
+            std::shared_ptr<DatabaseNodeInterface> null_node;
             class DatabaseNode: public DatabaseNodeInterface
             {
                 private:
@@ -64,7 +65,7 @@ namespace ublox::ubx
         public:
             Database()
             {
-
+                null_node = std::make_shared<DatabaseNode>(0,0);
             };
             bool has(uint8_t message_class, uint8_t message_id) override;
             virtual std::shared_ptr<DatabaseNodeInterface> get_node(uint8_t message_class, uint8_t message_id);

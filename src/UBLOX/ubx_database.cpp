@@ -5,7 +5,7 @@ namespace ublox::ubx
     bool Database::DatabaseNode::length_matches(int payload_length) const
     {
         int remainder = payload_length - length;
-        if(linear_length != 0)
+        if(linear_length != 0 && remainder >=0)
         {
             return remainder%linear_length == 0;
         }
@@ -23,6 +23,16 @@ namespace ublox::ubx
 
     std::shared_ptr<DatabaseNodeInterface> Database::get_node(uint8_t message_class, uint8_t message_id)
     {
-        return UBX_CLASS_Map[message_class][message_id];
+        std::shared_ptr<DatabaseNodeInterface> return_node;
+        if(has(message_class, message_id))
+        {
+            return_node = UBX_CLASS_Map[message_class][message_id];
+        }
+        else
+        {
+            return_node = null_node;
+        }
+        
+        return return_node;
     }
 }
