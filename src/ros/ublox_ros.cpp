@@ -105,6 +105,7 @@ UBLOX_ROS::UBLOX_ROS() :
     createCallback(ublox::CLASS_NAV, ublox::NAV_PVT, &UBLOX_ROS::pvtCB, this);
     createCallback(ublox::CLASS_RXM, ublox::RXM_RTCM, &UBLOX_ROS::rtcmInputCB, this);
     createCallback(ublox::CLASS_RXM, ublox::RXM_MEASX, &UBLOX_ROS::rxmMeasxCB, this);
+    createCallback(ublox::CLASS_RXM, ublox::RXM_SFRBX, &UBLOX_ROS::sfrbxCB, this);
     if (!log_filename_.empty())
     {
         ublox_->initLogFile(log_filename_);

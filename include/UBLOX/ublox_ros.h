@@ -94,7 +94,7 @@ private:
      * @brief Callback for filling a RXM-MEASX ROS message from a UBX callback
      */
     void rxmMeasxCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
-
+    void sfrbxCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID=0);
     void ephCB(const Ephemeris& eph);
     void gephCB(const GlonassEphemeris& eph);
 

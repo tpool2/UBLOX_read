@@ -1,4 +1,6 @@
 #include <UBLOX/ublox_ros.h>
+#include <iostream>
+#include <fstream>
 
 namespace ublox_ros
 {
@@ -426,5 +428,14 @@ void UBLOX_ROS::rxmMeasxCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
     }
 
     sat_status_pub_.publish(out);
+}
+
+void UBLOX_ROS::sfrbxCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
+{
+    for(int i = 0; i < sizeof(ublox::RXM_SFRBX_t); ++i)
+    {
+        std::cout<<ubx_msg.buffer[i];
+    }
+    std::cout<<"\n";
 }
 }
