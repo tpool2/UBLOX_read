@@ -18,6 +18,10 @@ namespace ublox::ubx
             uint8_t message_class = 0x00;
             uint8_t message_id = 0x00;
             uint16_t message_length = 0x0000;
+            uint8_t checksum_a = 0;
+            uint8_t checksum_b = 0;
+            uint16_t payload_bytes_received = 0;
+            void update_checksum();
             std::unique_ptr<DatabaseInterface> database;
             void get_start_byte_1();
             void get_start_byte_2();
@@ -26,6 +30,10 @@ namespace ublox::ubx
             void advance();
             void reset();
             void check_message_class_id();
+            void get_payload();
+            void verify_checksum_a();
+            void verify_checksum_b();
+            void finish_message();
         
         public:
             Parser()
@@ -49,6 +57,9 @@ namespace ublox::ubx
                 kGotMessageID,
                 kGotLength_1,
                 kGotLength_2,
+                kGotPayload,
+                kGotChecksumA,
+                kGotChecksumB,
             };
     };
 }

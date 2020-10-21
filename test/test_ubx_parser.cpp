@@ -188,3 +188,40 @@ TEST_F(ParserGotMessageClassIDNAV_ORB, SendWrongMessageLength_ParserStateReset)
     ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kReset);
 }
 
+class ParserGotMessageClassIDRXM_SFRBX: public ::testing::Test
+{
+    protected:
+        ublox::ubx::Parser parser;
+        void SetUp() override
+        {
+            parser.read_byte(ublox::ubx::kStartByte_1);
+            parser.read_byte(ublox::ubx::kStartByte_2);
+            parser.read_byte(ublox::ubx::kCLASS_RXM);
+            parser.read_byte(ublox::ubx::kRXM_SFRBX);
+        }
+};
+
+TEST_F(ParserGotMessageClassIDRXM_SFRBX, SendMessageLengthCorrect_ParserStateGotMessageLength)
+{
+    parser.read_byte(12);
+    parser.read_byte(0);
+    ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotLength_2);
+}
+
+TEST_F(ParserGotMessageClassIDRXM_SFRBX, SendMessageLengthWrong_ParserStateReset)
+{
+    parser.read_byte(11);
+    parser.read_byte(0);
+    ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kReset);
+}
+
+TEST_F(ParserGotMessageClassIDRXM_SFRBX, SendMessageLengthAndPayload_ParserStateGotPayload)
+{
+    parser.read_byte(8);
+    parser.read_byte(0);
+    for(int i = 0; i < 8; ++i)
+    {
+        parser.read_byte(1);
+    }
+    ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotPayload);
+}
