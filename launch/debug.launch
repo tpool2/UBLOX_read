@@ -5,7 +5,7 @@
 		<node name="f9p" pkg="ublox" type="ublox_ros">
 			<param name="serial_port" value="/dev/ttyACM0"/>
             <param name="debug" value="true"/>
-            <param name="log_filename" value="/home/tpool/debug_log.txt">
+            <param name="log_filename" value="/home/tpool/debug_log.txt"/>
         </node>
 	</group>
 

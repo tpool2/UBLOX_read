@@ -1,5 +1,6 @@
 #include <chrono>
 #include <stdio.h>
+#include <iostream>
 
 #include "async_comm/udp.h"
 
@@ -76,6 +77,10 @@ bool UBX::read_cb(uint8_t byte, uint8_t f9pID)
         break;
     case GOT_CLASS:
         message_type_ = byte;
+        if(message_type_==RXM_MEASX && message_class_==CLASS_RXM)
+        {
+            DBG("MEASX Message!");
+        }
         parse_state_ = GOT_MSG_ID;
         break;
     case GOT_MSG_ID:
@@ -272,6 +277,8 @@ bool UBX::decode_message(uint8_t f9pID)
                 mon_ver_.got_mon = true;
                 mon_ver_.mon_ver = in_message_.MON_VER;
         }
+    case CLASS_RXM:
+        DBG("RXM Message of type: %x\n", message_type_);
     default:
         // DBG((UBX_map[message_class_][message_type_]+"\n").c_str());
         break;

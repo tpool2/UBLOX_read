@@ -434,8 +434,8 @@ void UBLOX_ROS::sfrbxCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 {
     for(int i = 0; i < sizeof(ublox::RXM_SFRBX_t); ++i)
     {
-        std::cout<<ubx_msg.buffer[i];
+        std::cerr<<int(ubx_msg.buffer[i])<<",";
     }
-    std::cout<<"\n";
+    std::cerr<<"\n";
 }
 }

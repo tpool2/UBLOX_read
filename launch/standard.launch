@@ -12,6 +12,7 @@
 			<param name="serial_port" value="/dev/ttyACM0"/>
 			<param name="base_type" value = "moving"/>  <!--moving or stationary-->
 			<param name="rover_quantity" value = "0"/>     <!--number of rovers-->
+			<param name="log_filename" value="/home/tpool2/sfrbxlog.txt"/>
 		</node>
 	</group>
 
