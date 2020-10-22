@@ -1,41 +1,61 @@
 #include "UBLOX/ubx_defs.h"
 #include "UBLOX/ubx_parser.h"
+#include <iostream>
 
 using std::uint8_t;
 
 namespace ublox::ubx
 {
-    void Parser::get_start_byte_1()
+    bool Parser::get_start_byte_1()
     {
         if(current_byte == kStartByte_1)
-            ++parser_state;
-    }
-
-    void Parser::get_start_byte_2()
-    {
-        advance_or_reset(current_byte == kStartByte_2);
-    }
-
-    void Parser::get_length_2()
-    {
-        message_length += (current_byte << kByteSize);
-        advance_or_reset(database->get_node(message_class, message_id)->length_matches(message_length));
-    }
-    
-    void Parser::check_message_class_id()
-    {
-        advance_or_reset(database->has(message_class, message_id));
-    }
-
-    void Parser::advance_or_reset(bool advance)
-    {
-        if(advance)
         {
-            this->advance();
+            ++parser_state;
+            return true;
         }
         else
         {
             reset();
+            return false;
+        }
+    }
+
+    bool Parser::get_start_byte_2()
+    {
+        if(current_byte == kStartByte_2)
+        {
+            ++parser_state;
+            return true;
+        }
+        else
+        {
+            reset();
+            return false;
+        }
+    }
+
+    bool Parser::get_length_2()
+    {
+        message_length += (current_byte << kByteSize);
+        return advance_or_reset(database->get_node(message_class, message_id)->length_matches(message_length));
+    }
+    
+    bool Parser::check_message_class_id()
+    {
+        return advance_or_reset(database->has(message_class, message_id));
+    }
+
+    bool Parser::advance_or_reset(bool advance)
+    {
+        if(advance)
+        {
+            this->advance();
+            return true;
+        }
+        else
+        {
+            reset();
+            return false;
         }
     }
 
@@ -66,32 +86,35 @@ namespace ublox::ubx
         return parser_state;
     }
 
-    void Parser::get_payload()
+    bool Parser::get_payload()
     {
         if(payload_bytes_received < message_length-1)
         {
             ++payload_bytes_received;
             update_checksum();
+            return true;
         }
         else if(payload_bytes_received == message_length-1)
         {
             ++payload_bytes_received;
             advance();
+            return true;
         }
         else
         {
             reset();
+            return false;
         }
     }
 
-    void Parser::verify_checksum_a()
+    bool Parser::verify_checksum_a()
     {
-        advance_or_reset(current_byte==checksum_a);
+        return advance_or_reset(current_byte==checksum_a);
     }
 
-    void Parser::verify_checksum_b()
+    bool Parser::verify_checksum_b()
     {
-        advance_or_reset(current_byte==checksum_b);
+        return advance_or_reset(current_byte==checksum_b);
     }
 
     void Parser::finish_message()
@@ -99,17 +122,23 @@ namespace ublox::ubx
         reset();
     }
 
-    void Parser::read_byte(const uint8_t& byte)
+    uint8_t Parser::get_checksum_a() const
+    {
+        return checksum_a;
+    }
+
+    bool Parser::read_byte(const uint8_t& byte)
     {
         current_byte = byte;
+        bool byte_state = true;
         switch(parser_state)
         {
             case kReset:
-                get_start_byte_1();
+                byte_state = get_start_byte_1();
                 break;
             
             case kGotStartByte_1:
-                get_start_byte_2();
+                byte_state = get_start_byte_2();
                 break;
 
             case kGotStartByte_2:
@@ -119,7 +148,7 @@ namespace ublox::ubx
 
             case kGotMessageClass:
                 message_id = current_byte;
-                check_message_class_id();
+                byte_state = check_message_class_id();
                 break;
 
             case kGotMessageID:
@@ -128,19 +157,19 @@ namespace ublox::ubx
                 break;
 
             case kGotLength_1:
-                get_length_2();
+                byte_state = get_length_2();
                 break;
 
             case kGotLength_2:
-                get_payload();
+                byte_state = get_payload();
                 break;
 
             case kGotPayload:
-                verify_checksum_a();
+                byte_state = verify_checksum_a();
                 break;
 
             case kGotChecksumA:
-                verify_checksum_b();
+                byte_state = verify_checksum_b();
                 if(parser_state==kGotChecksumB)
                 {
                     finish_message();
@@ -149,7 +178,9 @@ namespace ublox::ubx
 
             default:
                 reset();
+                byte_state = false;
                 break;
         }
+        return byte_state;
     }
 }

@@ -9,6 +9,10 @@ add_library(UBX
     src/UBLOX/ubx_message.cpp)
 target_include_directories(UBX PUBLIC include)
 
+add_executable(read_file
+    src/executables/read_file.cpp)
+target_link_libraries(read_file PUBLIC UBX)
+
 option(BUILD_TESTS "Build Tests" ON)
 if(BUILD_TESTS)
     if(NOT TARGET gtest_main)

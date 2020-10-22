@@ -225,3 +225,8 @@ TEST_F(ParserGotMessageClassIDRXM_SFRBX, SendMessageLengthAndPayload_ParserState
     }
     ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotPayload);
 }
+
+TEST_F(ParserGotMessageClassIDRXM_SFRBX, ChecksumA)
+{
+    ASSERT_EQ(parser.get_checksum_a(), uint8_t(ublox::ubx::kCLASS_RXM+ublox::ubx::kRXM_SFRBX));
+}

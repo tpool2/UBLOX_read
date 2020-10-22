@@ -23,22 +23,23 @@ namespace ublox::ubx
             uint16_t payload_bytes_received = 0;
             void update_checksum();
             std::unique_ptr<DatabaseInterface> database;
-            void get_start_byte_1();
-            void get_start_byte_2();
-            void get_length_2();
-            void advance_or_reset(bool advance);
+            bool get_start_byte_1();
+            bool get_start_byte_2();
+            bool get_length_2();
+            bool advance_or_reset(bool advance);
             void advance();
             void reset();
-            void check_message_class_id();
-            void get_payload();
-            void verify_checksum_a();
-            void verify_checksum_b();
+            bool check_message_class_id();
+            bool get_payload();
+            bool verify_checksum_a();
+            bool verify_checksum_b();
             void finish_message();
         
         public:
             Parser()
             {
                 database = std::make_unique<Database>();
+                reset();
             };
             ~Parser()
             {
@@ -46,7 +47,8 @@ namespace ublox::ubx
             };
             int get_parser_state() const;
 
-            void read_byte(const uint8_t&);
+            bool read_byte(const uint8_t&);
+            uint8_t get_checksum_a() const;
 
             enum
             {

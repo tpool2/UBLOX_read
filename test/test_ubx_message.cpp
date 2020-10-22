@@ -8,7 +8,7 @@ TEST(UBX_Message, Create)
     UBX_Message message;
 }
 
-TEST(UBX_Message, GetBytesStartByte1)
+TEST(DISABLED_UBX_Message, GetBytesStartByte1)
 {
     UBX_Message message;
     uint8_t* bytes = message.get_bytes();
