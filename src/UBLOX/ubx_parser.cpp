@@ -119,12 +119,19 @@ namespace ublox::ubx
 
     void Parser::finish_message()
     {
+        auto node = database->get_node(message_class, message_id);
+        node->finish_messages();
         reset();
     }
 
-    uint8_t Parser::get_checksum_a() const
+    uint8_t Parser::get_checksum_a() const {return checksum_a;}
+
+    uint8_t Parser::get_checksum_b() const {return checksum_b;}
+
+    void Parser::add_message_parser(const std::shared_ptr<MessageParser> message_parser)
     {
-        return checksum_a;
+        auto node = database->get_node(message_parser->get_message_class(), message_parser->get_message_id());
+        node->add_message_parser(message_parser);
     }
 
     bool Parser::read_byte(const uint8_t& byte)

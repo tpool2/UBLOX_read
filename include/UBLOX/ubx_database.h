@@ -2,8 +2,10 @@
 #define UBX_DATABASE_H
 #include <cstdint>
 #include <map>
+#include <vector>
 #include "UBLOX/ubx_defs.h"
 #include "UBLOX/ubx_functions.h"
+#include "UBLOX/ubx_listener.h"
 
 namespace ublox::ubx
 {
@@ -11,6 +13,9 @@ namespace ublox::ubx
     {
         public:
             virtual bool length_matches(int message_length) const = 0;
+            virtual void add_message_parser(std::shared_ptr<MessageParser> message_parser) = 0;
+            virtual void finish_messages() const = 0;
+            virtual void pass_byte(uint8_t byte) const = 0;
     };
 
     class DatabaseInterface
@@ -30,14 +35,19 @@ namespace ublox::ubx
                 private:
                     int length;
                     int linear_length;
+                    std::vector<std::shared_ptr<MessageParser>> message_parsers;
                 
                 public:
                     DatabaseNode(int length=1, int linear_length=0)
                     {
                         this->length = length;
                         this->linear_length = linear_length;
+                        message_parsers.clear();
                     }
-                    bool length_matches(int payload_length) const;
+                    bool length_matches(int payload_length) const override;
+                    void add_message_parser(std::shared_ptr<MessageParser> message_parser) override;
+                    void finish_messages() const override;
+                    void pass_byte(uint8_t byte) const override;
             };
             typedef std::shared_ptr<DatabaseNode> DatabaseNodePtr;
 

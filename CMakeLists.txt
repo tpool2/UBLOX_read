@@ -6,7 +6,9 @@ add_library(UBX
     src/UBLOX/ubx_parser.cpp 
     src/UBLOX/ubx_database.cpp
     src/UBLOX/ubx_rxm_rawx.cpp
-    src/UBLOX/ubx_message.cpp)
+    src/UBLOX/ubx_message.cpp
+    src/UBLOX/ubx_sfrbx_parser.cpp
+    src/UBLOX/ubx_listener)
 target_include_directories(UBX PUBLIC include)
 
 add_executable(read_file
@@ -53,7 +55,8 @@ if(BUILD_TESTS)
         test/test_ubx_parser.cpp 
         test/test_ubx_database.cpp
         test/test_ubx_message.cpp
-        test/test_ubx_rxm_rawx.cpp)
+        test/test_ubx_rxm_rawx.cpp
+        test/test_ubx_sfrbx_parser.cpp)
     target_link_libraries(ublox_test PUBLIC gtest gtest_main UBX)
     
 endif(BUILD_TESTS)

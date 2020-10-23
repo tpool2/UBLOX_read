@@ -15,6 +15,27 @@ namespace ublox::ubx
         }
     }
 
+    void Database::DatabaseNode::finish_messages() const
+    {
+        for(auto message_parser : message_parsers)
+        {
+            message_parser->finish_message();
+        }
+    }
+
+    void Database::DatabaseNode::pass_byte(uint8_t byte) const
+    {
+        for(auto message_parser : message_parsers)
+        {
+            message_parser->read_byte(byte);
+        }
+    }
+
+    void Database::DatabaseNode::add_message_parser(std::shared_ptr<MessageParser> message_parser)
+    {
+        message_parsers.push_back(message_parser);
+    }
+
     bool Database::has(uint8_t message_class, uint8_t message_id)
     {
         return UBX_CLASS_Map.count(message_class) == 1

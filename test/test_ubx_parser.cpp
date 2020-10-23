@@ -199,6 +199,7 @@ class ParserGotMessageClassIDRXM_SFRBX: public ::testing::Test
             parser.read_byte(ublox::ubx::kCLASS_RXM);
             parser.read_byte(ublox::ubx::kRXM_SFRBX);
         }
+
 };
 
 TEST_F(ParserGotMessageClassIDRXM_SFRBX, SendMessageLengthCorrect_ParserStateGotMessageLength)
@@ -230,3 +231,4 @@ TEST_F(ParserGotMessageClassIDRXM_SFRBX, ChecksumA)
 {
     ASSERT_EQ(parser.get_checksum_a(), uint8_t(ublox::ubx::kCLASS_RXM+ublox::ubx::kRXM_SFRBX));
 }
+

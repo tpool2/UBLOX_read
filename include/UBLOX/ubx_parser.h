@@ -4,6 +4,7 @@
 #include <memory>
 #include "UBLOX/ubx_defs.h"
 #include "UBLOX/ubx_database.h"
+#include "UBLOX/ubx_listener.h"
 
 using std::uint8_t;
 
@@ -49,6 +50,8 @@ namespace ublox::ubx
 
             bool read_byte(const uint8_t&);
             uint8_t get_checksum_a() const;
+            uint8_t get_checksum_b() const;
+            void add_message_parser(const std::shared_ptr<MessageParser>);
 
             enum
             {
