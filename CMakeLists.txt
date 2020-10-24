@@ -4,8 +4,7 @@ project(ublox_read)
 
 add_library(UBX 
     src/UBLOX/ubx_parser.cpp 
-    src/UBLOX/ubx_database.cpp
-    src/UBLOX/ubx_functions.cpp)
+    src/UBLOX/ubx_database.cpp)
 target_include_directories(UBX PUBLIC include)
 
 option(BUILD_TESTS "Build Tests" ON)
@@ -46,8 +45,7 @@ if(BUILD_TESTS)
 
     add_executable(ublox_test 
         test/test_ubx_parser.cpp 
-        test/test_ubx_database.cpp
-        test/test_ubx_functions.cpp)
+        test/test_ubx_database.cpp)
     target_link_libraries(ublox_test PUBLIC gtest gtest_main UBX)
     
 endif(BUILD_TESTS)

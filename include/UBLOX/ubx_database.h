@@ -2,8 +2,8 @@
 #define UBX_DATABASE_H
 #include <cstdint>
 #include <map>
+#include <memory>
 #include "UBLOX/ubx_defs.h"
-#include "UBLOX/ubx_functions.h"
 
 namespace ublox::ubx
 {
