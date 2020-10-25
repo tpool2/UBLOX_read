@@ -15,6 +15,11 @@ namespace ublox::ubx
         }
     }
 
+    bool Database::has(uint8_t message_class)
+    {
+        return UBX_CLASS_Map.count(message_class) == 1;
+    }
+
     bool Database::has(uint8_t message_class, uint8_t message_id)
     {
         return UBX_CLASS_Map.count(message_class) == 1

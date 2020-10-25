@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "UBLOX/ubx_parser.h"
 
+using namespace ublox::ubx;
+
 class ParserResetStateTestFixture: public ::testing::Test
 {
     protected:
@@ -19,13 +21,13 @@ TEST(TestParserStates, StartByte2_0x62)
 
 TEST_F(ParserResetStateTestFixture, SendStartByte1_GetParserState_GotStartByte1)
 {
-    parser.read_byte(ublox::ubx::kStartByte_1);
+    ASSERT_TRUE(parser.read_byte(ublox::ubx::kStartByte_1));
     ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotStartByte_1);
 }
 
 TEST_F(ParserResetStateTestFixture, Reset_Send0x63_GetParserStateReset)
 {
-    parser.read_byte(0x63);
+    ASSERT_FALSE(parser.read_byte(0x63));
     ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kReset);
 }
 
@@ -41,17 +43,17 @@ class ParserGotStartByte1: public ::testing::Test
 
 TEST_F(ParserGotStartByte1, SendStartByte2_GetParserState_GotStartByte2)
 {
-    parser.read_byte(ublox::ubx::kStartByte_2);
+    ASSERT_TRUE(parser.read_byte(ublox::ubx::kStartByte_2));
     ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotStartByte_2);
 }
 
 TEST_F(ParserGotStartByte1, Send0x63_GetParserState_Reset)
 {
-    parser.read_byte(0x63);
+    ASSERT_FALSE(parser.read_byte(0x63));
     ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kReset);
 }
 
-class ParserGotStartByte2: public ::testing::Test
+class ParserGotStartByte2: public ::testing::TestWithParam<uint8_t>
 {
     protected:
         ublox::ubx::Parser parser;
@@ -62,47 +64,32 @@ class ParserGotStartByte2: public ::testing::Test
         }
 };
 
-TEST_F(ParserGotStartByte2, SendACKMessageClass_GetStateGotMessageClass)
+class ParserCorrectMessageClass: public ParserGotStartByte2 {};
+TEST_P(ParserCorrectMessageClass, SendMessageClasses)
 {
-    parser.read_byte(ublox::ubx::kCLASS_ACK);
+    ASSERT_TRUE(parser.read_byte(GetParam()));
     ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotMessageClass);
 }
+INSTANTIATE_TEST_SUITE_P(MessageClasses, ParserCorrectMessageClass,
+    testing::Values
+        (
+        kCLASS_ACK, kCLASS_INF, kCLASS_INF, kCLASS_LOG, kCLASS_MGA,
+        kCLASS_MON, kCLASS_NAV, kCLASS_RXM, kCLASS_SEC, kCLASS_TIM, kCLASS_UPD
+        )
+);
 
-TEST_F(ParserGotStartByte2, SendCFGMessageClass_GetStateGotMessageClass)
+class ParserIncorrectMessageClass: public ParserGotStartByte2 {};
+TEST_P(ParserIncorrectMessageClass, SendMessageClasses)
 {
-    parser.read_byte(ublox::ubx::kCLASS_CFG);
-    ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotMessageClass);
+    ASSERT_FALSE(parser.read_byte(GetParam()));
+    ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kReset);
 }
-
-TEST_F(ParserGotStartByte2, SendINFMessageClass_GetStateGotMessageClass)
-{
-    parser.read_byte(ublox::ubx::kCLASS_INF);
-    ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotMessageClass);
-}
-
-TEST_F(ParserGotStartByte2, SendLOGMessageClass_GetStateGotMessageCLASS_)
-{
-    parser.read_byte(ublox::ubx::kCLASS_LOG);
-    ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotMessageClass);
-}
-
-TEST_F(ParserGotStartByte2, SendMGAMessageCLASS__GetStateGotMessageClass)
-{
-    parser.read_byte(ublox::ubx::kCLASS_MGA);
-    ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotMessageClass);
-}
-
-TEST_F(ParserGotStartByte2, SendMONMessageClass_GetStateGotMessageClass)
-{
-    parser.read_byte(ublox::ubx::kCLASS_MON);
-    ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotMessageClass);
-}
-
-TEST_F(ParserGotStartByte2, SendNAVMessageClass_GetStateGotMessageClass)
-{
-    parser.read_byte(ublox::ubx::kCLASS_NAV);
-    ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotMessageClass);
-}
+INSTANTIATE_TEST_SUITE_P(MessageClasses, ParserIncorrectMessageClass,
+    testing::Values
+        (
+        0x22, 0x03, 0x0e, 0x10
+        )
+);
 
 class ParserGotMessageClass: public ::testing::Test
 {
@@ -187,4 +174,3 @@ TEST_F(ParserGotMessageClassIDNAV_ORB, SendWrongMessageLength_ParserStateReset)
     parser.read_byte(0);
     ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kReset);
 }
-

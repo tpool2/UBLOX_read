@@ -7,13 +7,12 @@ namespace ublox::ubx
 {
     void Parser::get_start_byte_1()
     {
-        if(current_byte == kStartByte_1)
-            ++parser_state;
+        valid = advance_or_reset(current_byte == kStartByte_1);
     }
 
     void Parser::get_start_byte_2()
     {
-        advance_or_reset(current_byte == kStartByte_2);
+        valid = advance_or_reset(current_byte == kStartByte_2);
     }
 
     void Parser::get_length_2()
@@ -21,21 +20,28 @@ namespace ublox::ubx
         message_length += (current_byte << kByteSize);
         advance_or_reset(database->get_node(message_class, message_id)->length_matches(message_length));
     }
+
+    void Parser::check_message_class()
+    {
+        valid = advance_or_reset(database->has(message_class));
+    }
     
     void Parser::check_message_class_id()
     {
-        advance_or_reset(database->has(message_class, message_id));
+        valid = advance_or_reset(database->has(message_class, message_id));
     }
 
-    void Parser::advance_or_reset(bool advance)
+    bool Parser::advance_or_reset(bool advance)
     {
         if(advance)
         {
             this->advance();
+            return true;
         }
         else
         {
             reset();
+            return false;
         }
     }
 
@@ -57,7 +63,7 @@ namespace ublox::ubx
         return parser_state;
     }
 
-    void Parser::read_byte(const uint8_t& byte)
+    bool Parser::read_byte(const uint8_t& byte)
     {
         current_byte = byte;
         switch(parser_state)
@@ -72,7 +78,7 @@ namespace ublox::ubx
 
             case kGotStartByte_2:
                 message_class = current_byte;
-                ++parser_state;
+                check_message_class();
                 break;
 
             case kGotMessageClass:
@@ -88,7 +94,7 @@ namespace ublox::ubx
             case kGotLength_1:
                 get_length_2();
                 break;
-
         }
+        return valid;
     }
 }
