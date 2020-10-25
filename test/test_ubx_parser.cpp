@@ -105,19 +105,19 @@ class ParserGotMessageClass: public ::testing::Test
 
 TEST_F(ParserGotMessageClass, SendMessageTypeACK_ACK)
 {
-    parser.read_byte(ublox::ubx::kACK_ACK);
+    ASSERT_TRUE(parser.read_byte(ublox::ubx::kACK_ACK));
     ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotMessageID);
 }
 
 TEST_F(ParserGotMessageClass, SendMessageTypeACK_NACK)
 {
-    parser.read_byte(ublox::ubx::kACK_NACK);
+    ASSERT_TRUE(parser.read_byte(ublox::ubx::kACK_NACK));
     ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotMessageID);
 }
 
 TEST_F(ParserGotMessageClass, SendMessageTypeNAV_ORB)
 {
-    parser.read_byte(ublox::ubx::kNAV_ORB);
+    ASSERT_FALSE(parser.read_byte(ublox::ubx::kNAV_ORB));
     ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kReset);
 }
 
@@ -136,15 +136,15 @@ class ParserGotMessageClassIDACK_ACK: public ::testing::Test
 
 TEST_F(ParserGotMessageClassIDACK_ACK, SendCorrectMessageLength_ParserStateGotLength_2)
 {
-    parser.read_byte(0x02);
-    parser.read_byte(0x00);
+    ASSERT_TRUE(parser.read_byte(0x02));
+    ASSERT_TRUE(parser.read_byte(0x00));
     ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotLength_2);
 }
 
 TEST_F(ParserGotMessageClassIDACK_ACK, SendIncorrectMessageLength_ParserStateReset)
 {
-    parser.read_byte(0x02);
-    parser.read_byte(0x02);
+    ASSERT_TRUE(parser.read_byte(0x02));
+    ASSERT_TRUE(parser.read_byte(0x02));
     ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kReset);
 }
 
