@@ -100,6 +100,7 @@ namespace ublox::ubx
                 }
             }
         }
+        reset();
     }
 
     bool Parser::read_byte(const uint8_t& byte)
