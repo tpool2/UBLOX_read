@@ -76,14 +76,10 @@ namespace ublox::ubx
 
     void Parser::calculate_checksums()
     {
-        std::cout<<"Message Length: "<<payload_length<<std::endl;
         for(int start = 2; start < 6+payload_length; ++start)
         {
-            std::cout<<int(buffer[start])<<" ";
             checksum_a += buffer[start];
-            std::cout<<"Checksum_a: "<<int(checksum_a)<<" ";
             checksum_b += checksum_a;
-            std::cout<<"Checksum b: "<<int(checksum_b)<<std::endl;
         }
     }
 
@@ -145,12 +141,10 @@ namespace ublox::ubx
                 break;
 
             case kGotPayload:
-                std::cout<<int(checksum_a)<<" "<<int(current_byte)<<std::endl;
                 valid = advance_or_reset(checksum_a==current_byte);
                 break;
             
             case kGotChecksumA:
-                std::cout<<int(checksum_b)<<" "<<int(current_byte)<<std::endl;
                 valid = advance_or_reset(checksum_b==current_byte);
                 finish_message();
                 break;

@@ -201,11 +201,6 @@ class ParserCallbacks: public ::testing::Test
         {
             parsed_ack_ack = true;
         }
-
-        void ack_nack_cb(const uint8_t *payload, size_t length)
-        {
-            parsed_ack_nack = true;
-        }
 };
 
 TEST_F(ParserCallbacks, ACK_ACK_Checksum_A)
@@ -241,6 +236,3 @@ TEST_F(ParserCallbacks, ACK_ACK_CB)
     parser.read_byte(195);
     ASSERT_TRUE(parsed_ack_ack);
 }
-
-
-
