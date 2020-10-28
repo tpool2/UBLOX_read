@@ -7,18 +7,18 @@ namespace ublox::ubx
 {
     void Parser::get_start_byte_1()
     {
-        valid = advance_or_reset(current_byte == kStartByte_1);
+        valid = advance_or_reset(current_byte == kSTART_BYTE_1);
     }
 
     void Parser::get_start_byte_2()
     {
-        valid = advance_or_reset(current_byte == kStartByte_2);
+        valid = advance_or_reset(current_byte == kSTART_BYTE_2);
     }
 
     void Parser::get_length_2()
     {
-        message_length += (current_byte << kByteSize);
-        advance_or_reset(database->get_node(message_class, message_id)->length_matches(message_length));
+        payload_length += (current_byte << kByteSize);
+        advance_or_reset(database->get_node(message_class, message_id)->length_matches(payload_length));
     }
 
     void Parser::check_message_class()
@@ -53,9 +53,10 @@ namespace ublox::ubx
     void Parser::reset()
     {
         parser_state = kReset;
-        message_class = 0x00;
-        message_id = 0x00;
-        message_length = 0x0000;
+        checksum_a = 0;
+        checksum_b = 0;
+        message_length = 0;
+        memset(buffer, 0, BUFFER_SIZE);
     }
 
     int Parser::get_parser_state() const
@@ -63,9 +64,53 @@ namespace ublox::ubx
         return parser_state;
     }
 
+    void Parser::receive_payload()
+    {
+        if(message_length == payload_length + 6)
+        {
+            advance();
+            calculate_checksums();
+        }
+        valid = true;
+    }
+
+    void Parser::calculate_checksums()
+    {
+        std::cout<<"Message Length: "<<payload_length<<std::endl;
+        for(int start = 2; start < 6+payload_length; ++start)
+        {
+            std::cout<<int(buffer[start])<<" ";
+            checksum_a += buffer[start];
+            std::cout<<"Checksum_a: "<<int(checksum_a)<<" ";
+            checksum_b += checksum_a;
+            std::cout<<"Checksum b: "<<int(checksum_b)<<std::endl;
+        }
+    }
+
+    void Parser::register_callback(uint8_t message_class, uint8_t message_id, std::function<void(const uint8_t* payload, size_t size)> callback_function)
+    {
+        callbacks.push_back(Callback(message_class, message_id, callback_function));
+    }
+
+    void Parser::finish_message()
+    {
+        if(parser_state == kGotChecksumB)
+        {
+            for(auto callback : callbacks)
+            {
+                if(callback.matches(message_class, message_id))
+                {
+                    callback.callback_function(payload.buffer, message_length);
+                }
+            }
+        }
+    }
+
     bool Parser::read_byte(const uint8_t& byte)
     {
         current_byte = byte;
+        buffer[message_length] = current_byte;
+        ++message_length;
         switch(parser_state)
         {
             case kReset:
@@ -87,12 +132,27 @@ namespace ublox::ubx
                 break;
 
             case kGotMessageID:
-                ++parser_state;
-                message_length = current_byte;
+                advance();
+                payload_length = current_byte;
                 break;
 
             case kGotLength_1:
                 get_length_2();
+                break;
+
+            case kGotLength_2:
+                receive_payload();
+                break;
+
+            case kGotPayload:
+                std::cout<<int(checksum_a)<<" "<<int(current_byte)<<std::endl;
+                valid = advance_or_reset(checksum_a==current_byte);
+                break;
+            
+            case kGotChecksumA:
+                std::cout<<int(checksum_b)<<" "<<int(current_byte)<<std::endl;
+                valid = advance_or_reset(checksum_b==current_byte);
+                finish_message();
                 break;
         }
         return valid;
