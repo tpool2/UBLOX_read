@@ -17,18 +17,18 @@ namespace ublox::ubx
 
     void Parser::get_length_2()
     {
-        payload_length += (current_byte << kByteSize);
-        advance_or_reset(database->get_node(message_class, message_id)->length_matches(payload_length));
+        ubx_message.payload_length += (current_byte << kByteSize);
+        advance_or_reset(database->get_node(ubx_message.message_class, ubx_message.message_id)->length_matches(ubx_message.payload_length));
     }
 
     void Parser::check_message_class()
     {
-        valid = advance_or_reset(database->has(message_class));
+        valid = advance_or_reset(database->has(ubx_message.message_class));
     }
     
     void Parser::check_message_class_id()
     {
-        valid = advance_or_reset(database->has(message_class, message_id));
+        valid = advance_or_reset(database->has(ubx_message.message_class, ubx_message.message_id));
     }
 
     bool Parser::advance_or_reset(bool advance)
@@ -56,7 +56,7 @@ namespace ublox::ubx
         checksum_a = 0;
         checksum_b = 0;
         message_length = 0;
-        memset(buffer, 0, BUFFER_SIZE);
+        memset(ubx_message.buffer, 0, BUFFER_SIZE+8);
     }
 
     int Parser::get_parser_state() const
@@ -66,7 +66,7 @@ namespace ublox::ubx
 
     void Parser::receive_payload()
     {
-        if(message_length == payload_length + 6)
+        if(message_length == ubx_message.payload_length + 6)
         {
             advance();
             calculate_checksums();
@@ -76,14 +76,14 @@ namespace ublox::ubx
 
     void Parser::calculate_checksums()
     {
-        for(int start = 2; start < 6+payload_length; ++start)
+        for(int start = 2; start < 6+ubx_message.payload_length; ++start)
         {
-            checksum_a += buffer[start];
+            checksum_a += ubx_message.buffer[start];
             checksum_b += checksum_a;
         }
     }
 
-    void Parser::register_callback(uint8_t message_class, uint8_t message_id, std::function<void(const uint8_t* payload, size_t size)> callback_function)
+    void Parser::register_callback(uint8_t message_class, uint8_t message_id, std::function<void(const UBX_message_t&)> callback_function)
     {
         callbacks.push_back(Callback(message_class, message_id, callback_function));
     }
@@ -94,9 +94,9 @@ namespace ublox::ubx
         {
             for(auto callback : callbacks)
             {
-                if(callback.matches(message_class, message_id))
+                if(callback.matches(ubx_message.message_class, ubx_message.message_id))
                 {
-                    callback.callback_function(payload.buffer, message_length);
+                    callback.callback_function(ubx_message);
                 }
             }
         }
@@ -106,7 +106,7 @@ namespace ublox::ubx
     bool Parser::read_byte(const uint8_t& byte)
     {
         current_byte = byte;
-        buffer[message_length] = current_byte;
+        ubx_message.buffer[message_length] = current_byte;
         ++message_length;
         switch(parser_state)
         {
@@ -119,18 +119,18 @@ namespace ublox::ubx
                 break;
 
             case kGotStartByte_2:
-                message_class = current_byte;
+                ubx_message.message_class = current_byte;
                 check_message_class();
                 break;
 
             case kGotMessageClass:
-                message_id = current_byte;
+                ubx_message.message_id = current_byte;
                 check_message_class_id();
                 break;
 
             case kGotMessageID:
                 advance();
-                payload_length = current_byte;
+                ubx_message.payload_length = current_byte;
                 break;
 
             case kGotLength_1:

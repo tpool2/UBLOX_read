@@ -183,13 +183,13 @@ class ParserCallbacks: public ::testing::Test
         bool parsed_ack_nack = false;
         void SetUp() override
         {
-            parser.register_callback(kCLASS_ACK, kACK_NACK, [this](const uint8_t* payload, size_t length)
+            parser.register_callback(kCLASS_ACK, kACK_NACK, [this](const UBX_message_t& ubx_message)
             {
-                this->ack_nack_cb(payload, length);
+                this->ack_nack_cb(ubx_message);
             });
-            parser.register_callback(kCLASS_ACK, kACK_ACK, [this](const uint8_t* payload, size_t length)
+            parser.register_callback(kCLASS_ACK, kACK_ACK, [this](const UBX_message_t& ubx_message)
             {
-                this->ack_ack_cb(payload, length);
+                this->ack_ack_cb(ubx_message);
             });
             parser.read_byte(kSTART_BYTE_1);
             parser.read_byte(kSTART_BYTE_2);
@@ -201,12 +201,12 @@ class ParserCallbacks: public ::testing::Test
             parser.read_byte(kCFG_VALDEL);
         }
 
-        void ack_ack_cb(const uint8_t *payload, size_t length)
+        void ack_ack_cb(const UBX_message_t& ubx_message)
         {
             parsed_ack_ack = true;
         }
 
-        void ack_nack_cb(const uint8_t *payload, size_t length)
+        void ack_nack_cb(const UBX_message_t& ubx_message)
         {
             parsed_ack_nack = true;
         }
@@ -258,4 +258,20 @@ TEST_F(ParserCallbacks, ACK_ACK_CB)
     ASSERT_TRUE(parser.read_byte(190));
     ASSERT_EQ(parser.get_parser_state(), Parser::kReset);
     ASSERT_TRUE(parsed_ack_nack);
+}
+
+TEST_F(ParserCallbacks, ACK_ACK_INFORMATION)
+{
+    parser.register_callback(kCLASS_ACK, kACK_ACK,[](const UBX_message_t message)
+    {
+        ASSERT_EQ(message.start_byte_1, kSTART_BYTE_1);
+        ASSERT_EQ(message.start_byte_2, kSTART_BYTE_2);
+        ASSERT_EQ(message.message_class, kCLASS_ACK);
+        ASSERT_EQ(message.message_id, kACK_ACK);
+        ASSERT_EQ(message.payload_length, 2);
+        ASSERT_EQ(message.payload.ACK_ACK.clsID, kCLASS_CFG);
+        ASSERT_EQ(message.payload.ACK_ACK.msgID, kCFG_VALDEL);
+    });
+    parser.read_byte(154);
+    parser.read_byte(195);
 }

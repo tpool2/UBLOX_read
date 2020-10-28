@@ -19,7 +19,7 @@ namespace ublox::ubx
             class Callback
             {
                 public:
-                    Callback(uint8_t message_class, uint8_t message_id, std::function<void(const uint8_t* payload, size_t size)> function)
+                    Callback(uint8_t message_class, uint8_t message_id, std::function<void(const UBX_message_t&)> function)
                     {
                         this->message_class = message_class;
                         this->message_id = message_id;
@@ -31,22 +31,10 @@ namespace ublox::ubx
                     }
                     uint8_t message_class = 0x00;
                     uint8_t message_id = 0x00;
-                    std::function<void(const uint8_t* payload, size_t size)> callback_function;
+                    std::function<void(const UBX_message_t&)> callback_function;
             };
 
-            union
-            {
-                uint8_t buffer[ublox::ubx::BUFFER_SIZE];
-                struct
-                {
-                    uint8_t start_byte_1    : 8;
-                    uint8_t start_byte_2    : 8;
-                    uint8_t message_class   : 8;
-                    uint8_t message_id      : 8;
-                    uint16_t payload_length : 16;
-                    UBX_message_t payload;
-                };
-            };
+            UBX_message_t ubx_message;
             
 
             std::vector<Callback> callbacks;
@@ -81,7 +69,7 @@ namespace ublox::ubx
 
             };
             int get_parser_state() const;
-            void register_callback(uint8_t message_id, uint8_t message_class, std::function<void(const uint8_t *payload, size_t length)>);
+            void register_callback(uint8_t message_id, uint8_t message_class, std::function<void(const UBX_message_t&)>);
             bool read_byte(const uint8_t& byte);
 
             enum

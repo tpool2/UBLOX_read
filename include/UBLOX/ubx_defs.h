@@ -13,7 +13,7 @@ using std::uint32_t;
 namespace ublox::ubx
 {
 static constexpr size_t BUFFER_SIZE = 1024;
-
+static constexpr size_t UBX_MESSAGE_BUFFER_SIZE = BUFFER_SIZE+8;
 enum {
     FIX_TYPE_NO_FIX = 0x00,
     FIX_TYPE_DEAD_RECKONING = 0x01,
@@ -1138,6 +1138,20 @@ typedef union {
     RXM_SFRBX_t RXM_SFRBX;
     NAV_SVIN_t NAV_SVIN;
     MON_VER_t MON_VER;
+} UBX_payload_t;
+
+typedef union
+{
+    uint8_t buffer[UBX_MESSAGE_BUFFER_SIZE];
+    struct
+    {
+        uint8_t start_byte_1    : 8;
+        uint8_t start_byte_2    : 8;
+        uint8_t message_class   : 8;
+        uint8_t message_id      : 8;
+        uint16_t payload_length : 16;
+        UBX_payload_t payload;
+    };
 } UBX_message_t;
 }
 #endif
