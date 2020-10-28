@@ -146,6 +146,7 @@ namespace ublox::ubx
                 break;
             
             case kGotChecksumA:
+            std::cout<<int(checksum_b)<<" "<<int(current_byte)<<std::endl;
                 valid = advance_or_reset(checksum_b==current_byte);
                 finish_message();
                 break;

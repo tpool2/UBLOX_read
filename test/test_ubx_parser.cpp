@@ -183,6 +183,10 @@ class ParserCallbacks: public ::testing::Test
         bool parsed_ack_nack = false;
         void SetUp() override
         {
+            parser.register_callback(kCLASS_ACK, kACK_NACK, [this](const uint8_t* payload, size_t length)
+            {
+                this->ack_nack_cb(payload, length);
+            });
             parser.register_callback(kCLASS_ACK, kACK_ACK, [this](const uint8_t* payload, size_t length)
             {
                 this->ack_ack_cb(payload, length);
@@ -200,6 +204,11 @@ class ParserCallbacks: public ::testing::Test
         void ack_ack_cb(const uint8_t *payload, size_t length)
         {
             parsed_ack_ack = true;
+        }
+
+        void ack_nack_cb(const uint8_t *payload, size_t length)
+        {
+            parsed_ack_nack = true;
         }
 };
 
@@ -219,7 +228,7 @@ TEST_F(ParserCallbacks, ACK_ACK_Checksum_B)
 {
     parser.read_byte(154);
     ASSERT_TRUE(parser.read_byte(195));
-    ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kGotChecksumB);
+    ASSERT_EQ(parser.get_parser_state(), ublox::ubx::Parser::kReset);
 }
 
 TEST_F(ParserCallbacks, ACK_ACK_Checksum_B_Wrong)
@@ -235,4 +244,18 @@ TEST_F(ParserCallbacks, ACK_ACK_CB)
     parser.read_byte(154);
     parser.read_byte(195);
     ASSERT_TRUE(parsed_ack_ack);
+    ASSERT_FALSE(parsed_ack_nack);
+
+    parser.read_byte(kSTART_BYTE_1);
+    parser.read_byte(kSTART_BYTE_2);
+    parser.read_byte(kCLASS_ACK);
+    parser.read_byte(kACK_NACK);
+    parser.read_byte(0x02);
+    parser.read_byte(0x00);
+    parser.read_byte(kCLASS_CFG);
+    parser.read_byte(kCFG_VALDEL);
+    ASSERT_TRUE(parser.read_byte(153));
+    ASSERT_TRUE(parser.read_byte(190));
+    ASSERT_EQ(parser.get_parser_state(), Parser::kReset);
+    ASSERT_TRUE(parsed_ack_nack);
 }
