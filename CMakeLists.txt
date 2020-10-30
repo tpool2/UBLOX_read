@@ -7,6 +7,10 @@ add_library(UBX
     src/UBLOX/ubx_database.cpp)
 target_include_directories(UBX PUBLIC include)
 
+add_library(GNSS
+    src/GNSS/nav_parser.cpp)
+target_include_directories(GNSS PUBLIC include)
+
 option(BUILD_TESTS "Build Tests" ON)
 if(BUILD_TESTS)
     if(NOT TARGET gtest_main)
@@ -48,6 +52,10 @@ if(BUILD_TESTS)
         test/test_ubx_database.cpp)
     target_link_libraries(ublox_test PUBLIC gtest gtest_main UBX)
     
+    add_executable(nav_test
+        test/test_nav_parser.cpp)
+    target_link_libraries(nav_test PUBLIC gtest gtest_main GNSS)
+
 endif(BUILD_TESTS)
 
 option(BUILD_ROS "Build ROS Nodes, Messages, Services" ON)
