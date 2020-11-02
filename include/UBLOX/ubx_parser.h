@@ -31,21 +31,21 @@ namespace ublox::ubx
                     }
                     uint8_t message_class = 0x00;
                     uint8_t message_id = 0x00;
-                    std::function<void(const UBX_message_t&)> callback_function;
+                    ubx_callback_function callback_function;
             };
 
             UBX_message_t ubx_message;
             
-
-            std::vector<Callback> callbacks;
             int parser_state = 0;
             int kByteSize = 8;
+            int message_length = 0;
+            bool valid = false;
             uint8_t checksum_a = 0;
             uint8_t checksum_b = 0;
-            bool valid = false;
             uint8_t current_byte = 0;
-            int message_length = 0;
             std::unique_ptr<DatabaseInterface> database;
+            std::vector<Callback> callbacks;
+
             void get_start_byte_1();
             void get_start_byte_2();
             void get_length_2();

@@ -5,6 +5,7 @@
 #include <string>
 #include <tuple>
 #include <vector>
+#include <functional>
 
 using std::uint8_t;
 using std::uint16_t;
@@ -1153,5 +1154,7 @@ typedef union
         UBX_payload_t payload;
     };
 } UBX_message_t;
+
+typedef std::function<void(const UBX_message_t&)> ubx_callback_function;
 }
 #endif
