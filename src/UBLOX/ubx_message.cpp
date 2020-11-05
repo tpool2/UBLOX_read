@@ -2,7 +2,7 @@
 
 namespace ublox::ubx
 {
-    UBX_message_t create_message(uint8_t msg_class, uint8_t id, uint16_t payload_length, const uint16_t* payload)
+    UBX_message_t create_message(uint8_t msg_class, uint8_t id, uint16_t payload_length, const uint8_t* payload)
     {
         UBX_message_t message;
         message.start_byte_1 = kSTART_BYTE_1;

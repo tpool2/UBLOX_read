@@ -33,6 +33,6 @@ namespace ublox::ubx
 
     typedef std::function<void(const UBX_message_t&)> ubx_callback_function;
     
-    UBX_message_t create_message(uint8_t msg_class, uint8_t id, uint16_t payload_length, const uint16_t* payload);
+    UBX_message_t create_message(uint8_t msg_class, uint8_t id, uint16_t payload_length, const uint8_t* payload);
 }
 #endif

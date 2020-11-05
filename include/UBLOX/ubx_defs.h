@@ -424,14 +424,14 @@ typedef union {
         typedef union {
             uint8_t buffer[2];
             uint16_t position;
-        }__attribute__((packed)) position_t;
+        } position_t;
 
         typedef struct {
             uint8_t version; //0 poll request, 1 poll (receiver to return config data key and value pairs)
             uint8_t layer;
             uint16_t position;
             CFG_KEY_ID_t cfgDataKey;
-        }__attribute__((packed)) request_t;
+        } request_t;
 
         typedef struct {
             uint8_t version; //0 poll request, 1 poll (receiver to return config data key and value pairs)
