@@ -18,5 +18,12 @@ TEST(CreateUBXMessage, ACK_ACK_Checksum_A)
 {
     uint16_t payload[2] = {kCLASS_CFG,kCFG_VALDEL};
     UBX_message_t message = create_message(kCLASS_ACK, kACK_ACK, 2, payload);
-    ASSERT_EQ(message.payload.buffer[3], 154);
+    ASSERT_EQ(message.get_checksum_a(), 154);
+}
+
+TEST(CreateUBXMessage, ACK_ACK_Checksum_B)
+{
+    uint16_t payload[2] = {kCLASS_CFG,kCFG_VALDEL};
+    UBX_message_t message = create_message(kCLASS_ACK, kACK_ACK, 2, payload);
+    ASSERT_EQ(message.get_checksum_b(), 195);
 }

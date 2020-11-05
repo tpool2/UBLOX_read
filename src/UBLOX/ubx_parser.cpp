@@ -53,8 +53,6 @@ namespace ublox::ubx
     void Parser::reset()
     {
         parser_state = kReset;
-        checksum_a = 0;
-        checksum_b = 0;
         message_length = 0;
         memset(ubx_message.buffer, 0, BUFFER_SIZE+8);
     }
@@ -69,18 +67,9 @@ namespace ublox::ubx
         if(message_length == ubx_message.payload_length + 6)
         {
             advance();
-            calculate_checksums();
+            ubx_message.update_checksums();
         }
         valid = true;
-    }
-
-    void Parser::calculate_checksums()
-    {
-        for(int start = 2; start < 6+ubx_message.payload_length; ++start)
-        {
-            checksum_a += ubx_message.buffer[start];
-            checksum_b += checksum_a;
-        }
     }
 
     void Parser::register_callback(uint8_t message_class, uint8_t message_id, std::function<void(const UBX_message_t&)> callback_function)
@@ -106,7 +95,10 @@ namespace ublox::ubx
     bool Parser::read_byte(const uint8_t& byte)
     {
         current_byte = byte;
-        ubx_message.buffer[message_length] = current_byte;
+        if(parser_state < kGotPayload)
+        {
+            ubx_message.buffer[message_length] = current_byte;
+        }
         ++message_length;
         switch(parser_state)
         {
@@ -142,12 +134,13 @@ namespace ublox::ubx
                 break;
 
             case kGotPayload:
-                valid = advance_or_reset(checksum_a==current_byte);
+                std::cout<<int(ubx_message.get_checksum_a())<<std::endl;
+                valid = advance_or_reset(ubx_message.get_checksum_a()==current_byte);
                 break;
             
             case kGotChecksumA:
-            std::cout<<int(checksum_b)<<" "<<int(current_byte)<<std::endl;
-                valid = advance_or_reset(checksum_b==current_byte);
+                std::cout<<int(ubx_message.get_checksum_b())<<std::endl;
+                valid = advance_or_reset(ubx_message.get_checksum_b()==current_byte);
                 finish_message();
                 break;
         }

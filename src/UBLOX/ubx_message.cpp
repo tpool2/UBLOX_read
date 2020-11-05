@@ -1,4 +1,5 @@
 #include "UBLOX/ubx_message.h"
+#include <iostream>
 
 namespace ublox::ubx
 {
@@ -14,6 +15,28 @@ namespace ublox::ubx
         {
             message.payload.buffer[index] = payload[index];
         }
+        message.update_checksums();
         return message;
+    }
+
+    void UBX_message_t::update_checksums()
+    {
+        std::cout<<"Payload Length: "<<payload_length<<std::endl;
+        for(int start = 2; start < 6+payload_length; ++start)
+        {
+            payload.buffer[payload_length] += buffer[start];
+            payload.buffer[payload_length+1] += payload.buffer[payload_length];
+            std::cout<<(int)payload.buffer[payload_length]<<" "<<int(payload.buffer[payload_length+1])<<std::endl;
+        }
+    }
+
+    uint8_t UBX_message_t::get_checksum_a() const
+    {
+        return payload.buffer[payload_length];
+    }
+
+    uint8_t UBX_message_t::get_checksum_b() const
+    {
+        return payload.buffer[payload_length+1];
     }
 }

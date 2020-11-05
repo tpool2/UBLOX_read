@@ -41,8 +41,6 @@ namespace ublox::ubx
             int kByteSize = 8;
             int message_length = 0;
             bool valid = false;
-            uint8_t checksum_a = 0;
-            uint8_t checksum_b = 0;
             uint8_t current_byte = 0;
             std::unique_ptr<DatabaseInterface> database;
             std::vector<Callback> callbacks;
@@ -56,7 +54,6 @@ namespace ublox::ubx
             void check_message_class();
             void check_message_class_id();
             void receive_payload();
-            void calculate_checksums();
             void finish_message();
         
         public:
