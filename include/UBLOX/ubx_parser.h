@@ -8,6 +8,7 @@
 #include <functional>
 #include "UBLOX/ubx_defs.h"
 #include "UBLOX/ubx_database.h"
+#include "UBLOX/ubx_message.h"
 
 using std::uint8_t;
 

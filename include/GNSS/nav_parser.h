@@ -2,6 +2,7 @@
 #define NAV_PARSER
 #include <bitset>
 #include "UBLOX/ubx_defs.h"
+#include "UBLOX/ubx_message.h"
 #include "GNSS/gps_defs.h"
 namespace gnss
 {

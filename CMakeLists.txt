@@ -4,7 +4,8 @@ project(ublox_read)
 
 add_library(UBX 
     src/UBLOX/ubx_parser.cpp 
-    src/UBLOX/ubx_database.cpp)
+    src/UBLOX/ubx_database.cpp
+    src/UBLOX/ubx_message.cpp)
 target_include_directories(UBX PUBLIC include)
 
 add_library(GNSS
@@ -49,7 +50,8 @@ if(BUILD_TESTS)
 
     add_executable(ublox_test 
         test/test_ubx_parser.cpp 
-        test/test_ubx_database.cpp)
+        test/test_ubx_database.cpp
+        test/test_ubx_message.cpp)
     target_link_libraries(ublox_test PUBLIC gtest gtest_main UBX)
     
     add_executable(nav_test

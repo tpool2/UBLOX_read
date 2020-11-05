@@ -30,8 +30,3 @@ TEST_F(TestGNSS_Word, Check_Parity)
 {
     ASSERT_TRUE(gnss::check_parity(bits, 0, 0));
 }
-
-TEST_F(TestGNSS_Word, Check_Parity)
-{
-    
-}
