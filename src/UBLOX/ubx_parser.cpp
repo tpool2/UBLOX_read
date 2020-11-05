@@ -134,12 +134,10 @@ namespace ublox::ubx
                 break;
 
             case kGotPayload:
-                std::cout<<int(ubx_message.get_checksum_a())<<std::endl;
                 valid = advance_or_reset(ubx_message.get_checksum_a()==current_byte);
                 break;
             
             case kGotChecksumA:
-                std::cout<<int(ubx_message.get_checksum_b())<<std::endl;
                 valid = advance_or_reset(ubx_message.get_checksum_b()==current_byte);
                 finish_message();
                 break;
