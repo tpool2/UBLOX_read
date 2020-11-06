@@ -12,6 +12,16 @@ add_library(GNSS
     src/GNSS/nav_parser.cpp)
 target_include_directories(GNSS PUBLIC include)
 
+include(ExternalProject)
+ExternalProject_Add(async_comm
+    PREFIX          lib/
+    GIT_REPOSITORY  https://github.com/dpkoch/async_comm.git
+    INSTALL_COMMAND cmake -E echo "Skipping install step"
+    )
+
+add_library(UBLOX
+    src/UBLOX/configure.cpp)
+
 option(BUILD_TESTS "Build Tests" ON)
 if(BUILD_TESTS)
     if(NOT TARGET gtest_main)
