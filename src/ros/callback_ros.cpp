@@ -432,10 +432,19 @@ void UBLOX_ROS::rxmMeasxCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 
 void UBLOX_ROS::sfrbxCB(const ublox::UBX_message_t &ubx_msg, uint8_t f9pID)
 {
-    for(int i = 0; i < sizeof(ublox::RXM_SFRBX_t); ++i)
+    if(ubx_msg.RXM_SFRBX.gnssId == 0)
     {
-        std::cerr<<int(ubx_msg.buffer[i])<<",";
+        std::cerr<<"Begin: ";
+        for(int i = 0; i < ubx_msg.RXM_SFRBX.numWords; ++i)
+        {
+            uint32_t word = ubx_msg.RXM_SFRBX.dwrd[i];
+            for(int j = 0; j < sizeof(word); j++)
+            {
+                std::cerr<<int((word & (0b00000001<<i))>>i);
+            }
+            std::cerr<<"  ";
+        }
+        std::cerr<<"End\n";
     }
-    std::cerr<<"\n";
 }
 }
