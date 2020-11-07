@@ -12,6 +12,10 @@ add_library(GNSS
     src/GNSS/nav_parser.cpp)
 target_include_directories(GNSS PUBLIC include)
 
+add_library(Bit_Utils
+    src/Bit_Utils/bit_utils.cpp)
+target_include_directories(Bit_Utils PUBLIC include)
+
 include(ExternalProject)
 ExternalProject_Add(async_comm
     PREFIX          lib/
@@ -67,6 +71,10 @@ if(BUILD_TESTS)
     add_executable(nav_test
         test/test_nav_parser.cpp)
     target_link_libraries(nav_test PUBLIC gtest gtest_main GNSS)
+
+    add_executable(bit_tests
+        test/test_bit_utils.cpp)
+    target_link_libraries(bit_tests PUBLIC gtest gtest_main Bit_Utils)
 
 endif(BUILD_TESTS)
 

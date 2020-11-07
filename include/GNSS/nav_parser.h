@@ -17,7 +17,6 @@ class NavParser
         void read_gps_message(const uint8_t* buffer, size_t len);
     private:
 };
-
 bool check_parity(const std::bitset<gps::kWordLength> &bits, const bool &prev_29, const bool &prev_30);
 }
 #endif
