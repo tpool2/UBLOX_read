@@ -65,7 +65,8 @@ if(BUILD_TESTS)
     add_executable(ublox_test 
         test/test_ubx_parser.cpp 
         test/test_ubx_database.cpp
-        test/test_ubx_message.cpp)
+        test/test_ubx_message.cpp
+        test/test_configure_ublox.cpp)
     target_link_libraries(ublox_test PUBLIC gtest gtest_main UBX)
     
     add_executable(nav_test
