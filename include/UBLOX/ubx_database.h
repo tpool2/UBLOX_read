@@ -51,7 +51,9 @@ namespace ublox::ubx
 
             DatabaseMap CFG_ID_Map
             {
-
+                {kCFG_VALDEL, std::make_shared<DatabaseNode>(4,4)},
+                {kCFG_VALGET, std::make_shared<DatabaseNode>(4,4)},
+                {kCFG_VALSET, std::make_shared<DatabaseNode>(4,1)},
             };
 
             DatabaseMap INF_ID_Map
