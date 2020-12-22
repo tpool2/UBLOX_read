@@ -25,6 +25,7 @@ ExternalProject_Add(async_comm
 
 add_library(UBLOX
     src/UBLOX/configure.cpp)
+target_include_directories(UBLOX PUBLIC include)
 
 option(BUILD_TESTS "Build Tests" ON)
 if(BUILD_TESTS)
@@ -67,7 +68,7 @@ if(BUILD_TESTS)
         test/test_ubx_database.cpp
         test/test_ubx_message.cpp
         test/test_configure_ublox.cpp)
-    target_link_libraries(ublox_test PUBLIC gtest gtest_main UBX)
+    target_link_libraries(ublox_test PUBLIC gtest gtest_main UBX UBLOX)
     
     add_executable(nav_test
         test/test_nav_parser.cpp)

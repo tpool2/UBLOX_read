@@ -1,9 +1,7 @@
 #include <gtest/gtest.h>
 #include "UBLOX/ubx_message.h"
 #include "UBLOX/ubx_parser.h"
-#include <iostream>
-#include <thread>
-#include <chrono>
+#include "UBLOX/configure.h"
 
 using namespace ublox::ubx;
 
@@ -88,4 +86,9 @@ TEST_F(MockUbloxReceiver, SendConfigurationRequest)
     // std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     ASSERT_TRUE(got_ack_cfg_val_get);
     /*result = output message from parser and then remove the callbacks*/
+}
+
+TEST(UbloxConfigurer, Create)
+{
+    Configurer configure;
 }
