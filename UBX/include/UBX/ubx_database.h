@@ -3,9 +3,9 @@
 #include <cstdint>
 #include <map>
 #include <memory>
-#include "UBLOX/ubx_defs.h"
+#include "ubx_defs.h"
 
-namespace ublox::ubx
+namespace ublox { namespace ubx
 {
     class DatabaseNodeInterface
     {
@@ -19,6 +19,7 @@ namespace ublox::ubx
             virtual bool has(uint8_t message_class, uint8_t message_id) = 0;
             virtual bool has(uint8_t message_class) = 0;
             virtual std::shared_ptr<DatabaseNodeInterface> get_node(uint8_t message_class, uint8_t message_id) = 0;
+            virtual ~DatabaseInterface() {};
     };
 
     class Database: public DatabaseInterface
@@ -121,9 +122,13 @@ namespace ublox::ubx
             {
                 null_node = std::make_shared<DatabaseNode>(0,0);
             };
+            ~Database()
+            {
+                
+            };
             bool has(uint8_t message_class, uint8_t message_id) override;
             bool has(uint8_t message_class) override;
-            virtual std::shared_ptr<DatabaseNodeInterface> get_node(uint8_t message_class, uint8_t message_id);
+            virtual std::shared_ptr<DatabaseNodeInterface> get_node(uint8_t message_class, uint8_t message_id) override;
     };
-}
+}}
 #endif

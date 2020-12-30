@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "UBLOX/ubx_message.h"
+#include "UBX/ubx.hpp"
 
 using namespace ublox::ubx;
 

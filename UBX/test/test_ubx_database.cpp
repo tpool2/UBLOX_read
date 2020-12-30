@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
-#include "UBLOX/ubx_defs.h"
-#include "UBLOX/ubx_database.h"
+#include "UBX/ubx.hpp"
 
 using namespace ublox::ubx;
 

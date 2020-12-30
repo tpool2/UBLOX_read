@@ -6,14 +6,16 @@
 #include <string.h>
 #include <vector>
 #include <functional>
-#include "UBLOX/ubx_defs.h"
-#include "UBLOX/ubx_database.h"
-#include "UBLOX/ubx_message.h"
+#include "ubx_defs.h"
+#include "ubx_database.h"
+#include "ubx_message.h"
 
 using std::uint8_t;
 
-namespace ublox::ubx
+namespace ublox
 {
+    namespace ubx
+    {
     class Parser
     {
         private:
@@ -59,7 +61,7 @@ namespace ublox::ubx
         public:
             Parser()
             {
-                database = std::make_unique<Database>();
+                database = std::unique_ptr<Database>(new Database());
                 reset();
             };
             ~Parser()
@@ -84,6 +86,7 @@ namespace ublox::ubx
                 kGotChecksumB,
             };
     };
+    }
 }
 
 #endif

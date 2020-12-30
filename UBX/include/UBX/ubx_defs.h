@@ -11,7 +11,7 @@ using std::uint8_t;
 using std::uint16_t;
 using std::uint32_t;
 
-namespace ublox::ubx
+namespace ublox { namespace ubx
 {
 static constexpr size_t BUFFER_SIZE = 1024;
 static constexpr size_t UBX_MESSAGE_BUFFER_SIZE = BUFFER_SIZE+8;
@@ -1140,5 +1140,5 @@ typedef union {
     NAV_SVIN_t NAV_SVIN;
     MON_VER_t MON_VER;
 } UBX_payload_t;
-}
+} }
 #endif

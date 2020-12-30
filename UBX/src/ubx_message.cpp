@@ -1,4 +1,4 @@
-#include "UBLOX/ubx_message.h"
+#include "UBX/ubx.hpp"
 
 namespace ublox::ubx
 {

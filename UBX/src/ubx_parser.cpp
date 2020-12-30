@@ -1,5 +1,4 @@
-#include "UBLOX/ubx_defs.h"
-#include "UBLOX/ubx_parser.h"
+#include "UBX/ubx.hpp"
 
 using std::uint8_t;
 

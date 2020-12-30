@@ -1,5 +1,6 @@
+#include <memory>
 #include <gtest/gtest.h>
-#include "UBLOX/ubx_parser.h"
+#include "UBX/ubx.hpp"
 
 using namespace ublox::ubx;
 

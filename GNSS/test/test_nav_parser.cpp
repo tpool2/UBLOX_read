@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
-#include "GNSS/nav_parser.h"
+#include "GNSS/gnss.hpp"
+
 using namespace gnss;
 TEST(NavParser, Construct)
 {

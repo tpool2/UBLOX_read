@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
-#include "UBLOX/ubx_message.h"
-#include "UBLOX/ubx_parser.h"
-#include "UBLOX/configure.h"
+#include "Configuration/configuration.hpp"
+#include "UBX/ubx.hpp"
 
 using namespace ublox::ubx;
 
