@@ -7,6 +7,10 @@ add_subdirectory(GNSS)
 add_subdirectory(Bit_Utils)
 add_subdirectory(Configuration)
 
+add_executable(read_file
+    src/executables/read_file.cpp)
+target_link_libraries(read_file PUBLIC UBX GNSS)
+
 option(BUILD_ROS "Build ROS Nodes, Messages, Services" OFF)
 if (${BUILD_ROS})
     message(STATUS "BUILDING UBLOX ROS PACKAGE")

@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <cstdint>
-#include "UBLOX/ubx_parser.h"
-#include "UBLOX/ubx_sfrbx_parser.h"
+#include "UBX/ubx.hpp"
+#include "GNSS/gnss.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -10,8 +10,13 @@ int main(int argc, char* argv[])
     ifs.open(argv[1]);
 
     ublox::ubx::Parser parser;
-    ublox::ubx::SFRBX_Parser nav_parser;
-    parser.add_message_parser(std::make_shared<ublox::ubx::SFRBX_Parser>(nav_parser));
+    gnss::NavParser sfrbx_parser;
+    
+    parser.register_callback(ublox::ubx::kCLASS_RXM, ublox::ubx::kRXM_SFRBX, [&sfrbx_parser](const ublox::ubx::UBX_message_t& message)
+    {
+        std::cout<<message.payload.buffer<<std::endl;
+        sfrbx_parser.parse_sfrbx(message);
+    });
     uint8_t byte;
 
     while(ifs.good())
