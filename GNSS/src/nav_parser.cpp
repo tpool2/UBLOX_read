@@ -1,16 +1,24 @@
 #include "GNSS/gnss.hpp"
+#include <iostream>
 
 namespace gnss
 {
     void NavParser::parse_sfrbx(const ublox::ubx::UBX_message_t& message)
     {
         uint8_t gnss_id = message.payload.RXM_SFRBX.gnssId;
-        (gnss_id == ublox::ubx::kGnssID_GPS) ? read_gps_message(&message.payload.buffer[sizeof(ublox::ubx::RXM_SFRBX_t)], size_t(message.payload_length-sizeof(ublox::ubx::RXM_SFRBX_t))) :
-        throw("Bad message type");
+        if(gnss_id == ublox::ubx::kGnssID_GPS)
+        {
+            read_gps_message(&message.payload.buffer[sizeof(ublox::ubx::RXM_SFRBX_t)], size_t(message.payload_length-sizeof(ublox::ubx::RXM_SFRBX_t)));
+        }
+        else
+        {
+            std::cout<<"Other GNSS type";
+        }
     }
 
     void NavParser::read_gps_message(const uint8_t* words, size_t len)
     {
+        std::cout<<"Reading GPS Message"<<std::endl;
         for(int word = 0; word < 10; ++word)
         {
 
