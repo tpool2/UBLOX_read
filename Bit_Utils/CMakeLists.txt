@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.10)
 
 project(Bit_Utils)
 
-add_library(Bit_Utils
+add_library(Bit_Utils SHARED
     src/bit_utils.cpp)
-target_compile_options(Bit_Utils PRIVATE -std=c++17)
+target_compile_options(Bit_Utils PUBLIC -std=c++17)
 target_include_directories(Bit_Utils PUBLIC include)
 
 OPTION(BUILD_BIT_UTILS_TESTS "Build Bit Utils Tests" OFF)

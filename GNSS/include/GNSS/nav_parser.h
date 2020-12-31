@@ -3,6 +3,8 @@
 #include <bitset>
 #include "UBX/ubx.hpp"
 #include "gps_defs.h"
+#include "Bit_Utils/bit_utils.h"
+
 namespace gnss
 {
 class NavParser
@@ -13,7 +15,7 @@ class NavParser
             this->parse_sfrbx(message);
         };
         void parse_sfrbx(const ublox::ubx::UBX_message_t&);
-        void read_gps_message(const uint8_t* buffer, size_t len);
+        void read_gps_message(const uint32_t* buffer, size_t len);
     private:
 };
 bool check_parity(const std::bitset<gps::kWordLength> &bits, const bool &prev_29, const bool &prev_30);

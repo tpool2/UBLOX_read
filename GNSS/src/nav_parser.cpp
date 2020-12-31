@@ -8,21 +8,29 @@ namespace gnss
         uint8_t gnss_id = message.payload.RXM_SFRBX.gnssId;
         if(gnss_id == ublox::ubx::kGnssID_GPS)
         {
-            read_gps_message(&message.payload.buffer[sizeof(ublox::ubx::RXM_SFRBX_t)], size_t(message.payload_length-sizeof(ublox::ubx::RXM_SFRBX_t)));
+            read_gps_message(message.payload.RXM_SFRBX.dwrd, message.payload.RXM_SFRBX.numWords);
         }
         else
         {
-            std::cout<<"Other GNSS type";
+            
         }
     }
 
-    void NavParser::read_gps_message(const uint8_t* words, size_t len)
+    void NavParser::read_gps_message(const uint32_t* words, size_t num_words)
     {
-        std::cout<<"Reading GPS Message"<<std::endl;
-        for(int word = 0; word < 10; ++word)
+        std::cout<<"Reading GPS Message with "<< num_words << " words" <<std::endl;
+        for(int word_index = 0; word_index < num_words; ++word_index)
         {
-
+            // std::cout<<words[word_index]<<"\t";
+            std::bitset<30> word = words[word_index];
+            word = bit_utils::flip_endian(word);
+            for(int bit_index = 0; bit_index < 30; ++bit_index)
+            {
+                std::cout<<word[bit_index]<<" ";
+            }
+            std::cout<<"\t";
         }
+        std::cout<<std::endl;
     }
 
     /*

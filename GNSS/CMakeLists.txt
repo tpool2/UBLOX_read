@@ -2,13 +2,17 @@ cmake_minimum_required(VERSION 3.10)
 
 project(GNSS)
 
-IF(NOT TARGET UBX)
-        add_subdirectory(../UBX UBX)
-ENDIF(NOT TARGET UBX)
+if(NOT TARGET UBX)
+    add_subdirectory(../UBX UBX)
+endif(NOT TARGET UBX)
+
+# if(NOT TARGET Bit_Utils)
+    # add_subdirectory(../Bit_Utils Bit_Utils)
+# endif(NOT TARGET Bit_Utils)
 
 add_library(GNSS SHARED
     src/nav_parser.cpp)
-target_link_libraries(GNSS PUBLIC UBX)
+target_link_libraries(GNSS PUBLIC UBX Bit_Utils)
 target_compile_options(GNSS PRIVATE -std=c++17)
 target_include_directories(GNSS PUBLIC include)
 

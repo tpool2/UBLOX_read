@@ -14,7 +14,6 @@ int main(int argc, char* argv[])
     
     parser.register_callback(ublox::ubx::kCLASS_RXM, ublox::ubx::kRXM_SFRBX, [&sfrbx_parser](const ublox::ubx::UBX_message_t& message)
     {
-        std::cout<<message.payload.buffer<<std::endl;
         sfrbx_parser.parse_sfrbx(message);
     });
     uint8_t byte;

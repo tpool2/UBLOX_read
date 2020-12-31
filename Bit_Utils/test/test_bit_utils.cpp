@@ -10,6 +10,16 @@ TEST(TestEndian, TestEndian)
     ASSERT_TRUE(bit_utils::little_endian());
 }
 
+TEST(TestEndian, TestFlipEndian)
+{
+    std::bitset<2> bits;
+    bits[0] = 1;
+    bits[1] = 0;
+    std::bitset<2> flipped_bits = bit_utils::flip_endian(bits);
+    ASSERT_EQ(flipped_bits[0], 0);
+    ASSERT_EQ(flipped_bits[1], 1);
+}
+
 TEST(GPS, TLM_Word)
 {
     uint32_t tlm_word = 583029304;
