@@ -21,7 +21,6 @@ int main(int argc, char* argv[])
     while(ifs.good())
     {
         byte = ifs.get();
-        // std::cout<<int(byte)<<std::endl;
         parser.read_byte((byte));
     }
     ifs.close();

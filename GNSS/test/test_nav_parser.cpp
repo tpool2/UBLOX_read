@@ -1,3 +1,4 @@
+#include <vector>
 #include <gtest/gtest.h>
 #include "GNSS/gnss.hpp"
 
@@ -24,6 +25,7 @@ class TestGNSS_Word: public ::testing::Test
         void SetUp() override
         {
             memset(&bits, 0, sizeof(bits));
+            bits = std::bitset<30>("100010110000000101000000101110");
         }
 };
 

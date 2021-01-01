@@ -16,7 +16,7 @@ target_link_libraries(GNSS PUBLIC UBX Bit_Utils)
 target_compile_options(GNSS PRIVATE -std=c++17)
 target_include_directories(GNSS PUBLIC include)
 
-OPTION(BUILD_GNSS_TESTS "Build GNSS Tests" OFF)
+OPTION(BUILD_GNSS_TESTS "Build GNSS Tests" ON)
 
 IF(BUILD_GNSS_TESTS)
     add_subdirectory(../gtest ../../gtest/build)

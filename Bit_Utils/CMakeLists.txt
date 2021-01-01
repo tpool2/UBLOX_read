@@ -7,10 +7,12 @@ add_library(Bit_Utils SHARED
 target_compile_options(Bit_Utils PUBLIC -std=c++17)
 target_include_directories(Bit_Utils PUBLIC include)
 
-OPTION(BUILD_BIT_UTILS_TESTS "Build Bit Utils Tests" OFF)
+OPTION(BUILD_BIT_UTILS_TESTS "Build Bit Utils Tests" ON)
 
 IF(BUILD_BIT_UTILS_TESTS)
-    add_subdirectory(../gtest ../../gtest/build)
+    if(NOT TARGET gtest)
+        add_subdirectory(../gtest ../../gtest/build)
+    endif(NOT TARGET gtest)
 
     add_executable(bit_tests
         test/test_bit_utils.cpp)
