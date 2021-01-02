@@ -7,6 +7,12 @@ namespace gnss { namespace gps
     {
         kWordLength = 30,
     };
+    class GPS_Message
+    {
+        private:
+            int subframe_id = 0;
+        
+    };
 } }
 
 #endif

@@ -32,6 +32,11 @@ namespace gnss
         std::cout<<std::endl;
     }
 
+    void NavParser::parse_handover_word(const std::bitset<30> &word)
+    {
+
+    }
+
     /*
     Checks GPS Parity given a 30-bit word, and the previous word's 29th and 30th bits in the subframe
     */
@@ -44,7 +49,11 @@ namespace gnss
         b[27] = (prev_30^b[1]^b[3]^b[4]^b[5]^b[7]^b[8]^b[12]^b[13]^b[14]^b[15]^b[16]^b[19]^b[20]^b[22]);
         b[28] = (prev_30^b[0]^b[2]^b[4]^b[5]^b[6]^b[8]^b[9]^b[13]^b[14]^b[15]^b[16]^b[17]^b[20]^b[21]^b[23]);
         b[29] = (prev_29^b[2]^b[4]^b[5]^b[7]^b[8]^b[9]^b[10]^b[12]^b[14]^b[18]^b[21]^b[22]^b[23]);
-        std::cout<<bits.to_string()<<"\t"<<b.to_string()<<std::endl;
+        for(int i = 0; i < 30; ++i)
+        {
+            std::cout<<bits[i];
+        }
+        std::cout<<" "<<bits.to_string()<<"\t"<<b.to_string()<<std::endl;
         return (bits[24] == b[24])
             & (bits[25] == b[25])
             & (bits[26] == b[26])
