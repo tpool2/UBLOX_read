@@ -4,7 +4,7 @@ project(ublox_read)
 
 add_subdirectory(UBX)
 add_subdirectory(GNSS)
-add_subdirectory(Bit_Utils)
+# add_subdirectory(Bit_Utils)
 add_subdirectory(Configuration)
 
 add_executable(read_file

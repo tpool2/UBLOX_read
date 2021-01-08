@@ -19,17 +19,77 @@ namespace gnss
     void NavParser::read_gps_message(const uint32_t* words, size_t num_words)
     {
         std::cout<<"Reading GPS Message with "<< num_words << " words" <<std::endl;
-        bool d_29 = false;
-        bool d_30 = false;
-        for(int word_index = 0; word_index < num_words; ++word_index)
+        if((words[0] & (0xFF)<<24)>>24 == gps::kPreamble)
         {
-            std::bitset<30> word = words[word_index];
-            word = bit_utils::flip_endian(word);
-            std::cout<<check_parity(word, d_29, d_30)<<"\n";
-            d_29 = word[28];
-            d_30 = word[29];
+            gps::parse_l2c(words);
         }
-        std::cout<<std::endl;
+        else if((words[0] & (0xFF)<<22)>>22 == gps::kPreamble)
+        {
+            gps::parse_l1_ca(words);
+        }
+        else
+        {
+            std::cout<<"Unknown"<<std::endl;
+        }
+    }
+
+    void gps::parse_l1_ca(const uint32_t* words)
+    {
+        std::cout<<"L1 C/A"<<std::endl;
+        int tow_truncated = bit_utils::get_bits_msb(words[1], 2, 19);
+        std::cout<<"TOW-Count: "<<tow_truncated<<std::endl;
+        int subframe_id = bit_utils::get_bits_msb(words[1], 21, 24);
+        std::cout<<"Subframe ID: "<<subframe_id<<std::endl;
+        switch(subframe_id)
+        {
+            case 3:
+                parse_subframe_3(words);
+                break;
+            default:
+                break;
+        }
+    }
+
+    void gps::parse_subframe_3(const uint32_t* words)
+    {
+        int16_t C_ic = bit_utils::get_bits_msb(words[2], 2, 18);
+        std::cout<<"C_ic: "<<C_ic << std::endl;
+        int32_t Omega_0 = (bit_utils::get_bits_msb(words[2], 18, 26)<<24) | bit_utils::get_bits_msb(words[3], 2, 26);
+        std::cout<<"Omega_0: "<<Omega_0 << std::endl;
+        int16_t C_is = bit_utils::get_bits_msb(words[4], 2, 18);
+        std::cout<<"C_is: "<<C_is << std::endl;
+        int32_t i_0 = (bit_utils::get_bits_msb(words[4], 18, 26)<<24) | bit_utils::get_bits_msb(words[5], 2, 26);
+        std::cout<<"i_0: "<<i_0<<std::endl;
+    }
+
+    void gps::parse_l2c(const uint32_t* words)
+    {
+        std::cout<<"L2"<<std::endl;
+        int prn = bit_utils::get_bits_msb(words[0], 8, 14);
+        std::cout<<"PRN: " << prn << std::endl;
+        int message_type_id = bit_utils::get_bits_msb(words[0], 14, 20);
+        std::cout<<"Message Type ID: " << message_type_id << std::endl;
+        int message_tow_count = ((uint32_t(bit_utils::get_bits_msb(words[0], 20, 32))<<5) | bit_utils::get_bits_msb(words[1], 0, 5) );
+        std::cout<<"Message TOW Count: " << message_tow_count << std::endl;
+        std::cout<<"SV Time: "<< message_tow_count*6 << std::endl;
+        std::cout<<"Alert Flag: " << bit_utils::get_bits_msb(words[1], 5, 6) << std::endl;
+        switch (message_type_id)
+        {
+        case 11:
+            parse_l2_nav_11(words);
+            break;
+        
+        default:
+            break;
+        }
+    }
+
+    void gps::parse_l2_nav_11(const uint32_t* words)
+    {
+        int t_oe = bit_utils::get_bits_msb(words[1], 6, 17);
+        std::cout<<"t_oe: "<<t_oe<<std::endl;
+        int Omega_0_n = (bit_utils::get_bits_msb(words[1], 17, 32)<<15 | bit_utils::get_bits_msb(words[2], 0, 18));
+        std::cout<<"Omega_0_n: "<<Omega_0_n<<std::endl;
     }
 
     void NavParser::parse_handover_word(const std::bitset<30> &word)

@@ -1,5 +1,6 @@
 #ifndef UBX_MESSAGE
 #define UBX_MESSAGE
+#include <cstring>
 #include "UBX/ubx_defs.h"
 
 namespace ublox { namespace ubx
