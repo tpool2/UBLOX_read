@@ -2,6 +2,7 @@
 #define BIT_UTILS
 #include <bitset>
 #include <iostream>
+#include <type_traits>
 
 namespace bit_utils
 {
@@ -43,18 +44,31 @@ template <class T> T get_bits_msb(const T number, int start, int stop)
     return T((number & ((1<<bit_quantity)-1)<<shift_factor)>>shift_factor);
 }
 
-template <class T> uint8_t get_bits_straddle(const T numbers, int start, int stop)
+template <class T, class R> T get_bits(const R* buffer, int position, int length = sizeof(T))
 {
-    size_t bit_quantity_T = sizeof(T)*8;
-    int start_word = start / bit_quantity_T;
-    int start_bit = start % bit_quantity_T;
-    int bit_quantity = stop - start;
-    uint8_t answer = 0;
-    for(int bit_count = 0; bit_count < bit_quantity; ++bit_count)
+    size_t T_size = sizeof(T)*8;
+    size_t R_size = sizeof(R)*8;
+
+    T bits = 0;
+    
+    for(int bit_index = 0; bit_index < length; ++bit_index)
     {
-        answer = (answer << 1) | get_bits_msb(numbers[(start+bit_count)/bit_quantity_T], (start+bit_count)%bit_quantity_T, ((start+bit_count)%bit_quantity_T)+1);
+        int word_index = (position+bit_index)/R_size;
+        int bit_in_word_index = (position+bit_index)%R_size;
+        int shift_factor = R_size - bit_in_word_index - 1;
+        ulong bit_value = ((buffer[word_index] & (1UL<<shift_factor))>>shift_factor);
+        bits |= (bit_value & 1UL) << (length-bit_index-1);
+        // std::cout<< bit_index<<" " << bit_value << " " <<static_cast<uint16_t>(bits)<<std::endl;
     }
-    return answer;
+
+    // std::cout<<"T_size: "<<T_size << " length: " << length << std::endl; 
+    if(std::is_signed<T>::value && (bits & (1UL<<(length-1))) && T_size > length)
+    {
+        // std::cout<<"Needs conversion"<<std::endl;
+        bits |= (((1UL<<(T_size-length))-1)<<length);
+    }
+    
+    return bits;
 }
 }
 
