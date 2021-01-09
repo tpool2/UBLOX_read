@@ -31,14 +31,6 @@ template<size_t start_pos, size_t end_pos, size_t num_bits> std::bitset<end_pos-
     return sub_bits;
 }
 
-template <class T> T get_bits_msb(const T number, int start, int stop)
-{
-    int bit_quantity = stop - start;
-    size_t bit_quantity_T = sizeof(T)*8;
-    int shift_factor = bit_quantity_T-start-bit_quantity;
-    return T((number & ((1<<bit_quantity)-1)<<shift_factor)>>shift_factor);
-}
-
 template <class T, class R> T get_bits(const R* buffer, int position, int length = sizeof(T))
 {
     size_t T_size = sizeof(T)*8;

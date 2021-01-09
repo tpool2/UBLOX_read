@@ -23,11 +23,11 @@ namespace gnss
         // std::cout<<"Reading GPS Message with "<< num_words << " words" <<std::endl;
         if(get_bits<uint8_t>(words, 0, 8) == gps::kPreamble)
         {
-            gps::parse_l2c(words);
+            gps::parse_L2(words);
         }
-        else if((words[0] & (0xFF)<<22)>>22 == gps::kPreamble)
+        else if(get_bits<uint8_t>(words, 2, 8) == gps::kPreamble)
         {
-            gps::parse_l1_ca(words);
+            // gps::parse_l1_ca(words);
         }
         else
         {
@@ -38,9 +38,10 @@ namespace gnss
     void gps::parse_l1_ca(const uint32_t* words)
     {
         // std::cout<<"L1 C/A"<<std::endl;
-        int tow_truncated = bit_utils::get_bits_msb(words[1], 2, 19);
+        throw std::logic_error("Not implemented correctly yet");
+        int tow_truncated = get_bits<int>(words, 2, 19);
         // std::cout<<"TOW-Count: "<<tow_truncated<<std::endl;
-        int subframe_id = bit_utils::get_bits_msb(words[1], 21, 24);
+        int subframe_id = get_bits<int>(words, 21, 24);
         // std::cout<<"Subframe ID: "<<subframe_id<<std::endl;
         switch(subframe_id)
         {
@@ -79,7 +80,7 @@ namespace gnss
         // std::cout<<"IDOT: " << IDOT << std::endl;
     }
 
-    void gps::parse_l2c(const uint32_t* words)
+    void gps::parse_L2(const uint32_t* words)
     {
         std::cout<<"L2"<<std::endl;
         int prn = get_bits<int>(words, 8, 6);
@@ -92,8 +93,11 @@ namespace gnss
         // std::cout<<"Alert Flag: " << bit_utils::get_bits_msb(words[1], 5, 6) << std::endl;
         switch (message_type_id)
         {
+        case 10:
+            parse_L2_10(words);
+            break;
         case 11:
-            parse_l2_nav_11(words);
+            parse_L2_11(words);
             break;
         
         default:
@@ -101,7 +105,22 @@ namespace gnss
         }
     }
 
-    void gps::parse_l2_nav_11(const uint32_t* words)
+    void gps::parse_L2_10(const uint32_t* words)
+    {
+        auto week_number = get_bits<uint16_t>(words, 38, 13);
+        auto CEI_time_of_week = get_bits<uint16_t>(words, 54, 11);
+        auto ED_accuracy = get_bits<int8_t>(words, 65, 5);
+        auto ephemeris_time_of_week = get_bits<uint16_t>(words, 70, 11);
+        auto semi_major_axis_diff = get_bits<int32_t>(words, 81, 26);
+        auto semi_major_axis_change_rate = get_bits<int32_t>(words, 107, 25);
+        auto mean_motion_diff = get_bits<int32_t>(words, 132, 17);
+        auto mean_motion_diff_rate = get_bits<int32_t>(words, 149, 23);
+        auto mean_anomaly = get_bits<int64_t>(words, 172, 33);
+        auto eccentricity = get_bits<uint64_t>(words, 205, 33);
+        auto argument_of_perigee = get_bits<int64_t>(words, 238, 33);
+    }
+
+    void gps::parse_L2_11(const uint32_t* words)
     {
         auto t_oe = get_bits<uint16_t>(words, 38, 11);
         auto Omega_0_n = get_bits<int64_t>(words, 49, 33);

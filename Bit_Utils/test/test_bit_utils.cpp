@@ -51,49 +51,49 @@ TEST(Subbits, S0111_011)
 TEST(BitsinBytes, byte1)
 {
     uint8_t my_byte = 0b00001111;
-    ASSERT_EQ((my_byte & 0x01), 0b1);
+    ASSERT_EQ(get_bits<uint8_t>(&my_byte, 7, 1), 0b1);
 }
 
 TEST(BitsinBytes, bit2)
 {
     uint8_t my_byte = 0b00001111;
-    ASSERT_EQ((my_byte & 0x02)>>1, 0b1);
+    ASSERT_EQ(get_bits<uint8_t>(&my_byte, 6, 1), 0b1);
 }
 
 TEST(BitsinBytes, bit3)
 {
     uint8_t my_byte = 0b00001011;
-    ASSERT_EQ((my_byte & (0x1<<2))>>2, 0b0);
+    ASSERT_EQ(get_bits<uint8_t>(&my_byte, 5, 1), 0b0);
 }
 
 TEST(BitsinBytes, bits1and2)
 {
     uint8_t my_byte = 0b00001011;
-    ASSERT_EQ((my_byte & (0b11<<0))>>0, 0b11);
+    ASSERT_EQ(get_bits<uint8_t>(&my_byte, 6, 2), 0b11);
 }
 
 TEST(BitsinBytes, bits1and2and3and4)
 {
     uint8_t my_byte = 0b00001011;
-    ASSERT_EQ((my_byte & (0b1111<<0))>>0, 0b1011);
+    ASSERT_EQ(get_bits<uint8_t>(&my_byte, 4, 4), 0b1011);
 }
 
 TEST(BitsinBytes, bits2and3and4)
 {
     uint8_t my_byte = 0b00001011;
-    ASSERT_EQ((my_byte & (0b111<<1))>>1, 0b101);
+    ASSERT_EQ(get_bits<uint8_t>(&my_byte, 4, 3), 0b101);
 }
 
 TEST(GetBitsMSB, Get_MSB_1)
 {
     uint32_t number = 0xFF000000;
-    ASSERT_EQ(get_bits_msb(number, 0, 1), 1);
+    ASSERT_EQ(get_bits<uint8_t>(&number, 0, 1), 1);
 }
 
 TEST(GetBitsMSB, Get_LSB_0)
 {
     uint32_t number = 0xFF000000;
-    ASSERT_EQ(get_bits_msb(number, 31, 32), 0);
+    ASSERT_EQ(get_bits<uint8_t>(&number, 31, 1), 0);
 }
 
 class BitTestFixture: public ::testing::TestWithParam<int>
