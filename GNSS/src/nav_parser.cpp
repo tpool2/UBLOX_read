@@ -3,6 +3,8 @@
 
 namespace gnss
 {
+    using bit_utils::get_bits;
+    
     void NavParser::parse_sfrbx(const ublox::ubx::UBX_message_t& message)
     {
         uint8_t gnss_id = message.payload.RXM_SFRBX.gnssId;
@@ -18,8 +20,8 @@ namespace gnss
 
     void NavParser::read_gps_message(const uint32_t* words, size_t num_words)
     {
-        std::cout<<"Reading GPS Message with "<< num_words << " words" <<std::endl;
-        if((words[0] & (0xFF)<<24)>>24 == gps::kPreamble)
+        // std::cout<<"Reading GPS Message with "<< num_words << " words" <<std::endl;
+        if(get_bits<uint8_t>(words, 0, 8) == gps::kPreamble)
         {
             gps::parse_l2c(words);
         }
@@ -35,11 +37,11 @@ namespace gnss
 
     void gps::parse_l1_ca(const uint32_t* words)
     {
-        std::cout<<"L1 C/A"<<std::endl;
+        // std::cout<<"L1 C/A"<<std::endl;
         int tow_truncated = bit_utils::get_bits_msb(words[1], 2, 19);
-        std::cout<<"TOW-Count: "<<tow_truncated<<std::endl;
+        // std::cout<<"TOW-Count: "<<tow_truncated<<std::endl;
         int subframe_id = bit_utils::get_bits_msb(words[1], 21, 24);
-        std::cout<<"Subframe ID: "<<subframe_id<<std::endl;
+        // std::cout<<"Subframe ID: "<<subframe_id<<std::endl;
         switch(subframe_id)
         {
             case 3:
@@ -50,29 +52,44 @@ namespace gnss
         }
     }
 
+    int32_t gps::l1_get_split_data(const uint32_t* words, int position)
+    {
+        return static_cast<int32_t>((get_bits<uint32_t>(words, position, 8)<<24) | get_bits<uint32_t>(words, position+14, 24));
+    }
+
     void gps::parse_subframe_3(const uint32_t* words)
     {
-        int16_t C_ic = bit_utils::get_bits_msb(words[2], 2, 18);
-        std::cout<<"C_ic: "<<C_ic << std::endl;
-        int32_t Omega_0 = (bit_utils::get_bits_msb(words[2], 18, 26)<<24) | bit_utils::get_bits_msb(words[3], 2, 26);
-        std::cout<<"Omega_0: "<<Omega_0 << std::endl;
-        int16_t C_is = bit_utils::get_bits_msb(words[4], 2, 18);
-        std::cout<<"C_is: "<<C_is << std::endl;
-        int32_t i_0 = (bit_utils::get_bits_msb(words[4], 18, 26)<<24) | bit_utils::get_bits_msb(words[5], 2, 26);
-        std::cout<<"i_0: "<<i_0<<std::endl;
+        int16_t C_ic = get_bits<int16_t>(words, 60, 16);
+        // std::cout << "C_ic: " << C_ic << std::endl;
+        int32_t Omega_0 = l1_get_split_data(words, 76);
+        // std::cout << "Omega_0: " << Omega_0 << std::endl;
+        int16_t C_is = get_bits<int16_t>(words, 120, 16);
+        // std::cout << "C_is: " << C_is << std::endl;
+        int32_t i_0 = l1_get_split_data(words, 136);
+        // std::cout << "i_0: " << i_0 << std::endl;
+        int16_t C_rc = get_bits<int16_t>(words, 180, 16);
+        // std::cout << "C_rc: " << C_rc<<std::endl;
+        int32_t omega = l1_get_split_data(words, 196);
+        // std::cout << "omega: " << omega << std::endl;
+        int32_t Omega_dot = get_bits<int32_t>(words, 240, 24);
+        // std::cout << "Omega_dot: " << Omega_dot << std::endl;
+        uint8_t IODE = get_bits<uint8_t>(words, 270, 8);
+        // std::cout << "IODE: " << static_cast<uint16_t>(IODE) << std::endl;
+        int16_t IDOT = get_bits<int16_t>(words, 278, 14);
+        // std::cout<<"IDOT: " << IDOT << std::endl;
     }
 
     void gps::parse_l2c(const uint32_t* words)
     {
         std::cout<<"L2"<<std::endl;
-        int prn = bit_utils::get_bits_msb(words[0], 8, 14);
+        int prn = get_bits<int>(words, 8, 6);
         std::cout<<"PRN: " << prn << std::endl;
-        int message_type_id = bit_utils::get_bits_msb(words[0], 14, 20);
-        std::cout<<"Message Type ID: " << message_type_id << std::endl;
-        int message_tow_count = ((uint32_t(bit_utils::get_bits_msb(words[0], 20, 32))<<5) | bit_utils::get_bits_msb(words[1], 0, 5) );
-        std::cout<<"Message TOW Count: " << message_tow_count << std::endl;
-        std::cout<<"SV Time: "<< message_tow_count*6 << std::endl;
-        std::cout<<"Alert Flag: " << bit_utils::get_bits_msb(words[1], 5, 6) << std::endl;
+        int message_type_id = get_bits<int>(words, 14, 6);
+        // std::cout<<"Message Type ID: " << message_type_id << std::endl;
+        int message_tow_count = get_bits<int>(words, 20, 17);
+        // std::cout<<"Message TOW Count: " << message_tow_count << std::endl;
+        // std::cout<<"SV Time: "<< message_tow_count*6 << std::endl;
+        // std::cout<<"Alert Flag: " << bit_utils::get_bits_msb(words[1], 5, 6) << std::endl;
         switch (message_type_id)
         {
         case 11:
@@ -86,15 +103,29 @@ namespace gnss
 
     void gps::parse_l2_nav_11(const uint32_t* words)
     {
-        int t_oe = bit_utils::get_bits_msb(words[1], 6, 17);
+        auto t_oe = get_bits<uint16_t>(words, 38, 11);
+        auto Omega_0_n = get_bits<int64_t>(words, 49, 33);
+        auto inclination_angle = get_bits<int64_t>(words, 82, 33);
+        auto rate_right_ascension_diff = get_bits<int32_t>(words, 115, 17);
+        auto rate_inclination_angle = get_bits<int16_t>(words, 15);
+        auto sin_inclination = get_bits<int16_t>(words, 147, 16);
+        auto cos_inclination = get_bits<int16_t>(words, 163, 16);
+        auto sin_orbit_radius = get_bits<int32_t>(words, 179, 24);
+        auto cos_orbit_radius = get_bits<int32_t>(words, 203, 24);
+        auto sin_latitude = get_bits<int32_t>(words, 227, 21);
+        auto cos_latitude = get_bits<int32_t>(words, 248, 21);
+
         std::cout<<"t_oe: "<<t_oe<<std::endl;
-        int Omega_0_n = (bit_utils::get_bits_msb(words[1], 17, 32)<<15 | bit_utils::get_bits_msb(words[2], 0, 18));
         std::cout<<"Omega_0_n: "<<Omega_0_n<<std::endl;
-    }
-
-    void NavParser::parse_handover_word(const std::bitset<30> &word)
-    {
-
+        std::cout << "Inclination Angle at Reference Time: " << inclination_angle << std::endl;
+        std::cout << "Rate of Right Ascension Difference: " << rate_right_ascension_diff << std::endl;
+        std::cout << "Rate of Inclination Angle: " << rate_inclination_angle << std::endl;
+        std::cout << "Sine Inclination: " << sin_inclination << std::endl;
+        std::cout << "Cosine Inclination: " << cos_inclination << std::endl;
+        std::cout << "Sine Orbit Radius: " << sin_orbit_radius << std::endl;
+        std::cout << "Cosine Orbit Radius: " << cos_orbit_radius << std::endl;
+        std::cout << "Sine Latitude: " << sin_latitude << std::endl;
+        std::cout << "Cosine Latitude: " << cos_latitude << std::endl;
     }
 
     /*

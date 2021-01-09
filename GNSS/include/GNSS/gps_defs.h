@@ -15,20 +15,7 @@ namespace gnss { namespace gps
     static void parse_subframe_3(const uint32_t* words);
     static void parse_l2c(const uint32_t* words);
     static void parse_l2_nav_11(const uint32_t* words);
-
-    class GPS_Subframe
-    {
-        private:
-            int subframe_id = 0;
-            
-        public:
-            int get_subframe_id() const;
-            GPS_Subframe(const uint32_t &words, int subframe_length = kSubframeLength)
-            {
-                
-            };
-        
-    };
+    static int32_t l1_get_split_data(const uint32_t* words, int position);
 } }
 
 #endif

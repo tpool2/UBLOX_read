@@ -6,8 +6,6 @@
 
 namespace bit_utils
 {
-
-bool little_endian();
 template<size_t num_bits> bool get_bit_msb(const std::bitset<num_bits> &bits, size_t pos)
 {
     return bits[num_bits-pos];
@@ -38,9 +36,6 @@ template <class T> T get_bits_msb(const T number, int start, int stop)
     int bit_quantity = stop - start;
     size_t bit_quantity_T = sizeof(T)*8;
     int shift_factor = bit_quantity_T-start-bit_quantity;
-    // std::cout<<"Bit Quantity: "<<bit_quantity<<std::endl;
-    // std::cout<<"bit_quantity_T: "<<bit_quantity_T<<std::endl;
-    // std::cout<<"Shift Factor: "<<shift_factor<<std::endl;
     return T((number & ((1<<bit_quantity)-1)<<shift_factor)>>shift_factor);
 }
 
@@ -58,13 +53,10 @@ template <class T, class R> T get_bits(const R* buffer, int position, int length
         int shift_factor = R_size - bit_in_word_index - 1;
         ulong bit_value = ((buffer[word_index] & (1UL<<shift_factor))>>shift_factor);
         bits |= (bit_value & 1UL) << (length-bit_index-1);
-        // std::cout<< bit_index<<" " << bit_value << " " <<static_cast<uint16_t>(bits)<<std::endl;
     }
 
-    // std::cout<<"T_size: "<<T_size << " length: " << length << std::endl; 
     if(std::is_signed<T>::value && (bits & (1UL<<(length-1))) && T_size > length)
     {
-        // std::cout<<"Needs conversion"<<std::endl;
         bits |= (((1UL<<(T_size-length))-1)<<length);
     }
     

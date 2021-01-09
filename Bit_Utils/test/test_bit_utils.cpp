@@ -5,11 +5,6 @@
 
 using namespace bit_utils;
 
-TEST(TestEndian, TestEndian)
-{
-    ASSERT_TRUE(bit_utils::little_endian());
-}
-
 TEST(TestEndian, TestFlipEndian)
 {
     std::bitset<2> bits;
@@ -24,26 +19,6 @@ TEST(TestEndian, TestFlipEndian2)
 {
     std::bitset<4> bits("0111");
     ASSERT_EQ(bit_utils::flip_endian(bits), std::bitset<4>("1110"));
-}
-
-TEST(GPS, TLM_Word)
-{
-    uint32_t tlm_word = 583029304;
-    std::bitset<30> bits(tlm_word);
-    // std::cout<<bits.to_string()<<std::endl;
-    ASSERT_EQ(get_bit_msb(bits, 1), 1);
-    ASSERT_EQ(get_bit_msb(bits, 2), 0);
-    ASSERT_EQ(get_bits<uint8_t>(&tlm_word, 2, 1), 1);
-    ASSERT_EQ(get_bits<uint8_t>(&tlm_word, 2, 8), 139);
-}
-
-TEST(GPS, HOV_Word)
-{
-    uint32_t hov_word = 709937912;
-    std::bitset<30> bits(hov_word);
-    // std::cout<<bits.to_string()<<std::endl;
-    ASSERT_EQ(get_bit_msb(bits, 29), 0);
-    ASSERT_EQ(get_bit_msb(bits, 30), 0);
 }
 
 TEST(Subbits, S0111_01)
@@ -89,7 +64,6 @@ TEST(BitsinBytes, bit3)
 {
     uint8_t my_byte = 0b00001011;
     ASSERT_EQ((my_byte & (0x1<<2))>>2, 0b0);
-    ASSERT_NE((my_byte & (0x1<<2))>>2, 0b1);
 }
 
 TEST(BitsinBytes, bits1and2)
@@ -122,53 +96,44 @@ TEST(GetBitsMSB, Get_LSB_0)
     ASSERT_EQ(get_bits_msb(number, 31, 32), 0);
 }
 
-TEST(GetBitsMSB, GPSPreamble_0_1)
+class BitTestFixture: public ::testing::TestWithParam<int>
 {
-    uint8_t number = 139;
-    ASSERT_EQ(get_bits_msb(number, 0, 1), 1);
+    protected:
+        uint8_t gps_preamble = 139;
+        uint32_t tlm_word = 583029304;
+        uint32_t hov_word = 709937912;
+};
+
+TEST_P(BitTestFixture, GPS_Preamble)
+{
+    int bit = GetParam();
+    size_t data_size = sizeof(gps_preamble)*8;
+    ASSERT_EQ(get_bits<uint8_t>(&gps_preamble, bit, 1), ((gps_preamble>>(data_size-bit-1)) & 1U));
 }
 
-TEST(GetBitsMSB, GPSPreamble_1_0)
+TEST_P(BitTestFixture, TLM_Word)
 {
-    uint8_t number = 139;
-    ASSERT_EQ(get_bits_msb(number, 1, 2), 0);
+    int bit = GetParam();
+    size_t data_size = sizeof(tlm_word)*8;
+    ASSERT_EQ(get_bits<uint8_t>(&tlm_word, bit, 1), ((tlm_word>>(data_size-bit-1)) & 1U));
 }
 
-TEST(GetBitsMSB, GPSPreamble_2_0)
+TEST_P(BitTestFixture, HOV_Word)
 {
-    uint8_t number = 139;
-    ASSERT_EQ(get_bits_msb(number, 2, 3), 0);
+    int bit = GetParam();
+    size_t data_size = sizeof(hov_word)*8;
+    ASSERT_EQ(get_bits<uint8_t>(&hov_word, bit, 1), ((hov_word>>(data_size-bit-1)) & 1U));
 }
 
-TEST(GetBitsMSB, GPSPreamble_3_0)
-{
-    uint8_t number = 139;
-    ASSERT_EQ(get_bits_msb(number, 3, 4), 0);
-}
-
-TEST(GetBitsMSB, GPSPreamble_4_1)
-{
-    uint8_t number = 139;
-    ASSERT_EQ(get_bits_msb(number, 4, 5), 1);
-}
-
-TEST(GetBitsMSB, GPSPreamble_5_0)
-{
-    uint8_t number = 139;
-    ASSERT_EQ(get_bits_msb(number, 5, 6), 0);
-}
-
-TEST(GetBitsMSB, GPSPreamble_6_1)
-{
-    uint8_t number = 139;
-    ASSERT_EQ(get_bits_msb(number, 6, 7), 1);
-}
-
-TEST(GetBitsMSB, GPSPreamble_7_1)
-{
-    uint8_t number = 139;
-    ASSERT_EQ(get_bits_msb(number, 7, 8), 1);
-}
+INSTANTIATE_TEST_CASE_P
+(
+    MSB,
+    BitTestFixture,
+    ::testing::Values
+    (
+        0,1,2,3,4,5,6,7
+    )
+);
 
 TEST(LeftShift, From128_To256)
 {
@@ -184,19 +149,7 @@ TEST(GetBitsMSB, StraddleBytes)
     int start_bit = 7;
     int num_bits = 2;
 
-    uint8_t answer = 0;
-    
-    for(int bit_index = 0; bit_index < num_bits; ++bit_index)
-    {
-        int word_index = (start_bit+bit_index) / 8;
-        int bit_in_word_index = (start_bit+bit_index) % 8;
-        int shift_factor = 7 - bit_in_word_index;
-        // std::cout << "Word: "<<word_index << " Bit in Word: " << bit_in_word_index;
-        bool bit_value = ((numbers[word_index] & (1<<shift_factor))>>shift_factor);
-        // std::cout << " Bit Value: " << bit_value;
-        answer |= 1UL << (num_bits-bit_index-1);
-        // std::cout << " Answer: " << (uint16_t)answer<< std::endl;
-    }
+    uint8_t answer = get_bits<uint8_t>(numbers, start_bit, num_bits);
     ASSERT_EQ(answer, 3);
 }
 

@@ -11,8 +11,7 @@ if(NOT TARGET Bit_Utils)
 endif(NOT TARGET Bit_Utils)
 
 add_library(GNSS SHARED
-    src/nav_parser.cpp
-    src/gps_subframe.cpp)
+    src/nav_parser.cpp)
 target_link_libraries(GNSS PUBLIC UBX Bit_Utils)
 target_compile_options(GNSS PRIVATE -std=c++17)
 target_include_directories(GNSS PUBLIC include)
@@ -23,8 +22,7 @@ IF(BUILD_GNSS_TESTS)
     add_subdirectory(../gtest ../../gtest/build)
 
     add_executable(gnss_test
-        test/test_nav_parser.cpp
-        test/test_gps_subframe.cpp)
+        test/test_nav_parser.cpp)
     target_link_libraries(gnss_test PUBLIC gtest gtest_main)
     target_link_libraries(gnss_test PRIVATE GNSS)
 
