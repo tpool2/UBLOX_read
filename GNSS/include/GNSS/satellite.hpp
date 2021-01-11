@@ -5,6 +5,8 @@
 #include <iostream>
 #include <map>
 
+#include "GNSS/ephemeris.hpp"
+
 namespace gnss
 {
 
@@ -26,6 +28,7 @@ class Satellite
     
     protected:
         constellation_t constellation;
+        std::shared_ptr<EphemerisInterface> ephemeris;
 };
 
 class SatelliteDatabase
@@ -51,6 +54,7 @@ class GPS_Satellite: public Satellite
         GPS_Satellite()
         {
             constellation = kGPS;
+            ephemeris = std::make_shared<L2Ephemeris>();
         };
 };
 

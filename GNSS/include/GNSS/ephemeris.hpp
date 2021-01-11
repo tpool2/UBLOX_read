@@ -7,14 +7,22 @@ namespace gnss
 
 class EphemerisInterface
 {
+    protected:
+        double x_ecef;
+        double y_ecef;
+        double z_ecef;
     
-
+    public:
+        virtual void update_location() = 0;
+        double get_x_ecef() const;
+        double get_y_ecef() const;
+        double get_z_ecef() const;
 };
 
 namespace gps
 {
 
-class L2Ephemeris
+class L2Ephemeris: public EphemerisInterface
 {
     private:
         // Message 10
@@ -40,11 +48,15 @@ class L2Ephemeris
         double cos_orbit_radius;
         double sin_latitude;
         double cos_latitude;
+
+    public:
+        void update_location() override;
 };
 
 class L1CAEphemeris
 {
     private:
+        // Subframe 2
         uint8_t IODE;
         double sin_orbit_radius;
 };
