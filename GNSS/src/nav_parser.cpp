@@ -84,13 +84,8 @@ namespace gnss
     {
         std::cout<<"L2"<<std::endl;
         int prn = get_bits<int>(words, 8, 6);
-        std::cout<<"PRN: " << prn << std::endl;
         int message_type_id = get_bits<int>(words, 14, 6);
-        // std::cout<<"Message Type ID: " << message_type_id << std::endl;
         int message_tow_count = get_bits<int>(words, 20, 17);
-        // std::cout<<"Message TOW Count: " << message_tow_count << std::endl;
-        // std::cout<<"SV Time: "<< message_tow_count*6 << std::endl;
-        // std::cout<<"Alert Flag: " << bit_utils::get_bits_msb(words[1], 5, 6) << std::endl;
         switch (message_type_id)
         {
         case 10:
@@ -122,29 +117,31 @@ namespace gnss
 
     void gps::parse_L2_11(const uint32_t* words)
     {
-        auto t_oe = get_bits<uint16_t>(words, 38, 11);
-        auto Omega_0_n = get_bits<int64_t>(words, 49, 33);
-        auto inclination_angle = get_bits<int64_t>(words, 82, 33);
-        auto rate_right_ascension_diff = get_bits<int32_t>(words, 115, 17);
-        auto rate_inclination_angle = get_bits<int16_t>(words, 15);
-        auto sin_inclination = get_bits<int16_t>(words, 147, 16);
-        auto cos_inclination = get_bits<int16_t>(words, 163, 16);
-        auto sin_orbit_radius = get_bits<int32_t>(words, 179, 24);
-        auto cos_orbit_radius = get_bits<int32_t>(words, 203, 24);
-        auto sin_latitude = get_bits<int32_t>(words, 227, 21);
-        auto cos_latitude = get_bits<int32_t>(words, 248, 21);
+        message_11 my_message(words);
+        std::cout<<my_message.to_string();
+        // auto t_oe = get_bits<uint16_t>(words, 38, 11);
+        // auto Omega_0_n = get_bits<int64_t>(words, 49, 33);
+        // auto inclination_angle = get_bits<int64_t>(words, 82, 33);
+        // auto rate_right_ascension_diff = get_bits<int32_t>(words, 115, 17);
+        // auto rate_inclination_angle = get_bits<int16_t>(words, 15);
+        // auto sin_inclination = get_bits<int16_t>(words, 147, 16);
+        // auto cos_inclination = get_bits<int16_t>(words, 163, 16);
+        // auto sin_orbit_radius = get_bits<int32_t>(words, 179, 24);
+        // auto cos_orbit_radius = get_bits<int32_t>(words, 203, 24);
+        // auto sin_latitude = get_bits<int32_t>(words, 227, 21);
+        // auto cos_latitude = get_bits<int32_t>(words, 248, 21);
 
-        std::cout<<"t_oe: "<<t_oe<<std::endl;
-        std::cout<<"Omega_0_n: "<<Omega_0_n<<std::endl;
-        std::cout << "Inclination Angle at Reference Time: " << inclination_angle << std::endl;
-        std::cout << "Rate of Right Ascension Difference: " << rate_right_ascension_diff << std::endl;
-        std::cout << "Rate of Inclination Angle: " << rate_inclination_angle << std::endl;
-        std::cout << "Sine Inclination: " << sin_inclination << std::endl;
-        std::cout << "Cosine Inclination: " << cos_inclination << std::endl;
-        std::cout << "Sine Orbit Radius: " << sin_orbit_radius << std::endl;
-        std::cout << "Cosine Orbit Radius: " << cos_orbit_radius << std::endl;
-        std::cout << "Sine Latitude: " << sin_latitude << std::endl;
-        std::cout << "Cosine Latitude: " << cos_latitude << std::endl;
+        // std::cout<<"t_oe: "<<t_oe<<std::endl;
+        // std::cout<<"Omega_0_n: "<<Omega_0_n<<std::endl;
+        // std::cout << "Inclination Angle at Reference Time: " << inclination_angle << std::endl;
+        // std::cout << "Rate of Right Ascension Difference: " << rate_right_ascension_diff << std::endl;
+        // std::cout << "Rate of Inclination Angle: " << rate_inclination_angle << std::endl;
+        // std::cout << "Sine Inclination: " << sin_inclination << std::endl;
+        // std::cout << "Cosine Inclination: " << cos_inclination << std::endl;
+        // std::cout << "Sine Orbit Radius: " << sin_orbit_radius << std::endl;
+        // std::cout << "Cosine Orbit Radius: " << cos_orbit_radius << std::endl;
+        // std::cout << "Sine Latitude: " << sin_latitude << std::endl;
+        // std::cout << "Cosine Latitude: " << cos_latitude << std::endl;
     }
 
     /*

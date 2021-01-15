@@ -25,6 +25,7 @@ class Satellite
 {
     public:
         constellation_t get_constellation() const;
+        virtual bool update_ephemeris(std::shared_ptr<EphemerisInterface>);
     
     protected:
         constellation_t constellation;
@@ -51,11 +52,19 @@ namespace gps
 class GPS_Satellite: public Satellite
 {
     public:
-        GPS_Satellite()
+        GPS_Satellite(bool cnav = true)
         {
             constellation = kGPS;
-            ephemeris = std::make_shared<L2Ephemeris>();
+            if(cnav)
+            {
+                ephemeris = std::make_shared<L2Ephemeris>();
+            }
+            else
+            {
+                ephemeris = std::make_shared<L1CAEphemeris>();
+            } 
         };
+        bool update_ephemeris(std::shared_ptr<EphemerisInterface>) override;
 };
 
 }
@@ -70,6 +79,7 @@ class Galileo_Satellite: public Satellite
         {
             constellation = kGALILEO;
         };
+        bool update_ephemeris(std::shared_ptr<EphemerisInterface>) override;
 };
 
 }

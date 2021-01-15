@@ -54,6 +54,7 @@ template <class T, class R> T get_bits(const R* buffer, int position, int length
     
     return bits;
 }
+
 }
 
 #endif
