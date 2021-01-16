@@ -40,7 +40,6 @@ bool val_get(std::shared_ptr<async_comm::Serial> serial)
 
     parser.register_callback(ublox::ubx::kCLASS_CFG, ublox::ubx::kCFG_VALGET, [&got_msg](const ublox::ubx::UBX_message_t& ubx_msg)
     {
-        std::cout<<"Got it!"<<std::endl;
         got_msg = true;
     });
 

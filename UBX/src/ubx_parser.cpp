@@ -16,7 +16,7 @@ namespace ublox::ubx
 
     void Parser::get_length_2()
     {
-        ubx_message.payload_length += (current_byte << kByteSize);
+        ubx_message.payload_length |= (static_cast<uint16_t>(current_byte) << kByteSize);
         advance_or_reset(database->get_node(ubx_message.message_class, ubx_message.message_id)->length_matches(ubx_message.payload_length));
     }
 
