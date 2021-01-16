@@ -3,7 +3,7 @@
 #include <bitset>
 #include "UBX/ubx.hpp"
 #include "gps_defs.h"
-#include "Bit_Utils/bit_utils.h"
+#include "bit_utils/bit_utils.h"
 #include "satellite.hpp"
 
 namespace gnss

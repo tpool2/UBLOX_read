@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <string>
 #include <sstream>
-#include "Bit_Utils/bit_utils.h"
+#include "bit_utils/bit_utils.h"
 
 using bit_utils::get_bits;
 

@@ -6,14 +6,12 @@ if(NOT TARGET UBX)
     add_subdirectory(../UBX UBX)
 endif(NOT TARGET UBX)
 
-if(NOT TARGET Bit_Utils)
-    add_subdirectory(../Bit_Utils Bit_Utils)
-endif(NOT TARGET Bit_Utils)
+add_subdirectory(../cmake/bit_utils bit_utils)
 
 add_library(GNSS SHARED
     src/nav_parser.cpp
     src/ephemeris.cpp)
-target_link_libraries(GNSS PUBLIC UBX Bit_Utils)
+target_link_libraries(GNSS PUBLIC UBX bit_utils)
 target_compile_options(GNSS PRIVATE -std=c++17)
 target_include_directories(GNSS PUBLIC include)
 
