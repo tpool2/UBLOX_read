@@ -54,8 +54,14 @@ bool val_get(std::shared_ptr<async_comm::Serial> serial)
         std::cout<<"Acknowledged"<<std::endl;
     });
 
+    serial->register_receive_callback([&parser](const uint8_t* buffer, size_t length)
+    {
+        parser.read_bytes(buffer, length);
+    });
+
     auto request = cfg_val_get_message(ubx::CFG_VALGET_t::kSIGNAL_GPS);
-    serial->send_bytes(request.buffer, sizeof(ubx::CFG_VALGET_t::request_t)+8);
+    int length = sizeof(ubx::CFG_VALGET_t::request_t)+8;
+    serial->send_bytes(request.buffer, length);
 
     clock_t start = clock();
     while(!got_msg && seconds_elapsed(start) < 5);

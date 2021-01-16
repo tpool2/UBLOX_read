@@ -71,6 +71,7 @@ namespace ublox
             int get_parser_state() const;
             void register_callback(uint8_t message_id, uint8_t message_class, std::function<void(const UBX_message_t&)>);
             bool read_byte(const uint8_t& byte);
+            bool read_bytes(const uint8_t* buffer, size_t length);
 
             enum
             {

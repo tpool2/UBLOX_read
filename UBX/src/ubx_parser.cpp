@@ -91,6 +91,16 @@ namespace ublox::ubx
         reset();
     }
 
+    bool Parser::read_bytes(const uint8_t* buffer, size_t length)
+    {
+        bool status = true;
+        for(int index = 0; index < length; ++index)
+        {
+            status &= read_byte(buffer[index]);
+        }
+        return status;
+    }
+
     bool Parser::read_byte(const uint8_t& byte)
     {
         current_byte = byte;

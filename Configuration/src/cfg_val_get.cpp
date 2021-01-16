@@ -10,7 +10,9 @@ int main(int argc, char* argv[])
         serial_port = argv[1];
     }
     std::shared_ptr<async_comm::Serial> serial = std::make_shared<async_comm::Serial>(serial_port, 460800);
+    serial->init();
     bool result = ublox::configure::val_get(serial);
+    serial->close();
     std::cout<<result<<std::endl;
     return 0;
 }
