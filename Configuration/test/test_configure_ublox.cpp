@@ -68,26 +68,7 @@ class MockUbloxReceiver: public ::testing::Test
 
 TEST_F(MockUbloxReceiver, SendConfigurationRequest)
 {
-    union
-    {
-        CFG_VALGET_t::request_t cfg_request;
-        uint8_t payload[sizeof(cfg_request)];
-    };
-    
-    cfg_request.version = CFG_VALGET_t::kREQUEST;
-    cfg_request.layer = CFG_VALGET_t::kRAM;
-    cfg_request.position = 0;
-    cfg_request.cfgDataKey.keyID = CFG_VALSET_t::kMSGOUT_SFRBX;
-    
-
-    UBX_message_t message = create_message(kCLASS_CFG, kCFG_VALGET, sizeof(payload), payload);
+    UBX_message_t message = ublox::configure::cfg_val_get_message(CFG_VALSET_t::kMSGOUT_SFRBX);
     send_bytes(message.buffer, sizeof(CFG_VALGET_t::request_t)+8, ublox_parser);
-    // std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     ASSERT_TRUE(got_ack_cfg_val_get);
-    /*result = output message from parser and then remove the callbacks*/
-}
-
-TEST(UbloxConfigurer, Create)
-{
-    Configurer configure;
 }

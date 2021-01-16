@@ -13,8 +13,13 @@ add_library(CONFIGURATION SHARED
 target_include_directories(CONFIGURATION PUBLIC include)
 target_link_libraries(CONFIGURATION PUBLIC UBX async_comm)
 
-OPTION(BUILD_CONFIGURATION_TESTS "Build Configuration Tests" OFF)
+add_executable(cfg_val_set src/cfg_val_set.cpp)
+target_link_libraries(cfg_val_set PUBLIC CONFIGURATION)
 
+add_executable(cfg_val_get src/cfg_val_get.cpp)
+target_link_libraries(cfg_val_get PUBLIC CONFIGURATION)
+
+OPTION(BUILD_CONFIGURATION_TESTS "Build Configuration Tests" OFF)
 IF(BUILD_CONFIGURATION_TESTS)
     add_subdirectory(../cmake/gtest ../../gtest/build)
 
