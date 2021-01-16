@@ -17,7 +17,7 @@ target_compile_options(UBX PUBLIC -std=c++17)
 OPTION(BUILD_UBX_TESTS "Build UBX Tests" OFF)
 
 IF(BUILD_UBX_TESTS)
-    add_subdirectory(../gtest ../../gtest/build)
+    add_subdirectory(../cmake/gtest ../../gtest/build)
     
     add_executable(ubx_test
         test/test_ubx_database.cpp

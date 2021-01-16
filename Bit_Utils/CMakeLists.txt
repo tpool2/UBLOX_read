@@ -11,7 +11,7 @@ OPTION(BUILD_BIT_UTILS_TESTS "Build Bit Utils Tests" ON)
 
 IF(BUILD_BIT_UTILS_TESTS)
     if(NOT TARGET gtest)
-        add_subdirectory(../gtest ../../gtest/build)
+        add_subdirectory(../cmake/gtest ../../gtest/build)
     endif(NOT TARGET gtest)
 
     add_executable(bit_tests

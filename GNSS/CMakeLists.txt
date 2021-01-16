@@ -20,7 +20,7 @@ target_include_directories(GNSS PUBLIC include)
 OPTION(BUILD_GNSS_TESTS "Build GNSS Tests" OFF)
 
 IF(BUILD_GNSS_TESTS)
-    add_subdirectory(../gtest ../../gtest/build)
+    add_subdirectory(../cmake/gtest ../../gtest/build)
 
     add_executable(gnss_test
         test/test_nav_parser.cpp)
