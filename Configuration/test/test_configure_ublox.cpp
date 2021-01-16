@@ -4,22 +4,6 @@
 
 using namespace ublox::ubx;
 
-TEST(CFG_VALGET, CreateCFG_VALGET_Request_Message)
-{
-    union
-    {
-        CFG_VALGET_t::request_t request;
-        uint8_t payload[8];
-    };
-    
-    request.version = CFG_VALGET_t::kREQUEST;
-    request.layer = CFG_VALGET_t::kRAM;
-    request.position = 0x0000;
-    request.cfgDataKey.keyID = CFG_VALGET_t::kMSGOUT_SFRBX;
-    
-    auto cfg_message = create_message(kCLASS_CFG, kCFG_VALGET, 8, payload);
-}
-
 class MockUbloxReceiver: public ::testing::Test
 {
     protected:
@@ -30,6 +14,7 @@ class MockUbloxReceiver: public ::testing::Test
 
         void SetUp()
         {
+            got_ack_cfg_val_get = false;
             ublox_parser.register_callback(kCLASS_CFG, kCFG_VALGET, [this](const UBX_message_t& ubx_message)
             {
                 CFG_VALGET_t::request_t request = ubx_message.payload.CFG_VALGET;
@@ -68,7 +53,7 @@ class MockUbloxReceiver: public ::testing::Test
 
 TEST_F(MockUbloxReceiver, SendConfigurationRequest)
 {
-    UBX_message_t message = ublox::configure::cfg_val_get_message(CFG_VALSET_t::kMSGOUT_SFRBX);
+    auto message = ublox::configure::cfg_val_get_message(CFG_VALSET_t::kMSGOUT_SFRBX);
     send_bytes(message.buffer, sizeof(CFG_VALGET_t::request_t)+8, ublox_parser);
     ASSERT_TRUE(got_ack_cfg_val_get);
 }
