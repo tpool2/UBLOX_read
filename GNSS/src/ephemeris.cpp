@@ -27,6 +27,38 @@ void L2Ephemeris::update_location()
     double mean_motion = sqrt(mu/std::pow(semi_major_axis, 3));
 }
 
+void L2C_Message::parse_preamble(const uint32_t* words)
+{
+    prn = get_bits<uint8_t>(words, 8, 6);
+    message_type_id = get_bits<uint8_t>(words, 14, 6);
+    message_tow = get_bits<uint32_t>(words, 20, 17);
+    alert_flag = get_bits<bool>(words, 37, 1);
+}
+
+std::string message_10::to_string() const
+{
+    std::stringstream ss;
+    ss<<"PRN: " << static_cast<uint16_t>(prn) << std::endl;
+    ss<<"Message Type ID: " << static_cast<uint16_t>(message_type_id) << std::endl;
+    ss<<"Message TOW: " << message_tow << std::endl;
+    ss<<"Alert Flag: " << alert_flag << std::endl;
+    ss<<"Ephemeris Time of Week: "<< ephemeris_time_of_week <<std::endl;
+    ss<<"Data Sequence Propogation Week Number: " << data_sequence_propogation_week_number << std::endl;
+    ss<<"L1 Health: " << l1_health << std::endl;
+    ss<<"L2 Health: " << l2_health << std::endl;
+    ss<<"L5 Health: " <<l5_health << std::endl;
+    ss<<"CEI Data Sequence Propogation Time of Week: " << CEI_time_of_week << std::endl;
+    ss<<"ED Accuracy Index: " << ED_accuracy << std::endl;
+    ss<<"Semi-major Axis Difference: " << semi_major_axis_diff << std::endl;
+    ss<<"Semi-major Axis Change Rate: " << semi_major_axis_change_rate << std::endl;
+    ss<<"Mean Motion Difference From Computed Value: " << mean_motion_diff << std::endl;
+    ss<<"Mean Motion Difference Rate: " << mean_motion_diff_rate << std::endl;
+    ss<<"Mean Anomaly: " << mean_anomaly << std::endl;
+    ss<<"Eccentricity: " << eccentricity << std::endl;
+    ss<<"Argument of Perigee: " << argument_of_perigee << std::endl;
+    return ss.str();
+}
+
 std::string message_11::to_string() const
 {
     std::stringstream ss;

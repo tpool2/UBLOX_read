@@ -102,46 +102,14 @@ namespace gnss
 
     void gps::parse_L2_10(const uint32_t* words)
     {
-        auto week_number = get_bits<uint16_t>(words, 38, 13);
-        auto CEI_time_of_week = get_bits<uint16_t>(words, 54, 11);
-        auto ED_accuracy = get_bits<int8_t>(words, 65, 5);
-        auto ephemeris_time_of_week = get_bits<uint16_t>(words, 70, 11);
-        auto semi_major_axis_diff = get_bits<int32_t>(words, 81, 26);
-        auto semi_major_axis_change_rate = get_bits<int32_t>(words, 107, 25);
-        auto mean_motion_diff = get_bits<int32_t>(words, 132, 17);
-        auto mean_motion_diff_rate = get_bits<int32_t>(words, 149, 23);
-        auto mean_anomaly = get_bits<int64_t>(words, 172, 33);
-        auto eccentricity = get_bits<uint64_t>(words, 205, 33);
-        auto argument_of_perigee = get_bits<int64_t>(words, 238, 33);
+        message_10 my_message(words);
+        std::cout<<my_message.to_string();
     }
 
     void gps::parse_L2_11(const uint32_t* words)
     {
         message_11 my_message(words);
         std::cout<<my_message.to_string();
-        // auto t_oe = get_bits<uint16_t>(words, 38, 11);
-        // auto Omega_0_n = get_bits<int64_t>(words, 49, 33);
-        // auto inclination_angle = get_bits<int64_t>(words, 82, 33);
-        // auto rate_right_ascension_diff = get_bits<int32_t>(words, 115, 17);
-        // auto rate_inclination_angle = get_bits<int16_t>(words, 15);
-        // auto sin_inclination = get_bits<int16_t>(words, 147, 16);
-        // auto cos_inclination = get_bits<int16_t>(words, 163, 16);
-        // auto sin_orbit_radius = get_bits<int32_t>(words, 179, 24);
-        // auto cos_orbit_radius = get_bits<int32_t>(words, 203, 24);
-        // auto sin_latitude = get_bits<int32_t>(words, 227, 21);
-        // auto cos_latitude = get_bits<int32_t>(words, 248, 21);
-
-        // std::cout<<"t_oe: "<<t_oe<<std::endl;
-        // std::cout<<"Omega_0_n: "<<Omega_0_n<<std::endl;
-        // std::cout << "Inclination Angle at Reference Time: " << inclination_angle << std::endl;
-        // std::cout << "Rate of Right Ascension Difference: " << rate_right_ascension_diff << std::endl;
-        // std::cout << "Rate of Inclination Angle: " << rate_inclination_angle << std::endl;
-        // std::cout << "Sine Inclination: " << sin_inclination << std::endl;
-        // std::cout << "Cosine Inclination: " << cos_inclination << std::endl;
-        // std::cout << "Sine Orbit Radius: " << sin_orbit_radius << std::endl;
-        // std::cout << "Cosine Orbit Radius: " << cos_orbit_radius << std::endl;
-        // std::cout << "Sine Latitude: " << sin_latitude << std::endl;
-        // std::cout << "Cosine Latitude: " << cos_latitude << std::endl;
     }
 
     /*
