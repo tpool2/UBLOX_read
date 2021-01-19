@@ -17,7 +17,6 @@ class Ublox
             comm = std::make_shared<async_comm::Serial>(serial_port, baud_rate);
             comm->register_receive_callback([this](const uint8_t* buffer, size_t length)
             {
-                std::cout<<"Got bytes"<<std::endl;
                 parser.read_bytes(buffer, length);
             });
             if(!comm->init())
