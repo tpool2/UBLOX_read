@@ -29,10 +29,10 @@ void L2Ephemeris::update_location()
 
 void L2C_Message::parse_preamble(const uint32_t* words)
 {
-    prn = get_bits<uint8_t>(words, 8, 6);
-    message_type_id = get_bits<uint8_t>(words, 14, 6);
-    message_tow = get_bits<uint32_t>(words, 20, 17);
-    alert_flag = get_bits<bool>(words, 37, 1);
+    prn = get_msb_bits<uint8_t>(words, 8, 6);
+    message_type_id = get_msb_bits<uint8_t>(words, 14, 6);
+    message_tow = get_msb_bits<uint32_t>(words, 20, 17);
+    alert_flag = get_msb_bits<bool>(words, 37, 1);
 }
 
 std::string message_10::to_string() const

@@ -5,6 +5,7 @@
 #include "async_comm/serial.h"
 #include "UBX/ubx.hpp"
 #include "ublox/ublox.hpp"
+#include "bit_utils/bit_utils.h"
 
 namespace ublox { namespace configure
 {

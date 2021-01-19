@@ -5,7 +5,7 @@
 #include <sstream>
 #include "bit_utils/bit_utils.h"
 
-using bit_utils::get_bits;
+using bit_utils::get_msb_bits;
 
 namespace gnss
 {
@@ -46,17 +46,17 @@ class message_11: public L2C_Message
         message_11(const uint32_t* words)
         {
             parse_preamble(words);
-            ephemeris_time_of_week = 300*static_cast<uint32_t>(get_bits<uint16_t>(words, 38, 11));
-            longitude_orbit_plane = pow(2,-32)*static_cast<double>(get_bits<int64_t>(words, 49, 33));
-            inclination_angle = pow(2, -32)*static_cast<double>(get_bits<int64_t>(words, 82, 33));
-            rate_right_ascension_diff = pow(2, -44)*static_cast<double>(get_bits<int32_t>(words, 115, 17));
-            rate_inclination_angle = pow(2, -44)*static_cast<double>(get_bits<int16_t>(words, 15));
-            sin_inclination = pow(2, -30)*static_cast<double>(get_bits<int16_t>(words, 147, 16));
-            cos_inclination = pow(2, -30)*static_cast<double>(get_bits<int16_t>(words, 163, 16));
-            sin_orbit_radius = pow(2, -8)*static_cast<double>(get_bits<int32_t>(words, 179, 24));
-            cos_orbit_radius = pow(2, -8)*static_cast<double>(get_bits<int32_t>(words, 203, 24));
-            sin_latitude = pow(2, -30)*static_cast<double>(get_bits<int32_t>(words, 227, 21));
-            cos_latitude = pow(2, -30)*static_cast<double>(get_bits<int32_t>(words, 248, 21));
+            ephemeris_time_of_week = 300*static_cast<uint32_t>(get_msb_bits<uint16_t>(words, 38, 11));
+            longitude_orbit_plane = pow(2,-32)*static_cast<double>(get_msb_bits<int64_t>(words, 49, 33));
+            inclination_angle = pow(2, -32)*static_cast<double>(get_msb_bits<int64_t>(words, 82, 33));
+            rate_right_ascension_diff = pow(2, -44)*static_cast<double>(get_msb_bits<int32_t>(words, 115, 17));
+            rate_inclination_angle = pow(2, -44)*static_cast<double>(get_msb_bits<int16_t>(words, 15));
+            sin_inclination = pow(2, -30)*static_cast<double>(get_msb_bits<int16_t>(words, 147, 16));
+            cos_inclination = pow(2, -30)*static_cast<double>(get_msb_bits<int16_t>(words, 163, 16));
+            sin_orbit_radius = pow(2, -8)*static_cast<double>(get_msb_bits<int32_t>(words, 179, 24));
+            cos_orbit_radius = pow(2, -8)*static_cast<double>(get_msb_bits<int32_t>(words, 203, 24));
+            sin_latitude = pow(2, -30)*static_cast<double>(get_msb_bits<int32_t>(words, 227, 21));
+            cos_latitude = pow(2, -30)*static_cast<double>(get_msb_bits<int32_t>(words, 248, 21));
         }
         std::string to_string() const override;
 
@@ -79,20 +79,20 @@ class message_10: public L2C_Message
         message_10(const uint32_t* words)
         {
             parse_preamble(words);
-            data_sequence_propogation_week_number = get_bits<uint16_t>(words, 38, 13);
-            l1_health = get_bits<bool>(words, 51, 1);
-            l2_health = get_bits<bool>(words, 52, 1);
-            l5_health = get_bits<bool>(words, 53, 1);
-            CEI_time_of_week = 300*static_cast<uint32_t>(get_bits<uint16_t>(words, 54, 11));
-            ED_accuracy = get_bits<int8_t>(words, 65, 5);
-            ephemeris_time_of_week = 300*static_cast<uint32_t>(get_bits<uint16_t>(words, 70, 11));
-            semi_major_axis_diff = pow(2, -9)*static_cast<double>(get_bits<int32_t>(words, 81, 26));
-            auto semi_major_axis_change_rate = pow(2, -21)*static_cast<double>(get_bits<int32_t>(words, 107, 25));
-            auto mean_motion_diff = pow(2, -44)*static_cast<double>(get_bits<int32_t>(words, 132, 17));
-            auto mean_motion_diff_rate = pow(2, -57)*static_cast<double>(get_bits<int32_t>(words, 149, 23));
-            auto mean_anomaly = pow(2, -32)*static_cast<double>(get_bits<int64_t>(words, 172, 33));
-            auto eccentricity = pow(2, -34)*static_cast<double>(get_bits<uint64_t>(words, 205, 33));
-            auto argument_of_perigee = pow(2, -32)*static_cast<double>(get_bits<int64_t>(words, 238, 33));
+            data_sequence_propogation_week_number = get_msb_bits<uint16_t>(words, 38, 13);
+            l1_health = get_msb_bits<bool>(words, 51, 1);
+            l2_health = get_msb_bits<bool>(words, 52, 1);
+            l5_health = get_msb_bits<bool>(words, 53, 1);
+            CEI_time_of_week = 300*static_cast<uint32_t>(get_msb_bits<uint16_t>(words, 54, 11));
+            ED_accuracy = get_msb_bits<int8_t>(words, 65, 5);
+            ephemeris_time_of_week = 300*static_cast<uint32_t>(get_msb_bits<uint16_t>(words, 70, 11));
+            semi_major_axis_diff = pow(2, -9)*static_cast<double>(get_msb_bits<int32_t>(words, 81, 26));
+            auto semi_major_axis_change_rate = pow(2, -21)*static_cast<double>(get_msb_bits<int32_t>(words, 107, 25));
+            auto mean_motion_diff = pow(2, -44)*static_cast<double>(get_msb_bits<int32_t>(words, 132, 17));
+            auto mean_motion_diff_rate = pow(2, -57)*static_cast<double>(get_msb_bits<int32_t>(words, 149, 23));
+            auto mean_anomaly = pow(2, -32)*static_cast<double>(get_msb_bits<int64_t>(words, 172, 33));
+            auto eccentricity = pow(2, -34)*static_cast<double>(get_msb_bits<uint64_t>(words, 205, 33));
+            auto argument_of_perigee = pow(2, -32)*static_cast<double>(get_msb_bits<int64_t>(words, 238, 33));
         }
 
         std::string to_string() const override;

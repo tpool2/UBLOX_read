@@ -10,12 +10,13 @@ if(NOT TARGET UBLOX)
     add_subdirectory(../ublox UBLOX)
 endif(NOT TARGET UBLOX)
 
+add_subdirectory(../cmake/bit_utils bit_utils)
 add_subdirectory(../cmake/async_comm async_comm)
 
 add_library(CONFIGURATION SHARED
     src/configure.cpp)
 target_include_directories(CONFIGURATION PUBLIC include)
-target_link_libraries(CONFIGURATION PUBLIC UBX UBLOX async_comm)
+target_link_libraries(CONFIGURATION PUBLIC UBX UBLOX async_comm bit_utils)
 
 add_executable(cfg_val_set src/cfg_val_set.cpp)
 target_link_libraries(cfg_val_set PUBLIC CONFIGURATION)

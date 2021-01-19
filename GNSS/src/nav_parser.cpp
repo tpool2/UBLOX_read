@@ -3,7 +3,7 @@
 
 namespace gnss
 {
-    using bit_utils::get_bits;
+    using bit_utils::get_msb_bits;
     
     void NavParser::parse_sfrbx(const ublox::ubx::UBX_message_t& message)
     {
@@ -21,11 +21,11 @@ namespace gnss
     void NavParser::read_gps_message(const uint32_t* words, size_t num_words)
     {
         // std::cout<<"Reading GPS Message with "<< num_words << " words" <<std::endl;
-        if(get_bits<uint8_t>(words, 0, 8) == gps::kPreamble)
+        if(get_msb_bits<uint8_t>(words, 0, 8) == gps::kPreamble)
         {
             gps::parse_L2(words);
         }
-        else if(get_bits<uint8_t>(words, 2, 8) == gps::kPreamble)
+        else if(get_msb_bits<uint8_t>(words, 2, 8) == gps::kPreamble)
         {
             // gps::parse_l1_ca(words);
         }
@@ -39,9 +39,9 @@ namespace gnss
     {
         // std::cout<<"L1 C/A"<<std::endl;
         throw std::logic_error("Not implemented correctly yet");
-        int tow_truncated = get_bits<int>(words, 2, 19);
+        int tow_truncated = get_msb_bits<int>(words, 2, 19);
         // std::cout<<"TOW-Count: "<<tow_truncated<<std::endl;
-        int subframe_id = get_bits<int>(words, 21, 24);
+        int subframe_id = get_msb_bits<int>(words, 21, 24);
         // std::cout<<"Subframe ID: "<<subframe_id<<std::endl;
         switch(subframe_id)
         {
@@ -55,37 +55,37 @@ namespace gnss
 
     int32_t gps::l1_get_split_data(const uint32_t* words, int position)
     {
-        return static_cast<int32_t>((get_bits<uint32_t>(words, position, 8)<<24) | get_bits<uint32_t>(words, position+14, 24));
+        return static_cast<int32_t>((get_msb_bits<uint32_t>(words, position, 8)<<24) | get_msb_bits<uint32_t>(words, position+14, 24));
     }
 
     void gps::parse_subframe_3(const uint32_t* words)
     {
-        int16_t C_ic = get_bits<int16_t>(words, 60, 16);
+        int16_t C_ic = get_msb_bits<int16_t>(words, 60, 16);
         // std::cout << "C_ic: " << C_ic << std::endl;
         int32_t Omega_0 = l1_get_split_data(words, 76);
         // std::cout << "Omega_0: " << Omega_0 << std::endl;
-        int16_t C_is = get_bits<int16_t>(words, 120, 16);
+        int16_t C_is = get_msb_bits<int16_t>(words, 120, 16);
         // std::cout << "C_is: " << C_is << std::endl;
         int32_t i_0 = l1_get_split_data(words, 136);
         // std::cout << "i_0: " << i_0 << std::endl;
-        int16_t C_rc = get_bits<int16_t>(words, 180, 16);
+        int16_t C_rc = get_msb_bits<int16_t>(words, 180, 16);
         // std::cout << "C_rc: " << C_rc<<std::endl;
         int32_t omega = l1_get_split_data(words, 196);
         // std::cout << "omega: " << omega << std::endl;
-        int32_t Omega_dot = get_bits<int32_t>(words, 240, 24);
+        int32_t Omega_dot = get_msb_bits<int32_t>(words, 240, 24);
         // std::cout << "Omega_dot: " << Omega_dot << std::endl;
-        uint8_t IODE = get_bits<uint8_t>(words, 270, 8);
+        uint8_t IODE = get_msb_bits<uint8_t>(words, 270, 8);
         // std::cout << "IODE: " << static_cast<uint16_t>(IODE) << std::endl;
-        int16_t IDOT = get_bits<int16_t>(words, 278, 14);
+        int16_t IDOT = get_msb_bits<int16_t>(words, 278, 14);
         // std::cout<<"IDOT: " << IDOT << std::endl;
     }
 
     void gps::parse_L2(const uint32_t* words)
     {
         std::cout<<"L2"<<std::endl;
-        int prn = get_bits<int>(words, 8, 6);
-        int message_type_id = get_bits<int>(words, 14, 6);
-        int message_tow_count = get_bits<int>(words, 20, 17);
+        int prn = get_msb_bits<int>(words, 8, 6);
+        int message_type_id = get_msb_bits<int>(words, 14, 6);
+        int message_tow_count = get_msb_bits<int>(words, 20, 17);
         switch (message_type_id)
         {
         case 10:

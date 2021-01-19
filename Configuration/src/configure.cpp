@@ -10,23 +10,26 @@ double seconds_elapsed(const clock_t &start_time)
 
 bool val_set(std::shared_ptr<Ublox> my_ublox, uint32_t cfg_key, uint64_t cfg_data, uint8_t layer)
 {   
-    my_ublox->parser.register_callback(ubx::kCLASS_ACK, ubx::kACK_ACK, [](const ubx::UBX_message_t &ubx_msg)
+    bool got_ack_ack = false;
+    bool got_ack_nack = false;
+
+    my_ublox->parser.register_callback(ubx::kCLASS_ACK, ubx::kACK_ACK, [&got_ack_ack](const ubx::UBX_message_t &ubx_msg)
     {
         std::cout<<"ACK_ACK"<<std::endl;
+        got_ack_ack = true;
     });
-    my_ublox->parser.register_callback(ubx::kCLASS_ACK, ubx::kACK_NACK, [](const ubx::UBX_message_t &ubx_msg)
+    my_ublox->parser.register_callback(ubx::kCLASS_ACK, ubx::kACK_NACK, [&got_ack_nack](const ubx::UBX_message_t &ubx_msg)
     {
         std::cout<<"ACK_NACK"<<std::endl;
+        got_ack_nack = true;
     });
-    // ubx::UBX_message_t out_message;
-    // memset(out_message.payload.buffer, 0, sizeof(ubx::UBX_message_t));
     
     // my_ublox->comm->send_bytes(out_message.buffer, 8+sizeof(ubx::CFG_VALSET_t));
     clock_t start = clock();
-    while(seconds_elapsed(start) < 10);
+    while(seconds_elapsed(start) < 10 && !got_ack_nack && !got_ack_ack);
     my_ublox->parser.pop_callback();
     my_ublox->parser.pop_callback();
-    return true;
+    return got_ack_ack;
 }
 
 ubx::UBX_message_t cfg_val_get_message(uint32_t configuration_key)

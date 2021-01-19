@@ -11,6 +11,8 @@ namespace ublox { namespace ubx
             UBX_message_t()
             {
                 memset(&buffer, 0, UBX_MESSAGE_BUFFER_SIZE);
+                buffer[0] = kSTART_BYTE_1;
+                buffer[1] = kSTART_BYTE_2;
             }
             union
             {
