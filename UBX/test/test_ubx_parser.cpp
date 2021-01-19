@@ -202,6 +202,20 @@ class ParserCallbacks: public ::testing::Test
             parser.read_byte(kCFG_VALDEL);
         }
 
+        void parse_ack_ack()
+        {
+            parser.read_byte(kSTART_BYTE_1);
+            parser.read_byte(kSTART_BYTE_2);
+            parser.read_byte(kCLASS_ACK);
+            parser.read_byte(kACK_ACK);
+            parser.read_byte(0x02);
+            parser.read_byte(0x00);
+            parser.read_byte(kCLASS_CFG);
+            parser.read_byte(kCFG_VALDEL);
+            parser.read_byte(154);
+            parser.read_byte(195);
+        }
+
         void ack_ack_cb(const UBX_message_t& ubx_message)
         {
             parsed_ack_ack = true;
@@ -275,6 +289,20 @@ TEST_F(ParserCallbacks, ACK_ACK_INFORMATION)
     });
     parser.read_byte(154);
     parser.read_byte(195);
+}
+
+TEST_F(ParserCallbacks, Deregister_ACK_ACK)
+{
+    parser.pop_callback();
+    parser.read_byte(154);
+    parser.read_byte(195);
+    ASSERT_FALSE(parsed_ack_ack);
+    parser.register_callback(ublox::ubx::kCLASS_ACK, ublox::ubx::kACK_ACK, [this](const ublox::ubx::UBX_message_t &msg)
+    {
+        parsed_ack_ack = true;
+    });
+    parse_ack_ack();
+    ASSERT_TRUE(parsed_ack_ack);
 }
 
 class ParserGotMessageClassIDRXM_SFRBX: public ::testing::Test

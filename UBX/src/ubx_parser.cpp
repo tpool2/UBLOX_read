@@ -76,6 +76,11 @@ namespace ublox::ubx
         callbacks.push_back(Callback(message_class, message_id, callback_function));
     }
 
+    void Parser::pop_callback()
+    {
+        callbacks.pop_back();
+    }
+
     void Parser::finish_message()
     {
         if(parser_state == kGotChecksumB)

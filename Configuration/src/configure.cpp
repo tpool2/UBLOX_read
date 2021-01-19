@@ -8,11 +8,24 @@ double seconds_elapsed(const clock_t &start_time)
     return static_cast<double>(clock()-start_time)/CLOCKS_PER_SEC;
 }
 
-bool val_set(std::shared_ptr<async_comm::Serial> serial)
+bool val_set(std::shared_ptr<Ublox> my_ublox, uint32_t cfg_key, uint64_t cfg_data, uint8_t layer)
 {   
+    my_ublox->parser.register_callback(ubx::kCLASS_ACK, ubx::kACK_ACK, [](const ubx::UBX_message_t &ubx_msg)
+    {
+        std::cout<<"ACK_ACK"<<std::endl;
+    });
+    my_ublox->parser.register_callback(ubx::kCLASS_ACK, ubx::kACK_NACK, [](const ubx::UBX_message_t &ubx_msg)
+    {
+        std::cout<<"ACK_NACK"<<std::endl;
+    });
+    // ubx::UBX_message_t out_message;
+    // memset(out_message.payload.buffer, 0, sizeof(ubx::UBX_message_t));
+    
+    // my_ublox->comm->send_bytes(out_message.buffer, 8+sizeof(ubx::CFG_VALSET_t));
     clock_t start = clock();
-    while(seconds_elapsed(start) < 5);
-
+    while(seconds_elapsed(start) < 10);
+    my_ublox->parser.pop_callback();
+    my_ublox->parser.pop_callback();
     return true;
 }
 
@@ -37,20 +50,24 @@ bool val_get(std::shared_ptr<async_comm::Serial> serial)
 {
     ublox::ubx::Parser parser;
     bool got_msg = false;
+    bool got_ack = false;
 
     parser.register_callback(ublox::ubx::kCLASS_CFG, ublox::ubx::kCFG_VALGET, [&got_msg](const ublox::ubx::UBX_message_t& ubx_msg)
     {
+        std::cout<<ubx_msg.payload.CFG_VALGET.version<<std::endl;
         got_msg = true;
     });
 
-    parser.register_callback(ubx::kCLASS_ACK, ubx::kACK_NACK, [](const ubx::UBX_message_t &response)
+    parser.register_callback(ubx::kCLASS_ACK, ubx::kACK_NACK, [&got_ack](const ubx::UBX_message_t &response)
     {
-        std::cout<<"Not Acknowledged"<<std::endl;
+        got_ack = true;
+        std::cout<<"ACK_NACK"<<std::endl;
     });
 
-    parser.register_callback(ubx::kCLASS_ACK, ubx::kACK_ACK, [](const ubx::UBX_message_t &response)
+    parser.register_callback(ubx::kCLASS_ACK, ubx::kACK_ACK, [&got_ack](const ubx::UBX_message_t &response)
     {
-        std::cout<<"Acknowledged"<<std::endl;
+        got_ack = true;
+        std::cout<<"ACK_ACK"<<std::endl;
     });
 
     serial->register_receive_callback([&parser](const uint8_t* buffer, size_t length)
@@ -60,10 +77,19 @@ bool val_get(std::shared_ptr<async_comm::Serial> serial)
 
     auto request = cfg_val_get_message(ubx::CFG_VALGET_t::kSIGNAL_GPS);
     int length = sizeof(ubx::CFG_VALGET_t::request_t)+8;
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     serial->send_bytes(request.buffer, length);
 
     clock_t start = clock();
     while(!got_msg && seconds_elapsed(start) < 5);
+
+    // Deregister callbacks
+    parser.pop_callback();
+    parser.pop_callback();
+    parser.pop_callback();
+
+    serial->register_receive_callback(nullptr);
 
     return got_msg;
 }
