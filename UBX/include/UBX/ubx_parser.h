@@ -68,7 +68,7 @@ namespace ublox
             {
 
             };
-            void pop_callback();
+            void pop_callbacks(int number_of_callbacks);
             int get_parser_state() const;
             void register_callback(uint8_t message_class, uint8_t message_id, std::function<void(const UBX_message_t&)>);
             bool read_byte(const uint8_t& byte);

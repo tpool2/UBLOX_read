@@ -12,7 +12,7 @@ class Ublox
         std::shared_ptr<async_comm::Comm> comm;
         ubx::Parser parser;
 
-        Ublox(std::string serial_port, unsigned int baud_rate)
+        Ublox(std::string serial_port, unsigned int baud_rate=460800)
         {
             comm = std::make_shared<async_comm::Serial>(serial_port, baud_rate);
             comm->register_receive_callback([this](const uint8_t* buffer, size_t length)

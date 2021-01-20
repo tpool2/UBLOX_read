@@ -76,9 +76,12 @@ namespace ublox::ubx
         callbacks.push_back(Callback(message_class, message_id, callback_function));
     }
 
-    void Parser::pop_callback()
+    void Parser::pop_callbacks(int number_of_callbacks)
     {
-        callbacks.pop_back();
+        for(int count = 0; count < number_of_callbacks; ++count)
+        {
+            callbacks.pop_back();
+        }
     }
 
     void Parser::finish_message()

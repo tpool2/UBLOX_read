@@ -2,31 +2,23 @@
 #include <iostream>
 #include "async_comm/serial.h"
 #include "Configuration/configure.h"
+#include "ublox/ublox.hpp"
 
 int main(int argc, char* argv[])
 {
     std::string serial_port = "/dev/ttyACM0";
+    uint32_t configuration_key = ublox::ubx::CFG_VALSET_t::kSIGNAL_GPS_L2;
     if(argc > 1)
     {
         serial_port = argv[1];
     }
-    std::cout<<serial_port<<std::endl;
-    std::shared_ptr<async_comm::Serial> serial = std::make_shared<async_comm::Serial>(serial_port, 460800);
-    std::shared_ptr<ublox::ubx::Parser> parser = std::make_shared<ublox::ubx::Parser>();
-    serial->register_receive_callback([parser](const uint8_t* buffer, size_t length)
+    if(argc > 2)
     {
-        parser->read_bytes(buffer, length);
-    });
+        configuration_key = static_cast<uint32_t>(std::stoi(argv[2]));
+    }
+    std::shared_ptr<ublox::Ublox> my_ublox = std::make_shared<ublox::Ublox>(serial_port);
 
-    if(!serial->init())
-    {
-        std::cout<<"Failed to initialize serial port"<<std::endl;
-        return 1;
-    };
-    bool result = ublox::configure::val_get(serial);
-
-    serial->close();
-
-    std::cout<<result<<std::endl;
+    uint8_t result = ublox::configure::val_get<uint8_t>(my_ublox, configuration_key);
+    std::cout<<static_cast<uint16_t>(result)<<std::endl;
     return 0;
 }

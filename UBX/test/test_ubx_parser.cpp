@@ -293,7 +293,7 @@ TEST_F(ParserCallbacks, ACK_ACK_INFORMATION)
 
 TEST_F(ParserCallbacks, Deregister_ACK_ACK)
 {
-    parser.pop_callback();
+    parser.pop_callbacks(1);
     parser.read_byte(154);
     parser.read_byte(195);
     ASSERT_FALSE(parsed_ack_ack);
