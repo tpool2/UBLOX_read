@@ -30,7 +30,8 @@ INSTANTIATE_TEST_SUITE_P(KeysAndDataSizes, GetDataStorageSize,
         data_tuple(0x10410013, 1),
         data_tuple(0x30de0006, 3),
         data_tuple(0x30de0007, 3),
-        data_tuple(0x10110013, 1)
+        data_tuple(0x10110013, 1),
+        data_tuple(0x50110013, 5)
     )
 );
 
