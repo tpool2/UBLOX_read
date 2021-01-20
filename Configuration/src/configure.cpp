@@ -8,9 +8,8 @@ double seconds_elapsed(const clock_t &start_time)
     return static_cast<double>(clock()-start_time)/CLOCKS_PER_SEC;
 }
 
-bool val_set(std::shared_ptr<Ublox> my_ublox, uint32_t cfg_key, uint64_t cfg_data, uint8_t layer)
+bool val_set(std::shared_ptr<Ublox> my_ublox, uint32_t cfg_key, uint8_t cfg_data, uint8_t layer)
 {   
-    using bit_utils::get_lsb_bits;
     bool got_ack_ack = false;
     bool got_ack_nack = false;
 
@@ -24,26 +23,17 @@ bool val_set(std::shared_ptr<Ublox> my_ublox, uint32_t cfg_key, uint64_t cfg_dat
         std::cout<<"ACK_NACK"<<std::endl;
         got_ack_nack = true;
     });
-    uint8_t payload_length = 9;
-    uint8_t payload[payload_length] = {  ubx::CFG_VALSET_t::kVERSION_0,
-                            layer,
-                            0,
-                            0,
-                            get_lsb_bits<uint8_t>(&cfg_key, 0, 8),
-                            get_lsb_bits<uint8_t>(&cfg_key, 8, 8),
-                            get_lsb_bits<uint8_t>(&cfg_key, 16, 8),
-                            get_lsb_bits<uint8_t>(&cfg_key, 24, 8),
-                            get_lsb_bits<uint8_t>(&cfg_data, 0, 1) };
-    ubx::UBX_message_t out_msg = ubx::create_message(ubx::kCLASS_CFG, ubx::kCFG_VALSET, payload_length, payload);
-    my_ublox->comm->send_bytes(out_msg.buffer, 8+payload_length);
+    
+    ubx::UBX_message_t out_msg = cfg_val_set_message(cfg_key, static_cast<uint8_t>(cfg_data));
+    my_ublox->comm->send_bytes(out_msg.buffer, 8+out_msg.payload_length);
 
-    for(int index = 0; index < 8+payload_length; ++index)
+    for(int index = 0; index < 8+out_msg.payload_length; ++index)
     {
         std::cout<<"Sent " << uint16_t(out_msg.buffer[index]) << std::endl;
     }
 
     clock_t start = clock();
-    while(seconds_elapsed(start) < 10 && !got_ack_nack && !got_ack_ack);
+    while(seconds_elapsed(start) < 2 && !got_ack_nack && !got_ack_ack);
     
     my_ublox->parser.pop_callback();
     my_ublox->parser.pop_callback();
