@@ -14,7 +14,8 @@ add_subdirectory(../cmake/bit_utils bit_utils)
 add_subdirectory(../cmake/async_comm async_comm)
 
 add_library(CONFIGURATION SHARED
-    src/configure.cpp)
+    src/configure.cpp
+    src/configuration_keys.cpp)
 target_include_directories(CONFIGURATION PUBLIC include)
 target_link_libraries(CONFIGURATION PUBLIC UBX UBLOX async_comm bit_utils)
 
@@ -29,7 +30,8 @@ IF(BUILD_CONFIGURATION_TESTS)
     add_subdirectory(../cmake/gtest ../../gtest/build)
 
     add_executable(configuration_tests
-        test/test_configure_ublox.cpp)
+        test/test_configure_ublox.cpp
+        test/test_configuration_keys.cpp)
     target_link_libraries(configuration_tests PUBLIC gtest gtest_main CONFIGURATION)
 
 ENDIF(BUILD_CONFIGURATION_TESTS)

@@ -27,11 +27,6 @@ bool val_set(std::shared_ptr<Ublox> my_ublox, uint32_t cfg_key, uint8_t cfg_data
     ubx::UBX_message_t out_msg = cfg_val_set_message(cfg_key, static_cast<uint8_t>(cfg_data));
     my_ublox->comm->send_bytes(out_msg.buffer, 8+out_msg.payload_length);
 
-    for(int index = 0; index < 8+out_msg.payload_length; ++index)
-    {
-        std::cout<<"Sent " << uint16_t(out_msg.buffer[index]) << std::endl;
-    }
-
     clock_t start = clock();
     while(seconds_elapsed(start) < 2 && !got_ack_nack && !got_ack_ack);
     

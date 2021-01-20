@@ -45,6 +45,7 @@ template <class T> T val_get(std::shared_ptr<Ublox> my_ublox, uint32_t configura
     my_ublox->parser.register_callback(ubx::kCLASS_CFG, ubx::kCFG_VALGET, [&got_configuration_data](const ublox::ubx::UBX_message_t& ubx_msg)
     {
         got_configuration_data = true;
+        // T = bit_utils::get_lsb_bits<T>(&)
     });
     my_ublox->parser.register_callback(ubx::kCLASS_ACK, ubx::kACK_ACK, [&got_ack_ack](const ubx::UBX_message_t &ubx_msg)
     {
