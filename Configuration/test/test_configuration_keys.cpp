@@ -4,6 +4,7 @@
 
 using ublox::configuration::get_data_storage_size;
 using ublox::configuration::get_group_id;
+using ublox::configuration::get_item_id;
 
 typedef std::tuple<uint32_t, uint8_t> data_tuple;
 
@@ -58,13 +59,48 @@ INSTANTIATE_TEST_SUITE_P(KeysAndGroupIDs, GetGroupID,
         data_tuple(0x40240021, 0x24),
         data_tuple(0x40240023, 0x24),
         // CFG-HW
-        data_tuple(0x10a3002e, 0xA3),
+        data_tuple(0x10a3002e, 0xa3),
         // CFG-INFMSG
         data_tuple(0x20920005, 0x92),
         // CFG-ITFM
         data_tuple(0x10410013, 0x41),
-        data_tuple(0x30de0006, 0xDE),
-        data_tuple(0x30de0007, 0xDE),
+        data_tuple(0x30de0006, 0xde),
+        data_tuple(0x30de0007, 0xde),
         data_tuple(0x10110013, 0x11)
+    )
+);
+
+typedef std::tuple<uint32_t, uint16_t> item_tuple;
+
+class GetItemID: public ::testing::TestWithParam<item_tuple>
+{};
+
+TEST_P(GetItemID, TestCorrectItemID)
+{
+    item_tuple key_item_pair = GetParam();
+    ASSERT_EQ(get_item_id(std::get<0>(key_item_pair)), std::get<1>(key_item_pair));
+}
+
+INSTANTIATE_TEST_SUITE_P(KeysAndItemIDs, GetItemID,
+    ::testing::Values
+    (
+        // CFG-BDS
+        data_tuple(0x10340014, 0x014),
+        // CFG-GEOFENCE
+        data_tuple(0x10240012, 0x012),
+        data_tuple(0x20240011, 0x011),
+        data_tuple(0x20240014, 0x014),
+        data_tuple(0x10240020, 0x020),
+        data_tuple(0x40240021, 0x021),
+        data_tuple(0x40240023, 0x023),
+        // CFG-HW
+        data_tuple(0x10a3002e, 0x02e),
+        // CFG-INFMSG
+        data_tuple(0x20920005, 0x005),
+        // CFG-ITFM
+        data_tuple(0x10410013, 0x013),
+        data_tuple(0x30de0006, 0x006),
+        data_tuple(0x30de0007, 0x007),
+        data_tuple(0x10110013, 0x013)
     )
 );

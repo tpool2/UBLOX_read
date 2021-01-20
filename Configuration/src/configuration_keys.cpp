@@ -15,5 +15,10 @@ uint8_t get_group_id(const configuration_key_t& configuration_key)
     return bit_utils::get_lsb_bits<uint8_t>(&configuration_key, 16, 8);
 }
 
+uint16_t get_item_id(const configuration_key_t& configuration_key)
+{
+    return bit_utils::get_lsb_bits<uint8_t>(&configuration_key, 0, 12);
+}
+
 } // namespace configuration
 } // namespace ublox
