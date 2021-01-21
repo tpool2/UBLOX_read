@@ -34,8 +34,8 @@ template <class T> ubx::UBX_message_t cfg_val_set_message(uint32_t configuration
     return ubx::create_message(ubx::kCLASS_CFG, ubx::kCFG_VALSET, payload_length, payload);
 }
 ubx::UBX_message_t cfg_val_get_message(uint32_t configuration_key);
-bool val_set(std::shared_ptr<Ublox>, uint32_t cfg_key, uint8_t cfg_data, uint8_t layer=ubx::CFG_VALSET_t::kRAM);
 bool configure_moving_base(std::shared_ptr<Ublox> my_ublox);
+bool configure_stationary_base(std::shared_ptr<Ublox> my_ublox);
 bool toggle_moving_base(std::shared_ptr<Ublox> my_ublox, bool on=true);
 bool toggle_stationary_base(std::shared_ptr<Ublox> my_ublox, bool on=true);
 template <class T> T val_get(std::shared_ptr<Ublox> my_ublox, uint32_t configuration_key)
@@ -45,10 +45,18 @@ template <class T> T val_get(std::shared_ptr<Ublox> my_ublox, uint32_t configura
     bool got_ack_nack = false;
     T configuration_data = 0;
 
-    my_ublox->parser.register_callback(ubx::kCLASS_CFG, ubx::kCFG_VALGET, [&got_configuration_data](const ublox::ubx::UBX_message_t& ubx_msg)
+    my_ublox->parser.register_callback(ubx::kCLASS_CFG, ubx::kCFG_VALGET, [&got_configuration_data, &configuration_data, configuration_key](const ublox::ubx::UBX_message_t& ubx_msg)
     {
         got_configuration_data = true;
-        // T = bit_utils::get_lsb_bits<T>(&)
+        if(configuration_key == bit_utils::get_lsb_bits<uint32_t>(ubx_msg.payload.buffer, 4))
+        {
+            std::cout << "Got good response" << std::endl;
+            configuration_data = bit_utils::get_lsb_bits<T>(ubx_msg.payload.buffer, 8);
+        }
+        else
+        {
+            std::cout << "Got bad response" << std::endl;
+        }
     });
     my_ublox->parser.register_callback(ubx::kCLASS_ACK, ubx::kACK_ACK, [&got_ack_ack](const ubx::UBX_message_t &ubx_msg)
     {
@@ -70,6 +78,32 @@ template <class T> T val_get(std::shared_ptr<Ublox> my_ublox, uint32_t configura
     my_ublox->parser.pop_callbacks(3);
 
     return configuration_data;
+}
+
+template <class T> bool val_set(std::shared_ptr<Ublox> my_ublox, uint32_t cfg_key, T cfg_data, uint8_t layer=ubx::CFG_VALSET_t::kRAM)
+{
+    bool got_ack_ack = false;
+    bool got_ack_nack = false;
+
+    my_ublox->parser.register_callback(ubx::kCLASS_ACK, ubx::kACK_ACK, [&got_ack_ack, cfg_key, cfg_data](const ubx::UBX_message_t &ubx_msg)
+    {
+        std::cout << "ACK_ACK: " << cfg_key << " : " << static_cast<uint16_t>(cfg_data) << std::endl;
+        got_ack_ack = true;
+    });
+    my_ublox->parser.register_callback(ubx::kCLASS_ACK, ubx::kACK_NACK, [&got_ack_nack, cfg_key, cfg_data](const ubx::UBX_message_t &ubx_msg)
+    {
+        std::cout << "ACK_NACK: " << cfg_key << " : " << static_cast<uint16_t>(cfg_data) << std::endl;
+        got_ack_nack = true;
+    });
+    
+    ubx::UBX_message_t out_msg = cfg_val_set_message(cfg_key, cfg_data);
+    my_ublox->comm->send_bytes(out_msg.buffer, 8+out_msg.payload_length);
+
+    clock_t start = clock();
+    while(seconds_elapsed(start) < 2 && !got_ack_nack && !got_ack_ack);
+    
+    my_ublox->parser.pop_callbacks(2);
+    return got_ack_ack;
 }
 } // namespace configure
 } // namespace ublox
