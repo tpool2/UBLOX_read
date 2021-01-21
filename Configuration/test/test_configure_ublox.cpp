@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "Configuration/configuration.hpp"
 #include "UBX/ubx.hpp"
+#include "ublox/ublox.hpp"
 
 using namespace ublox::ubx;
 

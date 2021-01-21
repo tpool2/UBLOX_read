@@ -35,6 +35,9 @@ template <class T> ubx::UBX_message_t cfg_val_set_message(uint32_t configuration
 }
 ubx::UBX_message_t cfg_val_get_message(uint32_t configuration_key);
 bool val_set(std::shared_ptr<Ublox>, uint32_t cfg_key, uint8_t cfg_data, uint8_t layer=ubx::CFG_VALSET_t::kRAM);
+bool configure_moving_base(std::shared_ptr<Ublox> my_ublox);
+bool toggle_moving_base(std::shared_ptr<Ublox> my_ublox, bool on=true);
+bool toggle_stationary_base(std::shared_ptr<Ublox> my_ublox, bool on=true);
 template <class T> T val_get(std::shared_ptr<Ublox> my_ublox, uint32_t configuration_key)
 {
     bool got_configuration_data = false;

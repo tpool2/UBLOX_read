@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(ublox)
 
-
-
 if(NOT TARGET UBX)
     add_subdirectory(../UBX UBX)
 endif(NOT TARGET UBX)
