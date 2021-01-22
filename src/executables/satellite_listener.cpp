@@ -12,6 +12,7 @@ int main(int argc, char* argv[])
     }
 
     std::shared_ptr<ublox::Ublox> my_ublox = std::make_shared<ublox::Ublox>(serial_port);
+    my_ublox->log_bytes_to_file("satellite_log");
     ublox::configure::configure_moving_base(my_ublox);
     ublox::configure::val_set(my_ublox, ublox::ubx::CFG_VALSET_t::kSIGNAL_GPS, static_cast<uint8_t>(1));
     ublox::configure::val_set(my_ublox, ublox::ubx::CFG_VALSET_t::kSIGNAL_GPS_L1, static_cast<uint8_t>(1));

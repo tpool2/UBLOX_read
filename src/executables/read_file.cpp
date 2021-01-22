@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdint>
+#include <ctime>
 #include "UBX/ubx.hpp"
 #include "GNSS/gnss.hpp"
 
