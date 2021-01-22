@@ -87,12 +87,12 @@ class message_10: public L2C_Message
             ED_accuracy = get_msb_bits<int8_t>(words, 65, 5);
             ephemeris_time_of_week = 300*static_cast<uint32_t>(get_msb_bits<uint16_t>(words, 70, 11));
             semi_major_axis_diff = pow(2, -9)*static_cast<double>(get_msb_bits<int32_t>(words, 81, 26));
-            auto semi_major_axis_change_rate = pow(2, -21)*static_cast<double>(get_msb_bits<int32_t>(words, 107, 25));
-            auto mean_motion_diff = pow(2, -44)*static_cast<double>(get_msb_bits<int32_t>(words, 132, 17));
-            auto mean_motion_diff_rate = pow(2, -57)*static_cast<double>(get_msb_bits<int32_t>(words, 149, 23));
-            auto mean_anomaly = pow(2, -32)*static_cast<double>(get_msb_bits<int64_t>(words, 172, 33));
-            auto eccentricity = pow(2, -34)*static_cast<double>(get_msb_bits<uint64_t>(words, 205, 33));
-            auto argument_of_perigee = pow(2, -32)*static_cast<double>(get_msb_bits<int64_t>(words, 238, 33));
+            semi_major_axis_change_rate = pow(2, -21)*static_cast<double>(get_msb_bits<int32_t>(words, 107, 25));
+            mean_motion_diff = pow(2, -44)*static_cast<double>(get_msb_bits<int32_t>(words, 132, 17));
+            mean_motion_diff_rate = pow(2, -57)*static_cast<double>(get_msb_bits<int32_t>(words, 149, 23));
+            mean_anomaly = pow(2, -32)*static_cast<double>(get_msb_bits<int64_t>(words, 172, 33));
+            eccentricity = pow(2, -34)*static_cast<double>(get_msb_bits<uint64_t>(words, 205, 33));
+            argument_of_perigee = pow(2, -32)*static_cast<double>(get_msb_bits<int64_t>(words, 238, 33));
         }
 
         std::string to_string() const override;

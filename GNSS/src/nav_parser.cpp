@@ -100,16 +100,18 @@ namespace gnss
         }
     }
 
-    void gps::parse_L2_10(const uint32_t* words)
+    gps::message_10 gps::parse_L2_10(const uint32_t* words)
     {
         message_10 my_message(words);
         std::cout<<my_message.to_string();
+        return my_message;
     }
 
-    void gps::parse_L2_11(const uint32_t* words)
+    gps::message_11 gps::parse_L2_11(const uint32_t* words)
     {
         message_11 my_message(words);
         std::cout<<my_message.to_string();
+        return my_message;
     }
 
     /*

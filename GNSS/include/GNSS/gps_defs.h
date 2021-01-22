@@ -2,6 +2,7 @@
 #define GPS_DEFS
 #include <cstdint>
 #include <cmath>
+#include "ephemeris.hpp"
 
 namespace gnss { namespace gps
 {
@@ -20,8 +21,8 @@ namespace gnss { namespace gps
     static void parse_l1_ca(const uint32_t* words);
     static void parse_subframe_3(const uint32_t* words);
     static void parse_L2(const uint32_t* words);
-    static void parse_L2_10(const uint32_t* words);
-    static void parse_L2_11(const uint32_t* words);
+    static message_10 parse_L2_10(const uint32_t* words);
+    static message_11 parse_L2_11(const uint32_t* words);
     static int32_t l1_get_split_data(const uint32_t* words, int position);
 } }
 
