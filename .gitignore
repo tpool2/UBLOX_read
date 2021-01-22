@@ -5,3 +5,4 @@ build*
 *.m
 *.vscode
 venv*
+gnss_files*
