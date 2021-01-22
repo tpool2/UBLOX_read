@@ -88,7 +88,6 @@ namespace ublox::ubx
     {
         if(parser_state == kGotChecksumB)
         {
-            std::cout<<"Message Class: "<<static_cast<uint16_t>(ubx_message.message_class)<<" Message ID: "<<static_cast<uint16_t>(ubx_message.message_id)<<std::endl;
             for(auto callback : callbacks)
             {
                 if(callback.matches(ubx_message.message_class, ubx_message.message_id))

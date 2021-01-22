@@ -48,7 +48,7 @@ std::string message_10::to_string() const
     ss<<"L2 Health: " << l2_health << std::endl;
     ss<<"L5 Health: " <<l5_health << std::endl;
     ss<<"CEI Data Sequence Propogation Time of Week: " << CEI_time_of_week << std::endl;
-    ss<<"ED Accuracy Index: " << ED_accuracy << std::endl;
+    ss<<"ED Accuracy Index: " << static_cast<int16_t>(ED_accuracy) << std::endl;
     ss<<"Semi-major Axis Difference: " << semi_major_axis_diff << std::endl;
     ss<<"Semi-major Axis Change Rate: " << semi_major_axis_change_rate << std::endl;
     ss<<"Mean Motion Difference From Computed Value: " << mean_motion_diff << std::endl;
