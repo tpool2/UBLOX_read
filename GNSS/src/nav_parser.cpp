@@ -20,7 +20,7 @@ namespace gnss
 
     void NavParser::read_gps_message(const uint32_t* words, size_t num_words)
     {
-        // std::cout<<"Reading GPS Message with "<< num_words << " words" <<std::endl;
+        std::cout<<"Reading GPS Message with "<< num_words << " words" <<std::endl;
         if(get_msb_bits<uint8_t>(words, 0, 8) == gps::kPreamble)
         {
             gps::parse_L2(words);
