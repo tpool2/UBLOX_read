@@ -23,7 +23,7 @@ namespace gnss
         // std::cout<<"Reading GPS Message with "<< num_words << " words" <<std::endl;
         if(get_msb_bits<uint8_t>(words, 0, 8) == gps::kPreamble)
         {
-            gps::parse_L2(words);
+            parse_L2(words);
         }
         else if(get_msb_bits<uint8_t>(words, 2, 8) == gps::kPreamble)
         {
@@ -80,37 +80,44 @@ namespace gnss
         // std::cout<<"IDOT: " << IDOT << std::endl;
     }
 
-    void gps::parse_L2(const uint32_t* words)
+    void NavParser::parse_L2(const uint32_t* words)
     {
-        std::cout<<"L2"<<std::endl;
         int prn = get_msb_bits<int>(words, 8, 6);
         int message_type_id = get_msb_bits<int>(words, 14, 6);
         int message_tow_count = get_msb_bits<int>(words, 20, 17);
         switch (message_type_id)
         {
-        case 10:
-            parse_L2_10(words);
-            break;
-        case 11:
-            parse_L2_11(words);
-            break;
-        
-        default:
-            break;
+            case 10:
+            {
+                auto message = std::make_shared<gps::message_10>(gps::parse_L2_10(words));
+                message_10_map.insert_or_assign(message->get_prn(), message);
+            } break;
+            case 11:
+            {
+                auto my_message_11 = std::make_shared<gps::message_11>(gps::parse_L2_11(words));
+                if(message_10_map.count(my_message_11->get_prn()) > 0)
+                {
+                    auto my_message_10 = message_10_map[my_message_11->get_prn()];
+                    gps::L2Ephemeris eph(my_message_10, my_message_11);
+                    std::cout<<eph.to_string()<<std::endl;
+                }
+            } break;
+            default:
+            {
+
+            } break;
         }
     }
 
     gps::message_10 gps::parse_L2_10(const uint32_t* words)
     {
         message_10 my_message(words);
-        std::cout<<my_message.to_string();
         return my_message;
     }
 
     gps::message_11 gps::parse_L2_11(const uint32_t* words)
     {
         message_11 my_message(words);
-        std::cout<<my_message.to_string();
         return my_message;
     }
 

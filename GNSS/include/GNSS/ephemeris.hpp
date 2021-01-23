@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <string>
 #include <sstream>
+#include <memory>
 #include "bit_utils/bit_utils.h"
 
 using bit_utils::get_msb_bits;
@@ -16,6 +17,7 @@ class EphemerisInterface
         double x_ecef;
         double y_ecef;
         double z_ecef;
+        uint8_t prn;
     
     public:
         virtual void update_location() = 0;
@@ -30,7 +32,13 @@ namespace gps
 class L2C_Message
 {
     public:
-        virtual std::string to_string() const = 0; 
+        virtual std::string to_string() const = 0;
+        uint8_t get_prn() const;
+        uint8_t get_message_type_id() const;
+        uint32_t get_message_tow() const;
+        bool get_alert_flag() const;
+        uint32_t get_ephemeris_time_of_week() const;
+        
     protected:
         uint8_t prn;
         uint8_t message_type_id;
@@ -58,6 +66,16 @@ class message_11: public L2C_Message
             sin_latitude = pow(2, -30)*static_cast<double>(get_msb_bits<int32_t>(words, 227, 21));
             cos_latitude = pow(2, -30)*static_cast<double>(get_msb_bits<int32_t>(words, 248, 21));
         }
+        double get_longitude_orbit_plane() const;
+        double get_rate_right_ascension_diff() const;
+        double get_inclination_angle() const;
+        double get_rate_inclination_angle() const;
+        double get_sin_inclination() const;
+        double get_cos_inclination() const;
+        double get_sin_orbit_radius() const;
+        double get_cos_orbit_radius() const;
+        double get_sin_latitude() const;
+        double get_cos_latitude() const;
         std::string to_string() const override;
 
     private:
@@ -94,7 +112,19 @@ class message_10: public L2C_Message
             eccentricity = pow(2, -34)*static_cast<double>(get_msb_bits<uint64_t>(words, 205, 33));
             argument_of_perigee = pow(2, -32)*static_cast<double>(get_msb_bits<int64_t>(words, 238, 33));
         }
-
+        uint16_t get_data_sequence_propogation_week_number() const;
+        bool get_l1_health() const;
+        bool get_l2_health() const;
+        bool get_l5_health() const;
+        int8_t get_ED_accuracy() const;
+        uint32_t get_CEI_time_of_week() const;
+        double get_semi_major_axis_diff() const;
+        double get_semi_major_axis_change_rate() const;
+        double get_mean_motion_diff() const;
+        double get_mean_motion_diff_rate() const;
+        double get_mean_anomaly() const;
+        double get_eccentricity() const;
+        double get_argument_of_perigee() const;
         std::string to_string() const override;
     
     private:
@@ -117,31 +147,23 @@ class L2Ephemeris: public EphemerisInterface
 {
     private:
         // Message 10
-        uint16_t week_number;
-        int8_t ED_accuracy;
-        uint32_t CEI_time_of_week;
-        double semi_major_axis_diff;
-        double semi_major_axis_change_rate;
-        double mean_motion_diff;
-        double mean_motion_diff_rate;
-        double mean_anomaly;
-        double eccentricity;
-        double argument_of_perigee;
+        std::shared_ptr<gps::message_11> msg_11;
 
         // Message 11
-        uint32_t ephemeris_time_of_week;
-        double longitude_orbit_plane;
-        double rate_right_ascension_diff;
-        double inclination_angle;
-        double rate_inclination_angle;
-        double sin_inclination;
-        double cos_inclination;
-        double sin_orbit_radius;
-        double cos_orbit_radius;
-        double sin_latitude;
-        double cos_latitude;
+        std::shared_ptr<gps::message_10> msg_10;
 
     public:
+        L2Ephemeris()
+        {
+            
+        }
+        L2Ephemeris(std::shared_ptr<gps::message_10> msg_10, std::shared_ptr<gps::message_11> msg_11)
+        {
+            this->msg_10 = msg_10;
+            this->msg_11 = msg_11;
+
+            std::cout<<"Created L2 Ephemeris!"<<std::endl;
+        }
         void update_location() override;
         std::string to_string() const override;
 };

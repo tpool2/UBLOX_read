@@ -2,6 +2,7 @@
 #define NAV_PARSER
 #include <bitset>
 #include <map>
+#include <memory>
 #include "UBX/ubx.hpp"
 #include "gps_defs.h"
 #include "bit_utils/bit_utils.h"
@@ -21,7 +22,8 @@ class NavParser
         void parse_handover_word(const std::bitset<30> &word);
         SatelliteDatabase database;
     private:
-        std::map<uint8_t, gps::message_10> message_10_map;
+        std::map<uint8_t, std::shared_ptr<gps::message_10> > message_10_map;
+        void parse_L2(const uint32_t* words);
 };
 bool check_parity(const std::bitset<gps::kWordLength> &bits, const bool &prev_29, const bool &prev_30);
 }
