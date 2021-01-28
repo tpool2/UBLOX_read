@@ -98,7 +98,7 @@ namespace gnss
                 if(message_10_map.count(my_message_11->get_prn()) > 0)
                 {
                     auto my_message_10 = message_10_map[my_message_11->get_prn()];
-                    gps::L2Ephemeris eph(my_message_10, my_message_11);
+                    gps::CNAVEphemeris eph(my_message_10, my_message_11);
                     std::cout<<eph.to_string()<<std::endl;
                 }
             } break;

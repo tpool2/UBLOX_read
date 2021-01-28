@@ -29,7 +29,7 @@ class EphemerisInterface
 
 namespace gps
 {
-class L2C_Message
+class CNAV_Message
 {
     public:
         virtual std::string to_string() const = 0;
@@ -48,7 +48,7 @@ class L2C_Message
         void parse_preamble(const uint32_t* words);
 };
 
-class message_11: public L2C_Message
+class message_11: public CNAV_Message
 {
     public:
         message_11(const uint32_t* words)
@@ -91,7 +91,7 @@ class message_11: public L2C_Message
         double cos_latitude;
 };
 
-class message_10: public L2C_Message
+class message_10: public CNAV_Message
 {
     public:
         message_10(const uint32_t* words)
@@ -143,7 +143,7 @@ class message_10: public L2C_Message
         double argument_of_perigee;
 };
 
-class L2Ephemeris: public EphemerisInterface
+class CNAVEphemeris: public EphemerisInterface
 {
     private:
         // Message 10
@@ -153,11 +153,11 @@ class L2Ephemeris: public EphemerisInterface
         std::shared_ptr<gps::message_10> msg_10;
 
     public:
-        L2Ephemeris()
+        CNAVEphemeris()
         {
             
         }
-        L2Ephemeris(std::shared_ptr<gps::message_10> msg_10, std::shared_ptr<gps::message_11> msg_11)
+        CNAVEphemeris(std::shared_ptr<gps::message_10> msg_10, std::shared_ptr<gps::message_11> msg_11)
         {
             this->msg_10 = msg_10;
             this->msg_11 = msg_11;

@@ -4,10 +4,10 @@
 #include <memory>
 
 using gnss::EphemerisInterface;
-using gnss::gps::L2Ephemeris;
+using gnss::gps::CNAVEphemeris;
 
 TEST(Ephemeris, ParseEphemerisDataToGetLocation)
 {
-    std::shared_ptr<EphemerisInterface> eph = std::make_shared<L2Ephemeris>();
+    std::shared_ptr<EphemerisInterface> eph = std::make_shared<CNAVEphemeris>();
     eph->update_location();
 }

@@ -21,12 +21,14 @@ double EphemerisInterface::get_z_ecef() const
 namespace gps
 {
 
-void L2Ephemeris::update_location()
+void CNAVEphemeris::update_location()
 {
-
+    double A_0 = A_ref + msg_10->get_semi_major_axis_diff();
+    // int t_k = 
+    // double A_k = A_0 + msg_10->get_semi_major_axis_change_rate()*
 }
 
-void L2C_Message::parse_preamble(const uint32_t* words)
+void CNAV_Message::parse_preamble(const uint32_t* words)
 {
     prn = get_msb_bits<uint8_t>(words, 8, 6);
     message_type_id = get_msb_bits<uint8_t>(words, 14, 6);
@@ -34,11 +36,11 @@ void L2C_Message::parse_preamble(const uint32_t* words)
     alert_flag = get_msb_bits<bool>(words, 37, 1);
 }
 
-uint8_t L2C_Message::get_prn() const { return prn; }
-uint8_t L2C_Message::get_message_type_id() const { return message_type_id; }
-uint32_t L2C_Message::get_message_tow() const { return message_tow; }
-bool L2C_Message::get_alert_flag() const { return alert_flag; }
-uint32_t L2C_Message::get_ephemeris_time_of_week() const { return ephemeris_time_of_week; }
+uint8_t CNAV_Message::get_prn() const { return prn; }
+uint8_t CNAV_Message::get_message_type_id() const { return message_type_id; }
+uint32_t CNAV_Message::get_message_tow() const { return message_tow; }
+bool CNAV_Message::get_alert_flag() const { return alert_flag; }
+uint32_t CNAV_Message::get_ephemeris_time_of_week() const { return ephemeris_time_of_week; }
 
 uint16_t message_10::get_data_sequence_propogation_week_number() const { return data_sequence_propogation_week_number; }
 bool message_10::get_l1_health() const { return l1_health; }
@@ -110,7 +112,7 @@ std::string message_11::to_string() const
     return ss.str();
 }
 
-std::string L2Ephemeris::to_string() const
+std::string CNAVEphemeris::to_string() const
 {
     std::stringstream ss;
     ss<<msg_10->to_string()<<msg_11->to_string();
