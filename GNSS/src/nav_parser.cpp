@@ -102,6 +102,11 @@ namespace gnss
                     std::cout<<eph.to_string()<<std::endl;
                 }
             } break;
+            case 30:
+            {
+                auto my_message_30 = std::make_shared<gps::message_30>(words);
+                std::cout << my_message_30->to_string() << std::endl;
+            } break;
             default:
             {
 

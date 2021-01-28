@@ -70,36 +70,30 @@ double message_11::get_cos_latitude() const { return cos_latitude; }
 std::string message_10::to_string() const
 {
     std::stringstream ss;
-    ss<<"PRN: " << static_cast<uint16_t>(prn) << std::endl;
-    ss<<"Message Type ID: " << static_cast<uint16_t>(message_type_id) << std::endl;
-    ss<<"Message TOW: " << message_tow << std::endl;
-    ss<<"Alert Flag: " << alert_flag << std::endl;
-    ss<<"Ephemeris Time of Week: "<< ephemeris_time_of_week <<std::endl;
-    ss<<"Data Sequence Propogation Week Number: " << data_sequence_propogation_week_number << std::endl;
-    ss<<"L1 Health: " << l1_health << std::endl;
-    ss<<"L2 Health: " << l2_health << std::endl;
-    ss<<"L5 Health: " <<l5_health << std::endl;
-    ss<<"CEI Data Sequence Propogation Time of Week: " << CEI_time_of_week << std::endl;
-    ss<<"ED Accuracy Index: " << static_cast<int16_t>(ED_accuracy) << std::endl;
-    ss<<"Semi-major Axis Difference: " << semi_major_axis_diff << std::endl;
-    ss<<"Semi-major Axis Change Rate: " << semi_major_axis_change_rate << std::endl;
-    ss<<"Mean Motion Difference From Computed Value: " << mean_motion_diff << std::endl;
-    ss<<"Mean Motion Difference Rate: " << mean_motion_diff_rate << std::endl;
-    ss<<"Mean Anomaly: " << mean_anomaly << std::endl;
-    ss<<"Eccentricity: " << eccentricity << std::endl;
-    ss<<"Argument of Perigee: " << argument_of_perigee << std::endl;
+    ss << preamble_to_string();
+    ss << "Ephemeris Time of Week: "<< ephemeris_time_of_week <<std::endl;
+    ss << "Data Sequence Propogation Week Number: " << data_sequence_propogation_week_number << std::endl;
+    ss << "L1 Health: " << l1_health << std::endl;
+    ss << "L2 Health: " << l2_health << std::endl;
+    ss << "L5 Health: " <<l5_health << std::endl;
+    ss << "CEI Data Sequence Propogation Time of Week: " << CEI_time_of_week << std::endl;
+    ss << "ED Accuracy Index: " << static_cast<int16_t>(ED_accuracy) << std::endl;
+    ss << "Semi-major Axis Difference: " << semi_major_axis_diff << std::endl;
+    ss << "Semi-major Axis Change Rate: " << semi_major_axis_change_rate << std::endl;
+    ss << "Mean Motion Difference From Computed Value: " << mean_motion_diff << std::endl;
+    ss << "Mean Motion Difference Rate: " << mean_motion_diff_rate << std::endl;
+    ss << "Mean Anomaly: " << mean_anomaly << std::endl;
+    ss << "Eccentricity: " << eccentricity << std::endl;
+    ss << "Argument of Perigee: " << argument_of_perigee << std::endl;
     return ss.str();
 }
 
 std::string message_11::to_string() const
 {
     std::stringstream ss;
-    ss<<"PRN: " << static_cast<uint16_t>(prn) << std::endl;
-    ss<<"Message Type ID: " << static_cast<uint16_t>(message_type_id) << std::endl;
-    ss<<"Message TOW: " << message_tow << std::endl;
-    ss<<"Alert Flag: " << alert_flag << std::endl;
-    ss<<"Ephemeris Time of Week: "<< ephemeris_time_of_week <<std::endl;
-    ss<<"Longitude of Ascending Node of Orbit Plane at Weekly Epoch: "<< longitude_orbit_plane <<std::endl;
+    ss << preamble_to_string();
+    ss << "Ephemeris Time of Week: "<< ephemeris_time_of_week <<std::endl;
+    ss << "Longitude of Ascending Node of Orbit Plane at Weekly Epoch: "<< longitude_orbit_plane <<std::endl;
     ss << "Inclination Angle at Reference Time: " << inclination_angle << std::endl;
     ss << "Rate of Right Ascension Difference: " << rate_right_ascension_diff << std::endl;
     ss << "Rate of Inclination Angle: " << rate_inclination_angle << std::endl;
@@ -109,6 +103,47 @@ std::string message_11::to_string() const
     ss << "Cosine Orbit Radius: " << cos_orbit_radius << std::endl;
     ss << "Sine Latitude: " << sin_latitude << std::endl;
     ss << "Cosine Latitude: " << cos_latitude << std::endl;
+    return ss.str();
+}
+
+uint32_t message_30::get_CEI_time_of_week() const { return CEI_time_of_week;}
+int8_t message_30::get_URA_NED_accuracy_index() const { return URA_NED_accuracy_index;}
+uint8_t message_30::get_URA_NED_accuracy_change_index() const { return URA_NED_accuracy_change_index;}
+uint8_t message_30::get_URA_NED_accuracy_change_rate_index() const { return URA_NED_accuracy_change_rate_index;}
+uint32_t message_30::get_clock_data_ref_time_of_week() const { return clock_data_ref_time_of_week;}
+double message_30::get_clock_bias_correction() const { return clock_bias_correction;}
+double message_30::get_clock_drift_correction() const { return clock_drift_correction;}
+double message_30::get_clock_drift_rate_correction() const { return clock_drift_rate_correction;}
+double message_30::get_group_delay_differential() const { return group_delay_differential;}
+double message_30::get_ISC_L1_CA() const { return ISC_L1_CA;}
+double message_30::get_ISC_L2C() const { return ISC_L2C;}
+double message_30::get_ISC_L5I5() const { return ISC_L5I5;}
+double message_30::get_ISC_L5Q5() const { return ISC_L5Q5;}
+
+std::string message_30::to_string() const
+{
+    std::stringstream ss;
+    ss << preamble_to_string();
+    ss << "CEI Data Sequence Propogation Time of Week: " << CEI_time_of_week << std::endl;
+    ss << "URA NED Accuracy Index: " << static_cast<int16_t>(URA_NED_accuracy_index) << std::endl;
+    ss << "URA NED Accuracy Change Index: " << static_cast<uint16_t>(URA_NED_accuracy_change_index) << std::endl;
+    ss << "URA NED Accuracy Change Rate Index: " << static_cast<uint16_t>(URA_NED_accuracy_change_rate_index) << std::endl;
+    ss << "Clock Data Reference Time of Week: " << clock_data_ref_time_of_week << std::endl;
+    ss << "SV Clock Drift Correction Coefficient: " << clock_drift_correction << std::endl;
+    ss << "SV Clock Drift Rate Correction Coefficient: " << clock_drift_rate_correction << std::endl;
+    ss << "SV Clock Bias Correction Coefficient: " << clock_bias_correction << std::endl;
+    ss << "Group Delay Differential: " << group_delay_differential << std::endl;
+    
+    return ss.str();
+}
+
+std::string CNAV_Message::preamble_to_string() const
+{
+    std::stringstream ss;
+    ss<<"PRN: " << static_cast<uint16_t>(prn) << std::endl;
+    ss<<"Message Type ID: " << static_cast<uint16_t>(message_type_id) << std::endl;
+    ss<<"Message TOW: " << message_tow << std::endl;
+    ss<<"Alert Flag: " << alert_flag << std::endl;
     return ss.str();
 }
 

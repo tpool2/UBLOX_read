@@ -38,6 +38,7 @@ class CNAV_Message
         uint32_t get_message_tow() const;
         bool get_alert_flag() const;
         uint32_t get_ephemeris_time_of_week() const;
+        std::string preamble_to_string() const;
         
     protected:
         uint8_t prn;
@@ -46,6 +47,60 @@ class CNAV_Message
         bool alert_flag;
         uint32_t ephemeris_time_of_week;
         void parse_preamble(const uint32_t* words);
+};
+
+class message_30: public CNAV_Message
+{
+    public:
+        message_30(const uint32_t* words)
+        {
+            parse_preamble(words);
+            CEI_time_of_week = 300*static_cast<uint32_t>(get_msb_bits<uint16_t>(words, 38, 11));
+            URA_NED_accuracy_index = get_msb_bits<int8_t>(words, 49, 5);
+            URA_NED_accuracy_change_index = get_msb_bits<uint8_t>(words, 54, 3);
+            URA_NED_accuracy_change_rate_index = get_msb_bits<uint8_t>(words, 57, 3);
+            clock_data_ref_time_of_week = 300*static_cast<uint32_t>(get_msb_bits<uint16_t>(words, 60, 11));
+            clock_bias_correction = pow(2, -35)*static_cast<double>(get_msb_bits<int32_t>(words, 71, 26));
+            clock_drift_correction = pow(2, -48)*static_cast<double>(get_msb_bits<int32_t>(words, 97, 20));
+            clock_drift_rate_correction = pow(2, -60)*static_cast<double>(get_msb_bits<int16_t>(words, 117, 10));
+            group_delay_differential = pow(2, -35)*static_cast<double>(get_msb_bits<int16_t>(words, 127, 13));
+            ISC_L1_CA = pow(2, -35)*static_cast<double>(get_msb_bits<int16_t>(words, 140, 13));
+            ISC_L2C = pow(2, -35)*static_cast<double>(get_msb_bits<int16_t>(words, 153, 13));
+            ISC_L5I5 = pow(2, -35)*static_cast<double>(get_msb_bits<int16_t>(words, 166, 13));
+            ISC_L5Q5 = pow(2, -35)*static_cast<double>(get_msb_bits<int16_t>(words, 179, 13));
+        }
+
+        uint32_t get_CEI_time_of_week() const;
+        int8_t get_URA_NED_accuracy_index() const;
+        uint8_t get_URA_NED_accuracy_change_index() const;
+        uint8_t get_URA_NED_accuracy_change_rate_index() const;
+        uint32_t get_clock_data_ref_time_of_week() const;
+        double get_clock_bias_correction() const;
+        double get_clock_drift_correction() const;
+        double get_clock_drift_rate_correction() const;
+        double get_group_delay_differential() const;
+        double get_ISC_L1_CA() const;
+        double get_ISC_L2C() const;
+        double get_ISC_L5I5() const;
+        double get_ISC_L5Q5() const;
+
+        std::string to_string() const override;
+
+
+    private:
+        uint32_t CEI_time_of_week;
+        int8_t URA_NED_accuracy_index;
+        uint8_t URA_NED_accuracy_change_index;
+        uint8_t URA_NED_accuracy_change_rate_index;
+        uint32_t clock_data_ref_time_of_week;
+        double clock_bias_correction;
+        double clock_drift_correction;
+        double clock_drift_rate_correction;
+        double group_delay_differential;
+        double ISC_L1_CA;
+        double ISC_L2C;
+        double ISC_L5I5;
+        double ISC_L5Q5;
 };
 
 class message_11: public CNAV_Message
