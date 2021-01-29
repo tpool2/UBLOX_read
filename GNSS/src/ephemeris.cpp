@@ -28,7 +28,39 @@ void CNAVEphemeris::update_location()
     int t_k = t - msg_11->get_ephemeris_time_of_week();
     double A_k = A_0 + msg_10->get_semi_major_axis_change_rate()*t_k;
     double n_0 = sqrt(mu/pow(A_0, 3));
-    
+    double delta_n_A = msg_10->get_mean_motion_diff()+.5*msg_10->get_mean_motion_diff_rate()*t_k;
+    double n_A = n_0 + delta_n_A;
+    double M_k = msg_10->get_mean_anomaly()+n_A*t_k;
+    double E_k = M_k;
+    double e = msg_10->get_eccentricity();
+    for(int j = 0; j < 7; ++j)
+    {
+        E_k += (M_k-E_k+e*sin(E_k))/(1-e*cos(E_k));
+    }
+    double v_k = 2*atan(sqrt((1+e)/(1-e))*tan(E_k/2));
+
+    double phi_k = v_k+msg_10->get_argument_of_perigee();
+    double delta_uk = msg_11->get_sin_latitude()*sin(2*phi_k)+msg_11->get_cos_latitude()*cos(2*phi_k);
+    double delta_rk = msg_11->get_sin_orbit_radius()*sin(2*phi_k)+msg_11->get_cos_orbit_radius()*cos(2*phi_k);
+    double delta_ik = msg_11->get_sin_inclination()*sin(2*phi_k)+msg_11->get_cos_inclination()*cos(2*phi_k);
+
+    double u_k = phi_k+delta_uk;
+    double r_k = A_k*(1.0-e*cos(E_k))+delta_rk;
+    double i_k = msg_11->get_inclination_angle()+(msg_11->get_rate_inclination_angle())*t_k+delta_ik;
+
+    double x_k_prime = r_k*cos(u_k);
+    double y_k_prime = r_k*sin(u_k);
+
+    double Omegad = Omegad_ref+msg_11->get_rate_right_ascension_diff();
+    double Omegak = msg_11->get_longitude_orbit_plane()+(Omegad-Omega_e_dot)*t_k-Omega_e_dot*msg_11->get_ephemeris_time_of_week();
+
+    double x_k = x_k_prime*cos(Omegak)-y_k_prime*cos(i_k)*sin(Omegak);
+    double y_k = x_k_prime*sin(Omegak)+y_k_prime*cos(i_k)*cos(Omegak);
+    double z_k = y_k_prime*sin(i_k);
+
+    std::cout << "X Coordinate: " << x_k << std::endl;
+    std::cout << "Y Coordinate: " << y_k << std::endl;
+    std::cout << "Z Coordinate: " << z_k << std::endl;
 }
 
 void CNAV_Message::parse_preamble(const uint32_t* words)

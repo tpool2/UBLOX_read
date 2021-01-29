@@ -222,6 +222,8 @@ class CNAVEphemeris: public EphemerisInterface
             this->msg_11 = msg_11;
 
             std::cout<<"Created L2 Ephemeris!"<<std::endl;
+
+            update_location();
         }
         void update_message_30(std::shared_ptr<gps::message_30> msg_30);
         void update_location() override;
