@@ -26,6 +26,14 @@ void CNAVEphemeris::update_location()
     double A_0 = A_ref + msg_10->get_semi_major_axis_diff();
     int t = msg_11->get_message_tow()*6-12;
     int t_k = t - msg_11->get_ephemeris_time_of_week();
+    if(t_k > 302400)
+    {
+        t -= 604800;
+    }
+    else if(t_k < -302400)
+    {
+        t_k += 604800;
+    }
     double A_k = A_0 + msg_10->get_semi_major_axis_change_rate()*t_k;
     double n_0 = sqrt(mu/pow(A_0, 3));
     double delta_n_A = msg_10->get_mean_motion_diff()+.5*msg_10->get_mean_motion_diff_rate()*t_k;
