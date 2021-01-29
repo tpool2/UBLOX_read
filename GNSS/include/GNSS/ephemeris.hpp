@@ -84,6 +84,8 @@ class message_30: public CNAV_Message
         double get_ISC_L5I5() const;
         double get_ISC_L5Q5() const;
 
+        
+
         std::string to_string() const override;
 
 
@@ -207,6 +209,8 @@ class CNAVEphemeris: public EphemerisInterface
         // Message 11
         std::shared_ptr<gps::message_10> msg_10;
 
+        std::shared_ptr<gps::message_30> msg_30;
+
     public:
         CNAVEphemeris()
         {
@@ -219,6 +223,7 @@ class CNAVEphemeris: public EphemerisInterface
 
             std::cout<<"Created L2 Ephemeris!"<<std::endl;
         }
+        void update_message_30(std::shared_ptr<gps::message_30> msg_30);
         void update_location() override;
         std::string to_string() const override;
 };
