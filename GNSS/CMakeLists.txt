@@ -21,7 +21,8 @@ IF(BUILD_GNSS_TESTS)
     add_subdirectory(../cmake/gtest ../../gtest/build)
 
     add_executable(gnss_test
-        test/test_nav_parser.cpp)
+        test/test_nav_parser.cpp
+        test/test_gps_lnav.cpp)
     target_link_libraries(gnss_test PUBLIC gtest gtest_main)
     target_link_libraries(gnss_test PRIVATE GNSS)
 
