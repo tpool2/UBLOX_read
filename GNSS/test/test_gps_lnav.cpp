@@ -33,6 +33,36 @@ uint32_t sat_27[]{  0x22c05d10, 0x28ccaa9c,
                     0x21c78ff0, 0x461684a,
                     0x833e1c26, 0x9ec31f1b };
 
+uint32_t bad_03[]{  0X22c05d10, 0X28ccaa9c,
+                    0Xc82c7d6,  0X8dba513c,
+                    0X3b050cf8, 0X286c084,
+                    0X38d4535b, 0X38ea845,
+                    0X837eca97, 0X1ec31f98  };
+
+uint32_t bad_07[]{  0x22c05d10, 0x28ccaa9c,
+                    0x7ff6203,  0xb955c46,
+                    0xa1ac8191, 0xbf7f4076,
+                    0xaac9c2fe, 0x8457284e,
+                    0x3553e54,  0x1ec31fc4  };
+
+uint32_t bad_22[]{  0x22c05d10, 0x28ccaa9c, 
+                    0x5ffa71a,  0x8c413efc,
+                    0x1a5aa601, 0xbf9d00f0,
+                    0x89fd611,  0x81d2287b,
+                    0x38ff846,  0x1ec2d090  };
+
+uint32_t bad_26[]{  0x22c05d10, 0x28ccaa9c,
+                    0x147f9c40, 0xbf57e8a,
+                    0x8a37d001, 0xbfa6c10b,
+                    0xa3b58606, 0x81c5686d,
+                    0x8359f2a6, 0x9ec31f48  };
+
+uint32_t bad_27[]{  0x22c05d10, 0x28ccaa9c,
+                    0x7bf552a,  0xddb7420,
+                    0x26e0deac, 0x3f7440c8,
+                    0x21c78ff0, 0x461684a,
+                    0x833e1c26, 0x9ec31f1b };
+
 class UBLOX_LNAV: public ::testing::TestWithParam<uint32_t*>
 {
     protected:
@@ -48,10 +78,36 @@ TEST_P(UBLOX_LNAV, Preamble_Check)
     ASSERT_EQ(bit_utils::get_msb_bits<uint8_t>(words, 2, 8), gnss::gps::kPreamble);
 }
 
+TEST_P(UBLOX_LNAV, Full_Parity_Check_True)
+{
+    ASSERT_TRUE(gnss::gps::lnav::check_parity(words));
+}
+
 INSTANTIATE_TEST_SUITE_P(NavData, UBLOX_LNAV,
 testing::Values
 (
     sat_03, sat_07, sat_22, sat_26, sat_27
+));
+
+class UBLOX_LNAV_BAD: public ::testing::TestWithParam<uint32_t*>
+{
+    protected:
+        uint32_t* words;
+        void SetUp() override
+        {
+            words = GetParam();
+        }
+};
+
+TEST_P(UBLOX_LNAV_BAD, Full_Parity_Check_False)
+{
+    ASSERT_FALSE(gnss::gps::lnav::check_parity(words));
+}
+
+INSTANTIATE_TEST_SUITE_P(BadNavData, UBLOX_LNAV_BAD,
+testing::Values
+(
+    bad_03, bad_07, bad_22, bad_26, bad_27
 ));
 
 class UBLOX_LNAV_With_Word_Index: public ::testing::TestWithParam<std::tuple<uint32_t*, int>>
@@ -67,7 +123,7 @@ class UBLOX_LNAV_With_Word_Index: public ::testing::TestWithParam<std::tuple<uin
         }
 };
 
-TEST_P(UBLOX_LNAV_With_Word_Index, Parity_Check)
+TEST_P(UBLOX_LNAV_With_Word_Index, Parity_Check_True)
 {
     bool D_29, D_30;
     if(word_index > 0)

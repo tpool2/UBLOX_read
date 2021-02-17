@@ -6,10 +6,29 @@ using bit_utils::get_msb_bits;
 
 namespace gnss { namespace gps { namespace lnav {
 
+bool check_parity(uint32_t* words)
+{
+    bool D_29 = 0;
+    bool D_30 = 0;
+    for(int word_index = 0; word_index < gps::kSubframeLength; ++word_index)
+    {
+        if(!check_parity(words[word_index], D_29, D_30))
+        {
+            return false;
+        }
+        else
+        {
+            D_29 = bit_utils::get_msb_bits<bool>(&words[word_index], 30, 1);
+            D_30 = bit_utils::get_msb_bits<bool>(&words[word_index], 31, 1);
+        }
+    }
+    return true;
+}
+
 bool check_parity(uint32_t word, bool D_29_star, bool D_30_star)
 {
-    bool D[30];
-    for(int i = 0; i < 30; ++i)
+    bool D[gps::kWordLength];
+    for(int i = 0; i < gps::kWordLength; ++i)
     {
         D[i] = get_msb_bits<bool>(&word, i+2, 1);
     }
