@@ -10,7 +10,8 @@ add_subdirectory(../cmake/bit_utils bit_utils)
 
 add_library(GNSS SHARED
     src/nav_parser.cpp
-    src/ephemeris.cpp)
+    src/ephemeris.cpp
+    src/gps_lnav.cpp)
 target_link_libraries(GNSS PUBLIC UBX bit_utils)
 target_compile_options(GNSS PRIVATE -std=c++17)
 target_include_directories(GNSS PUBLIC include)
