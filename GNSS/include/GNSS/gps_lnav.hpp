@@ -20,6 +20,13 @@ bool check_parity(uint32_t word, bool D_29, bool D_30);
 
 bool check_parity(uint32_t* words);
 
+int get_ublox_bit_index(int l1_desired_bit_index);
+
+template <class T, class R> T get_bits(const R* buffer, int position, int length = sizeof(T))
+{
+    return bit_utils::get_msb_bits<T>(buffer, get_ublox_bit_index(position), length);
+}
+
 } // namespace lnav
 } // namespace gps
 } // namespace gnss

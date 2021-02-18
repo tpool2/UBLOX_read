@@ -54,6 +54,11 @@ bool check_parity(uint32_t word, bool D_29_star, bool D_30_star)
     return D_25 == D[24] && D_26 == D[25] && D_27 == D[26] && D_28 == D[27] && D_29 == D[28] && D_30 == D[29];
 }
 
+int get_ublox_bit_index(int l1_desired_bit_index)
+{
+    return l1_desired_bit_index+2*(int(l1_desired_bit_index/30)+1);
+}
+
 } // namespace lnav
 } // namespace gps
 } // namespace gnss
