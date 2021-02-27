@@ -5,7 +5,10 @@
 #include <iostream>
 #include <map>
 
+#include "UBX/ubx.hpp"
+
 #include "GNSS/ephemeris.hpp"
+#include "GNSS/gps_lnav.hpp"
 
 namespace gnss
 {
@@ -43,6 +46,7 @@ class SatelliteDatabase
         };
 
     public:
+        void update(const ublox::ubx::UBX_message_t& message);
         int update_satellite(int constellation, int satellite);
 };
 
