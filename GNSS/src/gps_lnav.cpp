@@ -1,5 +1,4 @@
 #include "bit_utils/bit_utils.h"
-
 #include "GNSS/gps_lnav.hpp"
 
 using bit_utils::get_msb_bits;

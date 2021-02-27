@@ -1,10 +1,8 @@
 #ifndef GPS_LNAV_HPP
 #define GPS_LNAV_HPP
-#include "GNSS/gps_defs.h"
 #include "bit_utils/bit_utils.h"
+#include "GNSS/gps_defs.hpp"
 namespace gnss { namespace gps { namespace lnav {
-
-
 
 /*
 bool check_parity

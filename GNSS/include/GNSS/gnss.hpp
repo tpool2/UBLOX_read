@@ -1,8 +1,8 @@
 #ifndef GNSS_HPP
 #define GNSS_HPP
 
-#include "gps_defs.h"
-#include "nav_parser.h"
+#include "gps_defs.hpp"
+#include "nav_parser.hpp"
 #include "satellite.hpp"
 #include "ephemeris.hpp"
 

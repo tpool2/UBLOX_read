@@ -1,4 +1,4 @@
-#include "GNSS/gnss.hpp"
+#include "GNSS/satellite.hpp"
 
 namespace gnss
 {

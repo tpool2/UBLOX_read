@@ -54,15 +54,7 @@ class GPS_Satellite: public Satellite
     public:
         GPS_Satellite(bool cnav = true)
         {
-            constellation = kGPS;
-            if(cnav)
-            {
-                ephemeris = std::make_shared<CNAVEphemeris>();
-            }
-            else
-            {
-                ephemeris = std::make_shared<L1CAEphemeris>();
-            } 
+
         };
         bool update_ephemeris(std::shared_ptr<EphemerisInterface>) override;
 };
