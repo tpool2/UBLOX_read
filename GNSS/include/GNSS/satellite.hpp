@@ -7,6 +7,7 @@
 
 #include "UBX/ubx.hpp"
 
+#include "bit_utils/bit_utils.h"
 #include "GNSS/ephemeris.hpp"
 #include "GNSS/gps_lnav.hpp"
 

@@ -6,6 +6,8 @@
 
 using std::make_tuple;
 
+namespace gnss { namespace gps { namespace lnav {
+
 uint32_t sat_03[]
 {
     0X22c05d10, 0X28ccaa9c,
@@ -121,7 +123,7 @@ TEST_P(UBLOX_LNAV, Preamble_Check)
 
 TEST_P(UBLOX_LNAV, Full_Parity_Check_True)
 {
-    ASSERT_TRUE(gnss::gps::lnav::check_parity(words));
+    ASSERT_TRUE(check_parity(words));
 }
 
 INSTANTIATE_TEST_SUITE_P(NavData, UBLOX_LNAV,
@@ -142,7 +144,7 @@ class UBLOX_LNAV_BAD: public ::testing::TestWithParam<uint32_t*>
 
 TEST_P(UBLOX_LNAV_BAD, Full_Parity_Check_False)
 {
-    ASSERT_FALSE(gnss::gps::lnav::check_parity(words));
+    ASSERT_FALSE(check_parity(words));
 }
 
 INSTANTIATE_TEST_SUITE_P(BadNavData, UBLOX_LNAV_BAD,
@@ -178,7 +180,7 @@ TEST_P(UBLOX_LNAV_With_Word_Index, Parity_Check_True)
         D_29 = 0;
         D_30 = 0;
     }
-    ASSERT_TRUE(gnss::gps::lnav::check_parity(words[word_index], D_29, D_30));
+    ASSERT_TRUE(check_parity(words[word_index], D_29, D_30));
 }
 
 INSTANTIATE_TEST_SUITE_P(NavData, UBLOX_LNAV_With_Word_Index,
@@ -206,7 +208,7 @@ class BitIndicies: public ::testing::TestWithParam<std::tuple<int,int>>
 
 TEST_P(BitIndicies, MatchingBitTrue)
 {
-    ASSERT_EQ(gnss::gps::lnav::get_ublox_bit_index(l1_bit_index), real_bit_index);
+    ASSERT_EQ(get_ublox_bit_index(l1_bit_index), real_bit_index);
 }
 
 INSTANTIATE_TEST_SUITE_P(BitIndiciesParams, BitIndicies,
@@ -232,7 +234,7 @@ class UBLOX_LNAV_With_Bit_Index: public ::testing::TestWithParam<std::tuple<std:
 
 TEST_P(UBLOX_LNAV_With_Bit_Index, MatchingBitDataTrue)
 {
-    ASSERT_EQ(gnss::gps::lnav::get_bits<bool>(words, l1_bit_index, 1), bit_utils::get_msb_bits<bool>(words, real_bit_index, 1));
+    ASSERT_EQ(get_bits<bool>(words, l1_bit_index, 1), bit_utils::get_msb_bits<bool>(words, real_bit_index, 1));
 }
 
 INSTANTIATE_TEST_SUITE_P(BitIndiciesParams, UBLOX_LNAV_With_Bit_Index,
@@ -244,3 +246,7 @@ testing::Combine
         sat_03, sat_07, sat_22, sat_26, sat_27
     )
 ));
+
+} // namespace lnav
+} // namespace gps
+} // namespace gnss
