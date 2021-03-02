@@ -10,9 +10,14 @@ constellation_t Satellite::get_constellation() const
     return constellation;
 }
 
-int SatelliteDatabase::update_satellite(int constellation, int satellite)
+int Satellite::get_id() const
 {
-    return 0;
+    return id;
+}
+
+bool Satellite::update(uint32_t* words)
+{
+    return true;
 }
 
 void SatelliteDatabase::update(const ublox::ubx::UBX_message_t& message)
@@ -21,19 +26,22 @@ void SatelliteDatabase::update(const ublox::ubx::UBX_message_t& message)
     switch(sfrbx.gnssId)
     {
         case kGPS:
-            // std::cout<<"GPS message"<<std::endl;
             if(gps::lnav::check_parity(sfrbx.dwrd))
             {
-                // std::cout<<"LNAV Message"<<std::endl;
+                if(constellation_map[kGPS].count(sfrbx.svId) == 0)
+                {
+                    constellation_map[kGPS][sfrbx.svId] = std::make_shared<gps::GPS_Satellite>(sfrbx.svId);
+                }
+                constellation_map[kGPS][sfrbx.svId]->update(sfrbx.dwrd);
             }
             else if(bit_utils::get_msb_bits<uint8_t>(sfrbx.dwrd, 0, 8) == gps::kPreamble)
             {
-                std::cout<<"CNAV Message"<<std::endl;
-                std::cout<<uint16_t(sfrbx.svId)<<std::endl;
-                for(int i = 0; i < gps::kSubframeLength; ++i)
-                {
-                    std::cout << std::hex << sfrbx.dwrd[i]<<std::dec<<std::endl;
-                }
+                // std::cout<<"CNAV Message"<<std::endl;
+                // std::cout<<uint16_t(sfrbx.svId)<<std::endl;
+                // for(int i = 0; i < gps::kSubframeLength; ++i)
+                // {
+                    // std::cout << std::hex << sfrbx.dwrd[i]<<std::dec<<std::endl;
+                // }
             }
             break;
     }
@@ -41,7 +49,11 @@ void SatelliteDatabase::update(const ublox::ubx::UBX_message_t& message)
 
 namespace gps
 {
-
+    bool GPS_Satellite::update(uint32_t* words)
+    {
+        std::cout<<uint16_t(lnav::get_bits<uint8_t>(&words[1], 19, 3)) << std::endl;
+        return true;
+    }
 }
 
 }

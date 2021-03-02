@@ -13,6 +13,7 @@ add_library(GNSS SHARED
     src/ephemeris.cpp
     src/gps_lnav.cpp
     src/gps_cnav.cpp
+    src/gps_cei.cpp
     src/satellite.cpp)
 target_link_libraries(GNSS PUBLIC UBX bit_utils)
 target_compile_options(GNSS PRIVATE -std=c++17)
@@ -26,7 +27,8 @@ IF(BUILD_GNSS_TESTS)
     add_executable(gnss_test
         test/test_nav_parser.cpp
         test/test_gps_lnav.cpp
-        test/test_gps_cnav.cpp)
+        test/test_gps_cnav.cpp
+        test/test_gps_cei.cpp)
     target_link_libraries(gnss_test PUBLIC gtest gtest_main)
     target_link_libraries(gnss_test PRIVATE GNSS)
 

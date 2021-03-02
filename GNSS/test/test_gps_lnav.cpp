@@ -8,7 +8,7 @@ using std::make_tuple;
 
 namespace gnss { namespace gps { namespace lnav {
 
-uint32_t sat_03[]
+static uint32_t sat_03[]
 {
     0X22c05d10, 0X28ccaa9c,
     0Xc82c7d6,  0X8dba513c,

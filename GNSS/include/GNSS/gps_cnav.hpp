@@ -73,11 +73,6 @@ uint64_t crc24q[256] = {
     0xFCD11CCE, 0xFD575035, 0xFE5BC9C3, 0xFFDD8538,
 };
 
-uint64_t crc24q_hash(uint32_t* data, int len)
-{
-    
-}
-
 bool check_parity(uint32_t* words);
 
 } // namespace cnav

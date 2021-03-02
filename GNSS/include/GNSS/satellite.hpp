@@ -29,10 +29,20 @@ class Satellite
 {
     public:
         constellation_t get_constellation() const;
-        virtual bool update_ephemeris(std::shared_ptr<EphemerisInterface>);
+        virtual bool update(uint32_t* words);
+        int get_id() const;
+        Satellite()
+        {
+            id = 0;
+        }
+        Satellite(int sat_id)
+        {
+            id = sat_id;
+        }
     
     protected:
         constellation_t constellation;
+        int id;
         std::shared_ptr<EphemerisInterface> ephemeris;
 };
 
@@ -48,7 +58,6 @@ class SatelliteDatabase
 
     public:
         void update(const ublox::ubx::UBX_message_t& message);
-        int update_satellite(int constellation, int satellite);
 };
 
 namespace gps
@@ -57,11 +66,11 @@ namespace gps
 class GPS_Satellite: public Satellite
 {
     public:
-        GPS_Satellite(bool cnav = true)
+        GPS_Satellite(int sat_id)
         {
-
+            constellation = kGPS;
         };
-        bool update_ephemeris(std::shared_ptr<EphemerisInterface>) override;
+        bool update(uint32_t* words);
 };
 
 }
@@ -72,11 +81,10 @@ namespace galileo
 class Galileo_Satellite: public Satellite
 {
     public:
-        Galileo_Satellite()
+        Galileo_Satellite(int sat_id)
         {
             constellation = kGALILEO;
         };
-        bool update_ephemeris(std::shared_ptr<EphemerisInterface>) override;
 };
 
 }
