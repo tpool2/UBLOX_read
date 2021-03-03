@@ -36,7 +36,7 @@ void SatelliteDatabase::update(const ublox::ubx::UBX_message_t& message)
                 std::cout<<"Subframe ID: " << uint16_t(gps::lnav::get_bits<uint8_t>(&sfrbx.dwrd[1], 19, 3)) << std::endl;
                 if(sfrbx.svId == 4)
                 {
-                    for(int i = 0; i < gps::kSubframeLength; ++i)
+                    for(int i = 0; i < gps::kWordsPerSubframe; ++i)
                     {
                         std::cout << std::hex << sfrbx.dwrd[i]<<std::dec<<std::endl;
                     }
@@ -47,7 +47,7 @@ void SatelliteDatabase::update(const ublox::ubx::UBX_message_t& message)
             {
                 // std::cout<<"CNAV Message"<<std::endl;
                 // std::cout<<uint16_t(sfrbx.svId)<<std::endl;
-                // for(int i = 0; i < gps::kSubframeLength; ++i)
+                // for(int i = 0; i < gps::kWordsPerSubframe; ++i)
                 // {
                     // std::cout << std::hex << sfrbx.dwrd[i]<<std::dec<<std::endl;
                 // }

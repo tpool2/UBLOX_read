@@ -7,9 +7,11 @@ namespace gnss { namespace gps
 {
     enum
     {
-        kWordLength = 30,
-        kSubframeLength = 10,
+        kBitsPerWord = 30,
+        kWordsPerSubframe = 10,
+        kSubframesPerMessage = 5,
         kPreamble = 139,
+        kWordsPerMessage = 50,
     };
 
     static double const mu = 3.986005e14;

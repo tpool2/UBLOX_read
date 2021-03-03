@@ -2,6 +2,7 @@
 #define GPS_LNAV_HPP
 #include "bit_utils/bit_utils.h"
 #include "GNSS/gps_defs.hpp"
+#include "GNSS/gps_cei.hpp"
 namespace gnss { namespace gps { namespace lnav {
 
 /*
@@ -24,6 +25,18 @@ template <class T, class R> T get_bits(const R* lnav_words, int position, int le
 {
     return bit_utils::get_msb_bits<T>(lnav_words, get_ublox_bit_index(position), length);
 }
+
+class LNAVParser: public CEI
+{
+    private:
+        
+    public:
+        uint8_t subframe_id = 0;
+        void read_subframe(const uint32_t* subframe);
+        void read_subframe_1(const uint32_t* subframe);
+        void read_subframe_2(const uint32_t* subframe);
+        void read_subframe_3(const uint32_t* subframe);
+};
 
 } // namespace lnav
 } // namespace gps

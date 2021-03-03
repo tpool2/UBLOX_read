@@ -4,6 +4,7 @@
 #include <memory>
 #include <iostream>
 #include <map>
+#include <cstdint>
 
 #include "UBX/ubx.hpp"
 

@@ -28,3 +28,4 @@ TEST(Satellite, Galileo_Constellation)
     std::shared_ptr<Satellite> satellite = std::make_shared<Galileo_Satellite>();
     ASSERT_EQ(satellite->get_constellation(), gnss::kGALILEO);
 }
+

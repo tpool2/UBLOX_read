@@ -9,7 +9,7 @@ bool check_parity(uint32_t* words)
 {
     bool D_29 = 0;
     bool D_30 = 0;
-    for(int word_index = 0; word_index < gps::kSubframeLength; ++word_index)
+    for(int word_index = 0; word_index < gps::kWordsPerSubframe; ++word_index)
     {
         if(!check_parity(words[word_index], D_29, D_30))
         {
@@ -26,8 +26,8 @@ bool check_parity(uint32_t* words)
 
 bool check_parity(uint32_t word, bool D_29_star, bool D_30_star)
 {
-    bool D[gps::kWordLength];
-    for(int i = 0; i < gps::kWordLength; ++i)
+    bool D[gps::kBitsPerWord];
+    for(int i = 0; i < gps::kBitsPerWord; ++i)
     {
         D[i] = get_msb_bits<bool>(&word, i+2, 1);
     }
@@ -56,6 +56,57 @@ bool check_parity(uint32_t word, bool D_29_star, bool D_30_star)
 int get_ublox_bit_index(int l1_desired_bit_index)
 {
     return l1_desired_bit_index+2*(int(l1_desired_bit_index/30)+1);
+}
+
+void LNAVParser::read_subframe(const uint32_t* subframe)
+{
+    subframe_id = get_bits<uint8_t>(&subframe[1], 19, 3);
+    switch(subframe_id)
+    {
+        case 1:
+            read_subframe_1(subframe);
+            break;
+        case 2:
+            read_subframe_2(subframe);
+            break;
+        case 3:
+            read_subframe_3(subframe);
+            break;
+    };
+}
+
+void LNAVParser::read_subframe_1(const uint32_t* subframe)
+{
+    WN = get_bits<uint16_t>(subframe, 60, 10);
+    T_GD = double(get_bits<int64_t>(subframe, 196, 8))*powf128(2, -31);
+    a_f0 = double(get_bits<int64_t>(subframe, 270, 22))*powf128(2, -31);
+    a_f1 = double(get_bits<int64_t>(subframe, 248, 16))*powf128(2, -43);
+    a_f2 = double(get_bits<int64_t>(subframe, 240, 8))*powf128(2, -55);
+}
+
+void LNAVParser::read_subframe_2(const uint32_t* subframe)
+{
+    C_rs = double(get_bits<int64_t>(subframe, 68, 16))*powf128(2, -5);
+    Delta_n = double(get_bits<int16_t>(subframe, 90, 16))*powf128(2, -43);
+    M_0 = double((get_bits<int64_t>(subframe, 106, 8)<<24) + get_bits<int64_t>(subframe, 120, 24))*powf128(2, -31);
+    C_uc = double(get_bits<int16_t>(subframe, 150, 16))*powf128(2, -29);
+    e = double((get_bits<int32_t>(subframe, 166, 8)<<24) | get_bits<int32_t>(subframe, 180, 24))*powf128(2, -33);
+    C_us = double(get_bits<int16_t>(subframe, 210, 16))*powf128(2, -29);
+    sqrt_A = double((get_bits<uint32_t>(subframe, 226, 8) << 24) + get_bits<uint32_t>(subframe, 240, 24))*powf128(2, -19);
+    t_oe = get_bits<uint64_t>(subframe, 270, 16) << 4;
+}
+
+void LNAVParser::read_subframe_3(const uint32_t* subframe)
+{
+    IODE = get_bits<int>(subframe, 270, 8);
+    C_ic = double(get_bits<int16_t>(subframe, 60, 16))*powf128(2, -29);
+    Omega_0 = double( (get_bits<int32_t>(subframe, 76, 8)<<24) | get_bits<uint32_t>(subframe, 90, 24))*powf128(2, -43);
+    C_is = double(get_bits<int16_t>(subframe, 120, 16))*powf128(2, -29);
+    // i_0
+    C_rc = double(get_bits<int16_t>(subframe, 180, 16))*powf128(2, -5);
+    // omega
+    Omega_dot = double(get_bits<int32_t>(subframe, 240, 24))*powf128(2, -43);
+    // IDOT = double(get_bits<int16_t>())
 }
 
 } // namespace lnav

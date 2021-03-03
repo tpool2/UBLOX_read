@@ -11,20 +11,6 @@ static uint32_t sat_03[]
     0X837eca97, 0X1ec31f97
 };
 
-TEST(CEI, updateTRUE)
-{
-    gnss::gps::CEI cei;
-    
-    ASSERT_TRUE(update(cei, sat_03));
-}
-
-TEST(CEI, updateFALSE)
-{
-    gnss::gps::CEI cei;
-    update(cei, sat_03);
-    ASSERT_FALSE(update(cei, sat_03));
-}
-
 } // namespace lnav
 } // namespace gps
 } // namespace gnss

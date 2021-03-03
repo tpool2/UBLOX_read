@@ -17,7 +17,7 @@ static uint32_t sat_03[]
     0X837eca97, 0X1ec31f97
 };
 
-uint32_t sat_07[]
+static uint32_t sat_07[]
 {
     0x22c05d10, 0x28ccaa9c,
     0x7ff6203,  0xb955c46,
@@ -26,7 +26,7 @@ uint32_t sat_07[]
     0x3553e54,  0x1ec31fc4
 };
 
-uint32_t sat_22[]
+static uint32_t sat_22[]
 {
     0x22c05d10, 0x28ccaa9c,
     0x5ffa71a,  0x8c413efc,
@@ -35,7 +35,7 @@ uint32_t sat_22[]
     0x38ff847,  0x1ec2d090
 };
 
-uint32_t sat_26[]
+static uint32_t sat_26[]
 {
     0x22c05d10, 0x28ccaa9c,
     0x147f9c40, 0xbf57e8a,
@@ -44,7 +44,7 @@ uint32_t sat_26[]
     0x8359f2a6, 0x9ec31f48
 };
 
-uint32_t sat_27[]
+static uint32_t sat_27[]
 {
     0x22c05d10, 0x28ccaa9c,
     0x7bf552b,  0xddb7420,
@@ -53,7 +53,7 @@ uint32_t sat_27[]
     0x833e1c26, 0x9ec31f1b
 };
 
-uint32_t bad_03[]
+static uint32_t bad_03[]
 {
     0X22c05d10, 0X28ccaa9c,
     0Xc82c7d6,  0X8dba513c,
@@ -62,7 +62,7 @@ uint32_t bad_03[]
     0X837eca97, 0X1ec31f98
 };
 
-uint32_t bad_07[]
+static uint32_t bad_07[]
 {
     0x22c05d10, 0x28ccaa9c,
     0x7ff6203,  0xb955c46,
@@ -71,7 +71,7 @@ uint32_t bad_07[]
     0x3553e54,  0x1ec31fc4
 };
 
-uint32_t bad_22[]
+static uint32_t bad_22[]
 {   
     0x22c05d10, 0x28ccaa9c, 
     0x5ffa71a,  0x8c413efc,
@@ -80,7 +80,7 @@ uint32_t bad_22[]
     0x38ff846,  0x1ec2d090  
 };
 
-uint32_t bad_26[]
+static uint32_t bad_26[]
 {
     0x22c05d10, 0x28ccaa9c,
     0x147f9c40, 0xbf57e8a,
@@ -89,7 +89,7 @@ uint32_t bad_26[]
     0x8359f2a6, 0x9ec31f48
 };
 
-uint32_t bad_27[]
+static uint32_t bad_27[]
 {
     0x22c05d10, 0x28ccaa9c,
     0x7bf552a,  0xddb7420,
@@ -97,6 +97,54 @@ uint32_t bad_27[]
     0x21c78ff0, 0x461684a,
     0x833e1c26, 0x9ec31f1b
 };
+
+static uint32_t sat_04[] = 
+{
+    // Subframe 1
+    0x22c05d10, 0x28cbe9b4,
+    0x5d40074,  0x39e5a75,        
+    0x9242e37b, 0x2df03e9b,
+    0x88d3dca,  0x9edec319,
+    0x803ff9e6, 0xba462ed8,
+    // Subframe 2
+    0x22c05d10, 0x28cc0a00,
+    0x1eff97bc, 0xd0779d5,
+    0x8e54a58c, 0x3fa4400a,
+    0xa30d9af8, 0x38ae873,
+    0x32dbb74,  0x1ec31fc4,
+    // Subframe 3
+    0x22c05d10, 0x28cc2b88,
+    0x309b4,    0x1a33d03,
+    0x49ea,     0x87c14f87,
+    0x7b660e1,  0xb89deb62,
+    0xbfe9dfb9, 0x9ec00d3c,
+    // Subframe 4
+    0x22c05d10, 0x28cc4c34,
+    0x1e4080d8, 0x3a7b78b7,
+    0xa5bff76,  0xb465f071,
+    0xa2380a93, 0x25698143,
+    0x19242dd,  0xab655b47,
+    // Subframe 5
+    0x22c05d10, 0x28cc6dbc,
+    0x102aaaac, 0x2aaaaabc,
+    0x2aaaaabc, 0x2aaaaabc,
+    0x2aaaaabc, 0x2aaaaabc,
+    0x2aaaaabc, 0x2aaaaabc,
+};
+
+static double sat_04_solution[] = 
+{
+    -1.747393980622E-04,-2.842170943040E-12, 0.000000000000E+00,
+     1.230000000000E+02,-1.306250000000E+01, 4.764841331910E-09,-6.080965795834E-01,
+    -6.835907697678E-07, 1.069737016223E-03, 6.755813956261E-06, 5.153589319229E+03,
+     5.040000000000E+05, 2.235174179077E-08, 9.332883497659E-01, 1.862645149231E-09,
+     9.601780626532E-01, 2.467812500000E+02,-3.046249277721E+00,-8.092479941415E-09,
+     4.643050544549E-12, 1.000000000000E+00, 2.141000000000E+03, 0.000000000000E+00,
+     2.000000000000E+00, 0.000000000000E+00,-4.190952000000E-09, 3.790000000000E+02,
+     4.968600000000E+05, 4.000000000000E+00,
+};
+// Solution!
+// G04 2021 01 22 20 00 00
 
 std::vector<std::tuple<int, int>> bit_indicies
 {
@@ -246,6 +294,157 @@ testing::Combine
         sat_03, sat_07, sat_22, sat_26, sat_27
     )
 ));
+
+class TestLNAVParser: public ::testing::TestWithParam<int>
+{
+    protected:
+        int subframe_id;
+        uint32_t* subframe_address;
+        LNAVParser parser;
+        void SetUp() override
+        {
+            subframe_id = GetParam();
+            subframe_address = &sat_04[(subframe_id-1)*10];
+        }
+};
+
+TEST_P(TestLNAVParser, SubframeID)
+{
+    parser.read_subframe(subframe_address);
+    ASSERT_EQ(subframe_id, parser.subframe_id);
+}
+
+INSTANTIATE_TEST_SUITE_P(FullGNSSMessage, TestLNAVParser,
+::testing::Range(1, 6, 1)
+);
+
+class TestSubframes: public testing::TestWithParam<std::tuple<uint32_t*, double*>>
+{
+    protected:
+        LNAVParser parser;
+        double* answers;
+        uint32_t* message;
+        void SetUp() override
+        {
+            message = std::get<0>(GetParam());
+            answers = std::get<1>(GetParam());
+            for(int subframe_index = 0; subframe_index < kSubframesPerMessage; ++subframe_index)
+            {
+                parser.read_subframe(&message[subframe_index*kWordsPerSubframe]);
+            }
+        }
+};
+
+INSTANTIATE_TEST_SUITE_P(FullGNSSMessage, TestSubframes,
+::testing::Values
+(
+    std::make_tuple<uint32_t*, double*>(sat_04, sat_04_solution)
+));
+
+TEST_P(TestSubframes, WN)
+{
+    ASSERT_EQ(parser.WN, 2089%256);
+}
+
+TEST_P(TestSubframes, T_GD)
+{
+    ASSERT_FLOAT_EQ(parser.T_GD, -4.190952000000E-09);
+}
+
+TEST_P(TestSubframes, a_f0)
+{
+    ASSERT_FLOAT_EQ(parser.a_f0, answers[0]);
+}
+
+TEST_P(TestSubframes, a_f1)
+{
+    ASSERT_FLOAT_EQ(parser.a_f1, answers[1]);
+}
+
+TEST_P(TestSubframes, a_f2)
+{
+    ASSERT_FLOAT_EQ(parser.a_f2, answers[2]);
+}
+
+TEST_P(TestSubframes, IODE)
+{
+    ASSERT_FLOAT_EQ(parser.IODE, answers[3]);
+}
+
+TEST_P(TestSubframes, C_rs)
+{
+    ASSERT_FLOAT_EQ(parser.C_rs, answers[4]);
+}
+
+TEST_P(TestSubframes, Delta_n)
+{
+    ASSERT_FLOAT_EQ(parser.Delta_n, answers[5]);
+}
+
+TEST_P(TestSubframes, M_0)
+{
+    ASSERT_FLOAT_EQ(parser.M_0, answers[6]);
+}
+
+TEST_P(TestSubframes, C_uc)
+{
+    ASSERT_FLOAT_EQ(parser.C_uc, answers[7]);
+}
+
+TEST_P(TestSubframes, e)
+{
+    ASSERT_FLOAT_EQ(parser.e, answers[8]);
+}
+
+TEST_P(TestSubframes, C_us)
+{
+    ASSERT_FLOAT_EQ(parser.C_us, answers[9]);
+}
+
+TEST_P(TestSubframes, sqrt_A)
+{
+    ASSERT_FLOAT_EQ(parser.sqrt_A, answers[10]);
+}
+
+TEST_P(TestSubframes, t_oe)
+{
+    ASSERT_FLOAT_EQ(parser.t_oe, 5.040000000000E+05);
+}
+
+TEST_P(TestSubframes, C_ic)
+{
+    ASSERT_FLOAT_EQ(parser.C_ic, 2.235174179077E-08);
+}
+
+TEST_P(TestSubframes, Omega_0)
+{
+    ASSERT_FLOAT_EQ(parser.Omega_0, 9.332883497659E-01);
+}
+
+TEST_P(TestSubframes, C_is)
+{
+    ASSERT_FLOAT_EQ(parser.C_is, 1.862645149231E-09);
+}
+
+TEST_P(TestSubframes, i_0)
+{
+    ASSERT_FLOAT_EQ(parser.i_0, 9.601780626532E-01);
+}
+
+TEST_P(TestSubframes, C_rc)
+{
+    ASSERT_FLOAT_EQ(parser.C_rc, 2.467812500000E+02);
+}
+
+TEST_P(TestSubframes, omega)
+{
+    ASSERT_FLOAT_EQ(parser.omega, -3.046249277721E+00);
+}
+
+TEST_P(TestSubframes, Omega_dot)
+{
+    ASSERT_FLOAT_EQ(parser.Omega_dot, -8.092479941415E-09);
+}
 
 } // namespace lnav
 } // namespace gps
