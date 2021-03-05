@@ -26,6 +26,13 @@ template <class T, class R> T get_bits(const R* lnav_words, int position, int le
     return bit_utils::get_msb_bits<T>(lnav_words, get_ublox_bit_index(position), length);
 }
 
+template <class T, class R> T get_spliced_bits(const R* lnav_words, int start_1, int len_1, int start_2, int len_2)
+{
+    int ublox_start_1 = get_ublox_bit_index(start_1);
+    int ublox_start_2 = get_ublox_bit_index(start_2);
+    return bit_utils::splice_msb_bits<T>(lnav_words, ublox_start_1, len_1, ublox_start_2, len_2);
+}
+
 class LNAVParser: public CEI
 {
     private:

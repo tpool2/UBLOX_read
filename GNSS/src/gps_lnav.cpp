@@ -78,21 +78,22 @@ void LNAVParser::read_subframe(const uint32_t* subframe)
 void LNAVParser::read_subframe_1(const uint32_t* subframe)
 {
     WN = get_bits<uint16_t>(subframe, 60, 10);
-    T_GD = double(get_bits<int64_t>(subframe, 196, 8))*powf128(2, -31);
+    T_GD = double(get_bits<int8_t>(subframe, 196, 8))*powf128(2, -31);
     a_f0 = double(get_bits<int64_t>(subframe, 270, 22))*powf128(2, -31);
     a_f1 = double(get_bits<int64_t>(subframe, 248, 16))*powf128(2, -43);
     a_f2 = double(get_bits<int64_t>(subframe, 240, 8))*powf128(2, -55);
+    IODC = double(get_spliced_bits<uint16_t>(subframe, 82, 2, 210, 8));
 }
 
 void LNAVParser::read_subframe_2(const uint32_t* subframe)
 {
     C_rs = double(get_bits<int64_t>(subframe, 68, 16))*powf128(2, -5);
     Delta_n = double(get_bits<int16_t>(subframe, 90, 16))*powf128(2, -43);
-    M_0 = double((get_bits<int64_t>(subframe, 106, 8)<<24) + get_bits<int64_t>(subframe, 120, 24))*powf128(2, -31);
+    M_0 = double(get_spliced_bits<int32_t>(subframe, 106, 8, 120, 24))*powf128(2, -31);
     C_uc = double(get_bits<int16_t>(subframe, 150, 16))*powf128(2, -29);
-    e = double((get_bits<int32_t>(subframe, 166, 8)<<24) | get_bits<int32_t>(subframe, 180, 24))*powf128(2, -33);
+    e = double(get_spliced_bits<uint32_t>(subframe, 166, 8, 180, 24))*powf128(2, -33);
     C_us = double(get_bits<int16_t>(subframe, 210, 16))*powf128(2, -29);
-    sqrt_A = double((get_bits<uint32_t>(subframe, 226, 8) << 24) + get_bits<uint32_t>(subframe, 240, 24))*powf128(2, -19);
+    sqrt_A = double(get_spliced_bits<uint32_t>(subframe,226,8,240,24))*powf128(2, -19);
     t_oe = get_bits<uint64_t>(subframe, 270, 16) << 4;
 }
 
@@ -100,13 +101,24 @@ void LNAVParser::read_subframe_3(const uint32_t* subframe)
 {
     IODE = get_bits<int>(subframe, 270, 8);
     C_ic = double(get_bits<int16_t>(subframe, 60, 16))*powf128(2, -29);
-    Omega_0 = double( (get_bits<int32_t>(subframe, 76, 8)<<24) | get_bits<uint32_t>(subframe, 90, 24))*powf128(2, -43);
+    std::cout<<std::endl;
+    for(int i = 76; i < 76+8; ++i)
+    {
+        std::cout << get_bits<uint16_t>(subframe, i, 1);
+    }
+    for(int i = 90; i<90+24; ++i)
+    {
+        std::cout << get_bits<uint16_t>(subframe, i, 1);
+    }
+    std::cout<<std::endl;
+
+    Omega_0 = double(get_spliced_bits<int32_t>(subframe,76,8,90,24))*powf128(2, -31);
     C_is = double(get_bits<int16_t>(subframe, 120, 16))*powf128(2, -29);
-    // i_0
+    i_0 = double(get_spliced_bits<int32_t>(subframe, 136,8,150,24))*powf128(2,-31);
     C_rc = double(get_bits<int16_t>(subframe, 180, 16))*powf128(2, -5);
-    // omega
+    omega = double(get_spliced_bits<int32_t>(subframe,196,8,210,24))*powf128(2,-31);
     Omega_dot = double(get_bits<int32_t>(subframe, 240, 24))*powf128(2, -43);
-    // IDOT = double(get_bits<int16_t>())
+    IDOT = double(get_bits<int16_t>(subframe,278,14))*powf128(2,-43);
 }
 
 } // namespace lnav

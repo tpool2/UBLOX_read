@@ -133,7 +133,7 @@ static uint32_t sat_04[] =
 };
 
 static double sat_04_solution[] = 
-{
+{   // G04 2021 01 22 20 00 00
     -1.747393980622E-04,-2.842170943040E-12, 0.000000000000E+00,
      1.230000000000E+02,-1.306250000000E+01, 4.764841331910E-09,-6.080965795834E-01,
     -6.835907697678E-07, 1.069737016223E-03, 6.755813956261E-06, 5.153589319229E+03,
@@ -143,8 +143,8 @@ static double sat_04_solution[] =
      2.000000000000E+00, 0.000000000000E+00,-4.190952000000E-09, 3.790000000000E+02,
      4.968600000000E+05, 4.000000000000E+00,
 };
-// Solution!
-// G04 2021 01 22 20 00 00
+
+
 
 std::vector<std::tuple<int, int>> bit_indicies
 {
@@ -341,16 +341,6 @@ INSTANTIATE_TEST_SUITE_P(FullGNSSMessage, TestSubframes,
     std::make_tuple<uint32_t*, double*>(sat_04, sat_04_solution)
 ));
 
-TEST_P(TestSubframes, WN)
-{
-    ASSERT_EQ(parser.WN, 2089%256);
-}
-
-TEST_P(TestSubframes, T_GD)
-{
-    ASSERT_FLOAT_EQ(parser.T_GD, -4.190952000000E-09);
-}
-
 TEST_P(TestSubframes, a_f0)
 {
     ASSERT_FLOAT_EQ(parser.a_f0, answers[0]);
@@ -376,14 +366,14 @@ TEST_P(TestSubframes, C_rs)
     ASSERT_FLOAT_EQ(parser.C_rs, answers[4]);
 }
 
-TEST_P(TestSubframes, Delta_n)
+TEST_P(TestSubframes, DISABLED_Delta_n)
 {
     ASSERT_FLOAT_EQ(parser.Delta_n, answers[5]);
 }
 
 TEST_P(TestSubframes, M_0)
 {
-    ASSERT_FLOAT_EQ(parser.M_0, answers[6]);
+    ASSERT_FLOAT_EQ(parser.M_0*gps::pi, answers[6]);
 }
 
 TEST_P(TestSubframes, C_uc)
@@ -408,42 +398,62 @@ TEST_P(TestSubframes, sqrt_A)
 
 TEST_P(TestSubframes, t_oe)
 {
-    ASSERT_FLOAT_EQ(parser.t_oe, 5.040000000000E+05);
+    ASSERT_FLOAT_EQ(parser.t_oe, answers[11]);
 }
 
 TEST_P(TestSubframes, C_ic)
 {
-    ASSERT_FLOAT_EQ(parser.C_ic, 2.235174179077E-08);
+    ASSERT_FLOAT_EQ(parser.C_ic, answers[12]);
 }
 
 TEST_P(TestSubframes, Omega_0)
 {
-    ASSERT_FLOAT_EQ(parser.Omega_0, 9.332883497659E-01);
+    ASSERT_FLOAT_EQ(parser.Omega_0*gps::pi, answers[13]);
 }
 
 TEST_P(TestSubframes, C_is)
 {
-    ASSERT_FLOAT_EQ(parser.C_is, 1.862645149231E-09);
+    ASSERT_FLOAT_EQ(parser.C_is, answers[14]);
 }
 
 TEST_P(TestSubframes, i_0)
 {
-    ASSERT_FLOAT_EQ(parser.i_0, 9.601780626532E-01);
+    ASSERT_FLOAT_EQ(parser.i_0*gps::pi, answers[15]);
 }
 
 TEST_P(TestSubframes, C_rc)
 {
-    ASSERT_FLOAT_EQ(parser.C_rc, 2.467812500000E+02);
+    ASSERT_FLOAT_EQ(parser.C_rc, answers[16]);
 }
 
 TEST_P(TestSubframes, omega)
 {
-    ASSERT_FLOAT_EQ(parser.omega, -3.046249277721E+00);
+    ASSERT_FLOAT_EQ(parser.omega*gps::pi, answers[17]);
 }
 
 TEST_P(TestSubframes, Omega_dot)
 {
-    ASSERT_FLOAT_EQ(parser.Omega_dot, -8.092479941415E-09);
+    ASSERT_FLOAT_EQ(parser.Omega_dot*gps::pi, answers[18]);
+}
+
+TEST_P(TestSubframes, IDOT)
+{
+    ASSERT_FLOAT_EQ(parser.IDOT*gps::pi, answers[19]);
+}
+
+TEST_P(TestSubframes, WN)
+{
+    ASSERT_EQ(parser.WN, int(answers[21])%256);
+}
+
+TEST_P(TestSubframes, T_GD)
+{
+    ASSERT_FLOAT_EQ(parser.T_GD, answers[25]);
+}
+
+TEST_P(TestSubframes, IODC)
+{
+    ASSERT_FLOAT_EQ(parser.IODC, answers[26]);
 }
 
 } // namespace lnav
