@@ -34,7 +34,7 @@ void SatelliteDatabase::update(const ublox::ubx::UBX_message_t& message)
                 }
                 std::cout<<"SV ID: "<<uint16_t(sfrbx.svId)<<std::endl;
                 std::cout<<"Subframe ID: " << uint16_t(gps::lnav::get_bits<uint8_t>(&sfrbx.dwrd[1], 19, 3)) << std::endl;
-                if(sfrbx.svId == 4)
+                if(sfrbx.svId == 07)
                 {
                     for(int i = 0; i < gps::kWordsPerSubframe; ++i)
                     {

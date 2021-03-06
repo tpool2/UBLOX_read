@@ -101,17 +101,6 @@ void LNAVParser::read_subframe_3(const uint32_t* subframe)
 {
     IODE = get_bits<int>(subframe, 270, 8);
     C_ic = double(get_bits<int16_t>(subframe, 60, 16))*powf128(2, -29);
-    std::cout<<std::endl;
-    for(int i = 76; i < 76+8; ++i)
-    {
-        std::cout << get_bits<uint16_t>(subframe, i, 1);
-    }
-    for(int i = 90; i<90+24; ++i)
-    {
-        std::cout << get_bits<uint16_t>(subframe, i, 1);
-    }
-    std::cout<<std::endl;
-
     Omega_0 = double(get_spliced_bits<int32_t>(subframe,76,8,90,24))*powf128(2, -31);
     C_is = double(get_bits<int16_t>(subframe, 120, 16))*powf128(2, -29);
     i_0 = double(get_spliced_bits<int32_t>(subframe, 136,8,150,24))*powf128(2,-31);
