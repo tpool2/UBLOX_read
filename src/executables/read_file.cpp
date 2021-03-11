@@ -11,11 +11,11 @@ int main(int argc, char* argv[])
     ifs.open(argv[1]);
 
     ublox::ubx::Parser parser;
-    gnss::NavParser sfrbx_parser;
+    gnss::SatelliteDatabase database;
     
-    parser.register_callback(ublox::ubx::kCLASS_RXM, ublox::ubx::kRXM_SFRBX, [&sfrbx_parser](const ublox::ubx::UBX_message_t& message)
+    parser.register_callback(ublox::ubx::kCLASS_RXM, ublox::ubx::kRXM_SFRBX, [&database](const ublox::ubx::UBX_message_t& message)
     {
-        sfrbx_parser.parse_sfrbx(message);
+        database.update(message);
     });
     uint8_t byte;
 
