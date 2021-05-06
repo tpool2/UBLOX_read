@@ -58,7 +58,7 @@ class SatelliteDatabase
         };
 
     public:
-        void update(const ublox::ubx::UBX_message_t& message);
+        void update(const ublox::ubx::RXM_SFRBX_t& sfrbx);
 };
 
 namespace gps
